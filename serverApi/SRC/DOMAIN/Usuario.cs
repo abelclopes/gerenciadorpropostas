@@ -12,25 +12,31 @@ namespace DOMAIN
         {
             Nome = nome;
         }
-        public Usuario(string nome, string email)
+        public Usuario(string nome, string cpf, DateTime dataNacimento, Perfil perfil)
         {
             Nome = nome;
-            Email = email;
+            Cpf = cpf;
+            DataNacimento = dataNacimento;
+            PerfilUsuario = perfil;
         }
 
         public string Nome { get; set; }
+        public string Cpf { get; set; }
         public string Email { get; set; }
-        public string telefone { get; set; }
+        public DateTime DataNacimento { get; set; }
+        public Perfil PerfilUsuario { get; set; }
 
-        public async Task Atualizar(string nome, string email, IContext _context)
+        public async Task Atualizar(Usuario model, IContext _context)
         {
-            if (await _context.Usuarios.AnyAsync(x => x.Nome.Equals(nome)))
-                throw new ArgumentException($"O Nome {nome} já esta em uso");
+            if (await _context.Usuarios.AnyAsync(x => x.Nome.Equals(model.Nome)))
+                throw new ArgumentException($"O Nome {model.Nome} já esta em uso");
             if (await _context.Usuarios.AnyAsync(x => x.Email.Equals(Email)))
-                throw new ArgumentException($"O E-mail {Email} já esta em uso");
+                throw new ArgumentException($"O E-mail {model.Email} já esta em uso");
             
-            Nome = nome;
-            Email = email;
+            Nome = model.Nome;
+            Cpf = model.Cpf;
+            DataNacimento = model.DataNacimento;
+            PerfilUsuario = model.PerfilUsuario;
         }
         
         public async Task Atualizar(string nome, IContext _context)
