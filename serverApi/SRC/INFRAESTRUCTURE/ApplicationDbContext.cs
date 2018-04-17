@@ -11,11 +11,19 @@ namespace INFRAESTRUCTURE
         :base(options)
         { }
         public DbSet<Usuario> Usuarios { get; set; }
-    
+        public DbSet<Fornecedor> Fornecedores { get; set; }
+        public DbSet<Proposta> Propostas { get; set; }
+        public DbSet<PropostaHistorico> PropostasHistoricos { get; set; }
+        public DbSet<Categoria> Categorias { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Usuario>()
-                    .HasIndex(b => b.Email)
+                    .HasIndex(b => b.Cpf)
+                    .IsUnique();
+
+            modelBuilder.Entity<Fornecedor>()
+                    .HasIndex(b => b.CnpjCpf)
                     .IsUnique();
 
             base.OnModelCreating(modelBuilder);

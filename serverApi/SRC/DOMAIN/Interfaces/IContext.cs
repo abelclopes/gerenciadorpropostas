@@ -10,6 +10,10 @@ namespace DOMAIN.Interfaces
     public interface IContext
     {
         DbSet<Usuario> Usuarios { get; set; }
+        DbSet<Fornecedor> Fornecedores { get; set; }
+        DbSet<Proposta> Propostas { get; set; }
+        DbSet<PropostaHistorico> PropostasHistoricos { get; set; }
+        DbSet<Categoria> Categorias { get; set; }
 
         
         DatabaseFacade Database { get; }
