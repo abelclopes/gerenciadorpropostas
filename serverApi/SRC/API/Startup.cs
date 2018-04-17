@@ -34,12 +34,14 @@ namespace API
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {           
+            //var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
             //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),b => b.MigrationsAssembly("API")));
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                 //options.UseMySql(                    
                     Configuration.GetConnectionString("DefaultConnection"),
+                    //b => b.MigrationsAssembly(migrationsAssembly)
                     b => b.MigrationsAssembly("API")
                 )
             );
