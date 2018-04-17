@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using INFRAESTRUCTURE;
+//using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+
+using DOMAIN;
+using DOMAIN.Interfaces;
+using INFRAESTRUCTURE;
+using INFRAESTRUCTURE.Data;
 
 namespace API
 {
@@ -28,6 +35,7 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),b => b.MigrationsAssembly("API")));
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                 //options.UseMySql(                    
@@ -36,6 +44,16 @@ namespace API
                 )
             );
             
+            // ResolveDependencies(services);
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
+            services.AddResponseCompression(options =>
+            {
+                options.MimeTypes = new[]
+                {
+                    "application/json"
+                };
+            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -50,6 +68,9 @@ namespace API
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                 };
             });
+
+            ResolveDependencies(services);
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -59,12 +80,25 @@ namespace API
                       .AllowCredentials()
                 .Build());
             });
+            // services.AddSwaggerGen(c =>
+            // {
+            //     c.SwaggerDoc("v1", new Info
+            //     {
+            //         Title = "API Legislação",
+            //         Version = "v1"
+            //     });
+            // });
 
             services.AddMvc();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        private static void ResolveDependencies(IServiceCollection services)
+        {
+            //services.AddScoped<IContext, ApplicationDbContext>();
+            
+            services.AddScoped<DbInitializer>();
+        }
+        
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext context)
         {
             if (env.IsDevelopment())
             {
@@ -76,6 +110,17 @@ namespace API
             app.UseAuthentication();
 
             app.UseMvc();
+            // app.UseSwagger();
+            // app.UseSwaggerUI(c =>
+            // {
+            //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Legislação");
+            // });
+            
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var init = scope.ServiceProvider.GetService<DbInitializer>();
+                init.SeedData(context);
+            }
         }
     }
 }

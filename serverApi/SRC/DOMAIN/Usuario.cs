@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using DOMAIN.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace DOMAIN
 {
@@ -19,10 +21,10 @@ namespace DOMAIN
             DataNacimento = dataNacimento;
             PerfilUsuario = perfil;
         }
-
         public string Nome { get; set; }
         public string Cpf { get; set; }
         public string Email { get; set; }
+        public string Senha { get {return Senha; } set{ Senha = SHA1Hash(Senha);} }
         public DateTime DataNacimento { get; set; }
         public Perfil PerfilUsuario { get; set; }
 
@@ -45,6 +47,27 @@ namespace DOMAIN
                 throw new ArgumentException($"O Nome {nome} já esta em uso");
             
             Nome = nome;
+        }
+        public async Task Atualizar(string Email, string senha, IContext _context)
+        {
+            if (await _context.Usuarios.AnyAsync(x => !x.Email.Equals(Email)))
+                throw new ArgumentException($"O e-mail {Email} não foi encontrado!");
+            
+            Senha = senha;
+        }
+        
+        public string SHA1Hash(string input)
+        {
+            SHA1 sha = new SHA1CryptoServiceProvider();
+            byte[] data = System.Text.Encoding.ASCII.GetBytes(input);
+            byte[] hash = sha.ComputeHash(data);
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
         }
     }
 }

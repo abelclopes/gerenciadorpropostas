@@ -8,7 +8,6 @@ namespace DOMAIN
 {
     public class Proposta : EntidadeBase
     {
-        public Guid PropostaID { get; set; }
         public string NomeProposta { get; set; }
         
         [MaxLength(500)]

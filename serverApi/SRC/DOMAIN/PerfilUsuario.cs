@@ -5,9 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DOMAIN
 {
-    public class Perfil : EntidadeBase
+    public enum Perfil
     {
-        public Guid PerfilID { get; set; }
-        public string Descricao { get; set; }
+        Administrador,
+        AnalistaDeCompras,
+        AnalistaFinanceiro,
+        DiretorFinanceiro
     }
 }
