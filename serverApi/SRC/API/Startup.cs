@@ -20,6 +20,7 @@ using DOMAIN;
 using DOMAIN.Interfaces;
 using INFRAESTRUCTURE;
 using INFRAESTRUCTURE.Data;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace API
 {
@@ -80,16 +81,13 @@ namespace API
                       .AllowCredentials()
                 .Build());
             });
-            // services.AddSwaggerGen(c =>
-            // {
-            //     c.SwaggerDoc("v1", new Info
-            //     {
-            //         Title = "API Legislação",
-            //         Version = "v1"
-            //     });
-            // });
-
             services.AddMvc();
+
+            // Register the Swagger generator, defining one or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+            });
         }
         private static void ResolveDependencies(IServiceCollection services)
         {
@@ -109,12 +107,14 @@ namespace API
 
             app.UseAuthentication();
 
-            app.UseMvc();
-            // app.UseSwagger();
-            // app.UseSwaggerUI(c =>
-            // {
-            //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Legislação");
-            // });
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
             
             using (var scope = app.ApplicationServices.CreateScope())
             {
