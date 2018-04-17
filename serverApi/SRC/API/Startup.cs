@@ -35,8 +35,6 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {           
-            //var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-            //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),b => b.MigrationsAssembly("API")));
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                 //options.UseMySql(                    
@@ -117,11 +115,11 @@ namespace API
             // {
             //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Legislação");
             // });
-            // dar uma lida em http://docs.identityserver.io/en/release/quickstarts/8_entity_framework.html?highlight=entity
+            
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var init = scope.ServiceProvider.GetService<DbInitializer>();
-                init.SeedData(context);
+                init.Initialize(context);
             }
         }
     }

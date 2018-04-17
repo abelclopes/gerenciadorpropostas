@@ -8,9 +8,9 @@ namespace INFRAESTRUCTURE.Data
 {
      public class DbInitializer
     {
-        public  void SeedData(ApplicationDbContext context)
+        public  void Initialize(ApplicationDbContext context)
         {
-            //context.Database.EnsureCreated();
+            context.Database.EnsureCreated();
 
             // Look for any students.
             if (context.Usuarios.Any())

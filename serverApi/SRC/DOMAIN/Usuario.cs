@@ -24,7 +24,7 @@ namespace DOMAIN
         public string Nome { get; set; }
         public string Cpf { get; set; }
         public string Email { get; set; }
-        public string Senha { get {return Senha; } set{ Senha = SHA1Hash(Senha);} }
+        public string Senha { get; set; }
         public DateTime DataNacimento { get; set; }
         public Perfil PerfilUsuario { get; set; }
 
