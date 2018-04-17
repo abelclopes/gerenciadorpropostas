@@ -29,7 +29,8 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(                    
+                options.UseSqlServer(
+                //options.UseMySql(                    
                     Configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly("API")
                 )
