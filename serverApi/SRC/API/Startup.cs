@@ -115,7 +115,7 @@ namespace API
             // {
             //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Legislação");
             // });
-            
+            // dar uma lida em http://docs.identityserver.io/en/release/quickstarts/8_entity_framework.html?highlight=entity
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var init = scope.ServiceProvider.GetService<DbInitializer>();
