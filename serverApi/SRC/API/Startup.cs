@@ -91,7 +91,7 @@ namespace API
         }
         private static void ResolveDependencies(IServiceCollection services)
         {
-            //services.AddScoped<IContext, ApplicationDbContext>();
+           
             
             services.AddScoped<DbInitializer>();
         }
@@ -119,7 +119,7 @@ namespace API
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var init = scope.ServiceProvider.GetService<DbInitializer>();
-                init.Initialize(context);
+                //init.Initialize(context);
             }
         }
     }

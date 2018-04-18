@@ -16,10 +16,10 @@ namespace API.Controllers
         var currentUser = HttpContext.User;
         int userAge = 0;
         var resultBookList = new Book[] {
-        new Book { Author = "Ray Bradbury", Title = "Fahrenheit 451", AgeRestriction = false },
-        new Book { Author = "Gabriel García Márquez", Title = "One Hundred years of Solitude", AgeRestriction = false },
-        new Book { Author = "George Orwell", Title = "1984", AgeRestriction = false },
-        new Book { Author = "Anais Nin", Title = "Delta of Venus", AgeRestriction = true }
+          new Book { Author = "Ray Bradbury", Title = "Fahrenheit 451", AgeRestriction = false },
+          new Book { Author = "Gabriel García Márquez", Title = "One Hundred years of Solitude", AgeRestriction = false },
+          new Book { Author = "George Orwell", Title = "1984", AgeRestriction = false },
+          new Book { Author = "Anais Nin", Title = "Delta of Venus", AgeRestriction = true }
         };
 
         if (currentUser.HasClaim(c => c.Type == ClaimTypes.DateOfBirth))

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DOMAIN;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace INFRAESTRUCTURE
 {
     public class ApplicationDbContext : DbContext {
