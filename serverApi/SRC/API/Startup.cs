@@ -91,29 +91,18 @@ namespace API
         }
         private static void ResolveDependencies(IServiceCollection services)
         {
-           
-            
             services.AddScoped<DbInitializer>();
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext context)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-                //app.UseBrowserLink();
-            }
-
-         //   app.UseStaticFiles();
-
+            
             app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
-
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
@@ -124,7 +113,7 @@ namespace API
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var init = scope.ServiceProvider.GetService<DbInitializer>();
-                //init.Initialize(context);
+                init.Initialize(context); // popula o banco na primeira execução
             }
         }
     }
