@@ -56,7 +56,7 @@ namespace API.Controllers
             new Claim(JwtRegisteredClaimNames.Sub, user.Nome),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Birthdate, user.DataNacimento.ToString("yyyy-MM-dd")),
-            new Claim(JwtRegisteredClaimNames.Birthdate, user.Police),
+            new Claim(JwtRegisteredClaimNames.GivenName, user.Police),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
