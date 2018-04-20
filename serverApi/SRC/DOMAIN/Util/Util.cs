@@ -1,8 +1,6 @@
   using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -10,11 +8,6 @@ namespace DOMAIN
 {
     public class Util
     {
-        private const int SaltByteSize = 24;
-        private const int HashByteSize = 24;
-        private const int HasingIterationsCount = 10101;
-
-
         public static string GetSHA1HashData(string data)
         {
             //create new instance of md5
@@ -47,7 +40,6 @@ namespace DOMAIN
             {
                 return false;
             }
-        }        
-        
+        }
     }
 }
