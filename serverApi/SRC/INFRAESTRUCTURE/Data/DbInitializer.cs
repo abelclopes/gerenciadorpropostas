@@ -21,10 +21,11 @@ namespace INFRAESTRUCTURE.Data
             
             var users = new Usuario[]
             {
-                new Usuario { Id = Guid.NewGuid(), Nome = "Administrador", Cpf = "9336423068", Email = "abellopes@gmail.com" , Senha = "senha", PerfilUsuario = Perfil.Administrador},
-                new Usuario { Id = Guid.NewGuid(), Nome = "Analista de comprar", Cpf = "99900299202", Email = "abell@gmail.com", PerfilUsuario = Perfil.AnalistaDeCompras },
-                new Usuario { Id = Guid.NewGuid(), Nome = "Analista Financeiro", Cpf = "98800299202", Email = "analista.financeiro@gmail.com", PerfilUsuario = Perfil.AnalistaFinanceiro },
-                new Usuario { Id = Guid.NewGuid(), Nome = "Diretor Financeiro", Cpf = "99977777722", Email = "Dfinanceiro@gmail.com", PerfilUsuario = Perfil.DiretorFinanceiro }
+                // senha é teste123
+                new Usuario { Id = Guid.NewGuid(), Nome = "Administrador", Cpf = "9336423068", Email = "abellopes@gmail.com" , Senha = "2242461295221015719538209212227614317113501631961762", PerfilUsuario = Perfil.Administrador},
+                new Usuario { Id = Guid.NewGuid(), Nome = "Analista de comprar", Cpf = "99900299202", Email = "abell@gmail.com", Senha = "2242461295221015719538209212227614317113501631961762", PerfilUsuario = Perfil.AnalistaDeCompras },
+                new Usuario { Id = Guid.NewGuid(), Nome = "Analista Financeiro", Cpf = "98800299202", Email = "analista.financeiro@gmail.com", Senha = "2242461295221015719538209212227614317113501631961762", PerfilUsuario = Perfil.AnalistaFinanceiro },
+                new Usuario { Id = Guid.NewGuid(), Nome = "Diretor Financeiro", Cpf = "99977777722", Email = "Dfinanceiro@gmail.com", Senha = "2242461295221015719538209212227614317113501631961762", PerfilUsuario = Perfil.DiretorFinanceiro }
             };
             
             foreach (Usuario u in users)

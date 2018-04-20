@@ -14,10 +14,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
+using System.Security.Cryptography;
 
 using Model;
 using INFRAESTRUCTURE;
 using DOMAIN;
+using DOMAIN.EnumHelper;
 
 namespace API.Controllers
 {
@@ -54,6 +56,7 @@ namespace API.Controllers
             new Claim(JwtRegisteredClaimNames.Sub, user.Nome),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Birthdate, user.DataNacimento.ToString("yyyy-MM-dd")),
+            new Claim(JwtRegisteredClaimNames.Birthdate, user.Police),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -72,14 +75,16 @@ namespace API.Controllers
      {
         UsuariosModel user = null;
         if(string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Password)) return user;
-        
-        Usuario usuario = _context.Usuarios.FirstOrDefault(x => x.Nome.Equals(login.Email) && x.Senha.Equals(login.Password));
+        var encript = Util.GetSHA1HashData(login.Password);
+
+        Usuario usuario = _context.Usuarios.FirstOrDefault(x => x.Email == login.Email && x.Senha == encript);
 
         if (!string.IsNullOrEmpty(usuario.Email))
         {
             user = new UsuariosModel(){
                 Email = usuario.Email,
                 Nome = usuario.Nome,
+                Police = EnumHelper.GetDescription(usuario.PerfilUsuario),
                 DataNacimento = usuario.DataNacimento
             };
         }

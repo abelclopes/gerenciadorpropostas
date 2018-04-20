@@ -101,7 +101,10 @@ namespace API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                //app.UseBrowserLink();
             }
+
+         //   app.UseStaticFiles();
 
             app.UseCors("CorsPolicy");
 
@@ -115,7 +118,9 @@ namespace API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
-            
+
+            app.UseMvc();
+
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var init = scope.ServiceProvider.GetService<DbInitializer>();
