@@ -44,8 +44,9 @@ namespace API
                     b => b.MigrationsAssembly("API")
                 )
             );
-            
-            // ResolveDependencies(services);
+          
+            ResolveDependencies(services);
+          
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
             services.AddResponseCompression(options =>
             {
@@ -91,7 +92,7 @@ namespace API
         }
         private static void ResolveDependencies(IServiceCollection services)
         {
-            services.AddScoped<DbInitializer>();
+            //services.AddScoped<IContext, ApplicationDbContext>();
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext context)

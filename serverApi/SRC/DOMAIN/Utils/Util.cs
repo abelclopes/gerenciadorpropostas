@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DOMAIN
 {
-    public class Util
+    public static class Util
     {
         public static string GetSHA1HashData(string data)
         {
