@@ -49,7 +49,7 @@ namespace API.Controllers
                             ).ToList();
       }
       if(usuarios.Count() > 0)
-        return Ok(new PagedList<IUsuariosModel>(usuarios.AsQueryable(), this.PageNumber, this.PageSize));
+        return Ok(new PagedList<UsuariosModel>(usuarios.AsQueryable(), this.PageNumber, this.PageSize));
       
       return Ok("Nenhum Resultado Encontrado");      
     }
@@ -62,12 +62,12 @@ namespace API.Controllers
 
     [Route("{id}")]
     [HttpGet, Authorize]
-    [ProducesResponseType(typeof(IUsuariosModel), 201)]
+    [ProducesResponseType(typeof(UsuariosModel), 201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public IUsuariosModel GetUser(string id)
+    public UsuariosModel GetUser(string id)
     {
-      var usuarios = new IUsuariosModel();
+      var usuarios = new UsuariosModel();
       if(!string.IsNullOrEmpty(id)){
         return RestornaUsuariosList().FirstOrDefault(x => x.Id == Guid.Parse(id));
       }
@@ -137,10 +137,10 @@ namespace API.Controllers
 
       return Ok(new {Response = "Usuário deletado com sucesso"});
     }
-    private List<IUsuariosModel>  RestornaUsuariosList(){
+    private List<UsuariosModel>  RestornaUsuariosList(){
       return _context.Usuarios
       .Select(x => 
-            new IUsuariosModel{ 
+            new UsuariosModel{ 
               Id = x.Id,
               Nome = x.Nome, 
               Email = x.Email, 
