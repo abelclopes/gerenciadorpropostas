@@ -92,10 +92,10 @@ namespace API
         }
         private static void ResolveDependencies(IServiceCollection services)
         {
-            //services.AddScoped<IContext, ApplicationDbContext>();
+            services.AddScoped<IContext, ApplicationDbContext>();
         }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext context)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
@@ -111,11 +111,23 @@ namespace API
 
             app.UseMvc();
 
+            /********       QUANDO INICIAR A APLICAÇÃO PELO PRIMEIRA VES DESCOMENTAR TRECHO ABAIXO *************/
+            /*
             using (var scope = app.ApplicationServices.CreateScope())
             {
-                var init = scope.ServiceProvider.GetService<DbInitializer>();
-                init.Initialize(context); // popula o banco na primeira execução
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+                    DbInitializer.Initialize(context);//<---Do your seeding here
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
             }
+            */
         }
     }
 }

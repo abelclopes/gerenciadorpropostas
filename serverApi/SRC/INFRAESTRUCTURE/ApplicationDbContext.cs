@@ -2,12 +2,13 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DOMAIN;
+using DOMAIN.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace INFRAESTRUCTURE
 {
-    public class ApplicationDbContext : DbContext {
+    public class ApplicationDbContext : DbContext, IContext {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         :base(options)
         { }

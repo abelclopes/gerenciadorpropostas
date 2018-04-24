@@ -14,14 +14,9 @@ namespace DOMAIN.Interfaces
         DbSet<Fornecedor> Fornecedores { get; set; }
         DbSet<Proposta> Propostas { get; set; }
         DbSet<PropostaHistorico> PropostasHistoricos { get; set; }
-        DbSet<Categoria> Categorias { get; set; }
-
-        
+        DbSet<Categoria> Categorias { get; set; }        
         DatabaseFacade Database { get; }
-
         Task<int> SaveChangesAsync();
         int SaveChanges();
     }
-    public interface AplicaitonDbContext : IContext
-    {}
 }

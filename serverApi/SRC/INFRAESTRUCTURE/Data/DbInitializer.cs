@@ -6,12 +6,12 @@ using DOMAIN;
 
 namespace INFRAESTRUCTURE.Data
 {
-     public class DbInitializer
+     public static class DbInitializer
     {
-        public  void Initialize(ApplicationDbContext context)
+        public static void Initialize(ApplicationDbContext context)
         {
             context.Database.EnsureCreated();
-
+           
             // Look for any students.
             if (context.Usuarios.Any())
             {
@@ -37,5 +37,6 @@ namespace INFRAESTRUCTURE.Data
 
             context.SaveChanges();
         }
+
     }
 }
