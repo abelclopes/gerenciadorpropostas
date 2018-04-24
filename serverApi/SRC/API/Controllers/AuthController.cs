@@ -49,7 +49,7 @@ namespace API.Controllers
 
         return response;
     }
-    private string BuildToken(UsuariosModel user)
+    private string BuildToken(UsuarioAuthModel user)
     {
 
         var claims = new[] {
@@ -71,9 +71,9 @@ namespace API.Controllers
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-     private UsuariosModel Authenticate(LoginModel login)
+     private UsuarioAuthModel Authenticate(LoginModel login)
      {
-        UsuariosModel user = null;
+        UsuarioAuthModel user = null;
         if(string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Password)) return user;
         var encript = Util.GetSHA1HashData(login.Password);
 
@@ -81,7 +81,7 @@ namespace API.Controllers
 
         if (!string.IsNullOrEmpty(usuario.Email))
         {
-            user = new UsuariosModel(){
+            user = new UsuarioAuthModel(){
                 Email = usuario.Email,
                 Nome = usuario.Nome,
                 Police = EnumHelper.GetDescription(usuario.PerfilUsuario),
