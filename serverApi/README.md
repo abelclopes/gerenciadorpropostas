@@ -9,11 +9,6 @@
 Or
 * dotnet watch run
 
-## Code Samples
-
-> Segui tutorial
-https://imasters.com.br/apis/asp-net-core-2-0-autenticacao-em-apis-utilizando-jwt-json-web-tokens/?trace=1519021197&source=single
-
 ## Installation
 
 > Migrations
