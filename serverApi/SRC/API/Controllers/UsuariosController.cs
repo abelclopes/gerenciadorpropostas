@@ -13,6 +13,8 @@ using INFRAESTRUCTURE;
 using DOMAIN;
 using DOMAIN.EnumHelper;
 using DOMAIN.Paginator;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using StructureMap.Diagnostics;
 
 namespace API.Controllers
 {
@@ -28,12 +30,15 @@ namespace API.Controllers
     {
       _context = context;
       this.PageNumber = 1;
-      this.PageSize = 2;
+      this.PageSize = 20;
     }
 
 
     [HttpGet, Authorize]
-    public IActionResult  Get(PaginationParams model)
+    [SwaggerResponse(201)]
+    [SwaggerResponse(401)]
+    [SwaggerResponse(403)]
+    public  IActionResult Get(PaginationParams model)
     {
       var usuarios = RestornaUsuariosList();
       this.setPaginacao(model);
@@ -57,6 +62,9 @@ namespace API.Controllers
 
     [Route("{id}")]
     [HttpGet, Authorize]
+    [ProducesResponseType(typeof(IUsuariosModel), 201)]
+    [SwaggerResponse(401)]
+    [SwaggerResponse(403)]
     public IUsuariosModel GetUser(string id)
     {
       var usuarios = new IUsuariosModel();
@@ -65,27 +73,69 @@ namespace API.Controllers
       }
       return usuarios;
     }
-    //[Route("{id}")]
-    [HttpPut("{id}")]//, Authorize]
-    [ProducesResponseType(typeof(IUsuariosModel), 201)]
-    [ProducesResponseType(typeof(IUsuariosModel), 400)]
-    public IActionResult Put(string id, [FromBody] IUsuariosModel model)
+    [HttpPost, Authorize]
+    [SwaggerResponse(201)]
+    [SwaggerResponse(401)]
+    [SwaggerResponse(403)]
+    public IActionResult Post([FromBody] NovoUsuarioMode model)
     {
-        if (model == null || model.Id.ToString() != id)
-        {
-            return BadRequest();
-        }
-        
-        var usuario =  _context.Usuarios.FirstOrDefault(x => x.Id.ToString() == id);
-        if (usuario == null)
-        {
-            return NotFound();
-        }
-        
-        usuario = usuario.Atualizar(new Usuario(model.Nome, model.Cpf, model.DataNacimento, model.Police), _context);
-        _context.Usuarios.Update(usuario);
-        _context.SaveChanges();
-        return new ObjectResult(usuario);
+       if (model == null)
+      {
+          return BadRequest();
+      }
+      if(RestornaUsuariosList().Any(x => x.Email == model.Email))
+      {
+        throw new ArgumentException($"O Email {model.Email} já esta em uso");
+      }
+      _context.Usuarios.Add(new Usuario(model.Nome, model.Cpf, model.DataNacimento, model.PerfilUsuario, model.Senha));
+      _context.SaveChanges();
+
+      return Ok(new {Response = "Usuário salvo com sucesso"});
+    }
+    
+    [HttpPut("{id}"), Authorize]
+    [SwaggerResponse(201)]
+    [SwaggerResponse(401)]
+    [SwaggerResponse(403)]
+    public IActionResult Put(string id, [FromBody] NovoUsuarioMode model)
+    {
+      if (model == null ||  string.IsNullOrEmpty(id))
+      {
+          return BadRequest();
+      }
+      
+      var usuario =  ConsultaUsuario(id);
+      if (usuario == null)
+      {
+          return NotFound();
+      }
+      
+      var user = new Usuario(model.Nome, model.Cpf, model.DataNacimento, model.PerfilUsuario);
+      if(!string.IsNullOrEmpty(model.Senha))
+      {
+        user.Senha = model.Senha;
+      }
+      usuario.Atualizar(user, _context);
+      _context.Usuarios.Update(usuario);
+      _context.SaveChanges();
+
+      return Ok(new {Response = "Usuário salvo com sucesso"});
+    }
+    
+    [HttpDelete("{id}"), Authorize]
+    [SwaggerResponse(201)]
+    [SwaggerResponse(401)]
+    [SwaggerResponse(403)]
+    public IActionResult Delete(string id)
+    {
+      if(string.IsNullOrEmpty(id)){
+          return BadRequest();
+      }
+      var user = ConsultaUsuario(id);
+      _context.Usuarios.Remove(user);
+      _context.SaveChanges();
+
+      return Ok(new {Response = "Usuário deletado com sucesso"});
     }
     private List<IUsuariosModel>  RestornaUsuariosList(){
       return _context.Usuarios
@@ -98,6 +148,10 @@ namespace API.Controllers
               DataNacimento = x.DataNacimento,
               Police = x.PerfilUsuario //EnumHelper.GetDescription(x.PerfilUsuario), 
             }).ToList();
+    }
+
+    private Usuario ConsultaUsuario(string id){
+      return _context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(id));
     }
   }
 }
