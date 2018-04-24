@@ -10,7 +10,7 @@ namespace DOMAIN
     {
         public Proposta Proposta { get; set; }
 
-        public PropostaStatus PropostaStatus{ get; set; }        
+        public virtual PropostaStatus PropostaStatus{ get; set; }        
                 
     }
 }

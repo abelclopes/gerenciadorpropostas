@@ -21,20 +21,23 @@ namespace DOMAIN
             DataNacimento = dataNacimento;
             PerfilUsuario = perfil;
         }
+        public Usuario(string nome, string cpf, DateTime dataNacimento, Perfil perfil, string senha)
+        {
+            Nome = nome;
+            Cpf = cpf;
+            DataNacimento = dataNacimento;
+            PerfilUsuario = perfil;
+            Senha = Util.GetSHA1HashData(senha);
+        }
         public string Nome { get; set; }
         public string Cpf { get; set; }
         public string Email { get; set; }
         public string Senha { get; set; }
         public DateTime DataNacimento { get; set; }
-        public Perfil PerfilUsuario { get; set; }
+        public virtual Perfil PerfilUsuario { get; set; }
 
-        public async Task Atualizar(Usuario model, IContext _context)
+        public void Atualizar(Usuario model, IContext _context)
         {
-            if (await _context.Usuarios.AnyAsync(x => x.Nome.Equals(model.Nome)))
-                throw new ArgumentException($"O Nome {model.Nome} já esta em uso");
-            if (await _context.Usuarios.AnyAsync(x => x.Email.Equals(Email)))
-                throw new ArgumentException($"O E-mail {model.Email} já esta em uso");
-            
             Nome = model.Nome;
             Cpf = model.Cpf;
             DataNacimento = model.DataNacimento;
@@ -69,5 +72,6 @@ namespace DOMAIN
             }
             return sb.ToString();
         }
+
     }
 }

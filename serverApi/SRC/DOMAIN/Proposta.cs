@@ -15,8 +15,8 @@ namespace DOMAIN
 
         [DataType(DataType.DateTime)]
         public double valor { get; set; }
-        public Fornecedor Fornecedor { get; set; }
-        public Categoria Categoria { get; set; }        
+        public virtual Fornecedor Fornecedor { get; set; }
+        public virtual Categoria Categoria { get; set; }        
                 
     }
 }
