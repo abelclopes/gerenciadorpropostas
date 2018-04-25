@@ -12,8 +12,8 @@ namespace Model
         [MaxLength(500)]
         public string Descricao { get; set; }
         public double Valor { get; set; }
-        public string Fornecedor { get; set; }
-        public string Categoria { get; set; }  
+        public string FornecedorID { get; set; }
+        public string CategoriaID { get; set; }  
         public int Status { get; set; }
     }
 }

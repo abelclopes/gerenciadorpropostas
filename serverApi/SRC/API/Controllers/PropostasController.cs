@@ -83,9 +83,11 @@ namespace API.Controllers
         throw new ArgumentException($"O Nome da Proposta {model.NomeProposta} já esta em uso");
       }
       
-      Fornecedor fornecedor = await _context.Fornecedores.FirstOrDefaultAsync(x => x.Nome == model.Fornecedor);      
-      Categoria categoria = await _context.Categorias.FirstOrDefaultAsync(x => x.Nome == model.Categoria);
-      _context.Propostas.Add(new Proposta(model.NomeProposta, model.Descricao, model.Valor, fornecedor, categoria));
+      _context.Propostas.Add(new Proposta(model.NomeProposta,
+                                 model.Descricao, model.Valor, 
+                                ConsultaFornecedor(model.FornecedorID), 
+                                ConsultaCategoria(model.CategoriaID), 
+                                (PropostaStatus)Enum.ToObject(typeof(PropostaStatus) , model.Status)));
       await _context.SaveChangesAsync();
 
       return Ok(new {Response = "Proposta salvo com sucesso"});
@@ -102,16 +104,19 @@ namespace API.Controllers
           return BadRequest();
       }
       
-      var Proposta =  ConsultaProposta(id);
-      if (Proposta == null)
+      var proposta =  ConsultaProposta(id);
+      if (proposta == null)
       {
           return NotFound();
       }
-      Fornecedor fornecedor = await _context.Fornecedores.FirstOrDefaultAsync(x => x.Nome == model.Fornecedor);      
-      Categoria categoria = await _context.Categorias.FirstOrDefaultAsync(x => x.Nome == model.Categoria);
-      var fornec = new Proposta(model.NomeProposta, model.Descricao, model.Valor, fornecedor, categoria);
-      Proposta.Atualizar(fornec, _context);
-      _context.Propostas.Update(Proposta);
+
+      var propost = new Proposta(model.NomeProposta, model.Descricao, model.Valor, 
+                                ConsultaFornecedor(model.FornecedorID), 
+                                ConsultaCategoria(model.CategoriaID), 
+                                (PropostaStatus)Enum.ToObject(typeof(PropostaStatus) , model.Status)
+                    );
+      proposta.Atualizar(propost, _context);
+      _context.Propostas.Update(proposta);
       await _context.SaveChangesAsync();
 
       return Ok(new {Response = "Proposta atualizado com sucesso"});
@@ -138,6 +143,14 @@ namespace API.Controllers
     private Proposta ConsultaProposta(string id){
       return _context.Propostas.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
     }    
+    private Fornecedor ConsultaFornecedor(string fornecedorID)
+    {   
+        return _context.Fornecedores.FirstOrDefault(x => x.Id == Guid.Parse(fornecedorID));           
+    }
+    private Categoria ConsultaCategoria(string categoriaID)
+    {   
+        return _context.Categorias.FirstOrDefault(x => x.Id == Guid.Parse(categoriaID));
+    }
     private void setPaginacao(PaginationParamsProposta model)
     {
         this.PageNumber = model.PageNumber;
