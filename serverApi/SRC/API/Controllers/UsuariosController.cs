@@ -146,7 +146,7 @@ namespace API.Controllers
               Email = x.Email, 
               Cpf = x.Cpf,
               DataNacimento = x.DataNacimento,
-              Police = x.PerfilUsuario //EnumHelper.GetDescription(x.PerfilUsuario), 
+              Perfil = x.PerfilUsuario //EnumHelper.GetDescription(x.PerfilUsuario), 
             }).ToList();
     }
 
