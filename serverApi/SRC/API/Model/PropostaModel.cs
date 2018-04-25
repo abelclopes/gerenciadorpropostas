@@ -13,6 +13,8 @@ namespace Model
         public string Descricao { get; set; }
         public double Valor { get; set; }
         public virtual Fornecedor Fornecedor { get; set; }
-        public virtual Categoria Categoria { get; set; }      
+        public virtual Categoria Categoria { get; set; } 
+        public PropostaStatus Status { get; set; }
+     
     }
 }

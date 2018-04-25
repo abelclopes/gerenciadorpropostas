@@ -15,6 +15,8 @@ namespace Model
         public string Descricao { get; set; }
         public double Valor { get; set; }
         public string FornecedorID { get; set; }
-        public string CategoriaID { get; set; }  
+        public string CategoriaID { get; set; } 
+        public int Status { get; set; }
+ 
     }
 }

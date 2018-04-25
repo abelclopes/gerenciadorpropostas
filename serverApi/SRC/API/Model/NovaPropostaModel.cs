@@ -14,5 +14,6 @@ namespace Model
         public double Valor { get; set; }
         public string Fornecedor { get; set; }
         public string Categoria { get; set; }  
+        public int Status { get; set; }
     }
 }
