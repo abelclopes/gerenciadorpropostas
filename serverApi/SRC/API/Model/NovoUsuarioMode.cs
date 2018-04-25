@@ -4,7 +4,7 @@ using Model;
 
 namespace Model
 {
-    public class NovoUsuarioMode    
+    public class NovoUsuarioModel  
     {
         public string Nome { get; set; }
         public string Cpf { get; set; }

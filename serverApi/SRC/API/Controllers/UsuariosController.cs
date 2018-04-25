@@ -35,6 +35,7 @@ namespace API.Controllers
 
 
     [HttpGet, Authorize]
+    //[HttpGet, Authorize(Policy = "Administrador")]
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
@@ -51,13 +52,7 @@ namespace API.Controllers
       if(usuarios.Count() > 0)
         return Ok(new PagedList<UsuariosModel>(usuarios.AsQueryable(), this.PageNumber, this.PageSize));
       
-      return Ok("Nenhum Resultado Encontrado");      
-    }
-
-    private void setPaginacao(PaginationParams model)
-    {
-        this.PageNumber = model.PageNumber;
-        this.PageSize = model.PageSize;
+      return Ok(new { Response = "Nenhum Resultado Encontrado"} );
     }
 
     [Route("{id}")]
@@ -77,7 +72,7 @@ namespace API.Controllers
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public IActionResult Post([FromBody] NovoUsuarioMode model)
+    public IActionResult Post([FromBody] NovoUsuarioModel model)
     {
        if (model == null)
       {
@@ -87,7 +82,7 @@ namespace API.Controllers
       {
         throw new ArgumentException($"O Email {model.Email} já esta em uso");
       }
-      _context.Usuarios.Add(new Usuario(model.Nome, model.Cpf, model.DataNacimento, model.PerfilUsuario, model.Senha));
+      _context.Usuarios.Add(new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, model.PerfilUsuario, model.Senha));
       _context.SaveChanges();
 
       return Ok(new {Response = "Usuário salvo com sucesso"});
@@ -97,7 +92,7 @@ namespace API.Controllers
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public IActionResult Put(string id, [FromBody] NovoUsuarioMode model)
+    public IActionResult Put(string id, [FromBody] NovoUsuarioModel model)
     {
       if (model == null ||  string.IsNullOrEmpty(id))
       {
@@ -110,7 +105,7 @@ namespace API.Controllers
           return NotFound();
       }
       
-      var user = new Usuario(model.Nome, model.Cpf, model.DataNacimento, model.PerfilUsuario);
+      var user = new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, model.PerfilUsuario);
       if(!string.IsNullOrEmpty(model.Senha))
       {
         user.Senha = model.Senha;
@@ -132,13 +127,16 @@ namespace API.Controllers
           return BadRequest();
       }
       var user = ConsultaUsuario(id);
-      _context.Usuarios.Remove(user);
+      user.Excluido = true;
+      // _context.Usuarios.Remove(user);
+      _context.Usuarios.Update(user);
       _context.SaveChanges();
 
       return Ok(new {Response = "Usuário deletado com sucesso"});
     }
     private List<UsuariosModel>  RestornaUsuariosList(){
       return _context.Usuarios
+      .Where(x => !x.Excluido)
       .Select(x => 
             new UsuariosModel{ 
               Id = x.Id,
@@ -151,7 +149,12 @@ namespace API.Controllers
     }
 
     private Usuario ConsultaUsuario(string id){
-      return _context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(id));
+      return _context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
+    }
+    private void setPaginacao(PaginationParams model)
+    {
+        this.PageNumber = model.PageNumber;
+        this.PageSize = model.PageSize;
     }
   }
 }
