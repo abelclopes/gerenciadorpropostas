@@ -50,8 +50,7 @@ namespace API.Controllers
       }
       if(fornecedors.Count() > 0)
         return Ok(new PagedList<FornecedorModel>(fornecedors.AsQueryable(), this.PageNumber, this.PageSize));
-      
-      return Ok("Nenhum Resultado Encontrado");      
+      return Ok(new { Response = "Nenhum Resultado Encontrado" });
     }
 
     [Route("{id}")]
@@ -59,13 +58,13 @@ namespace API.Controllers
     [ProducesResponseType(typeof(FornecedorModel), 201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public FornecedorModel GetFornecedor(string id)
+    public IActionResult GetFornecedor(string id)
     {
       var Fornecedors = new FornecedorModel();
       if(!string.IsNullOrEmpty(id)){
-        return RestornaFornecedorList().FirstOrDefault(x => x.Id == Guid.Parse(id));
+        return Ok(RestornaFornecedorList().FirstOrDefault(x => x.Id == Guid.Parse(id)));
       }
-      return Fornecedors;
+      return Ok(new { Response = "Nenhum Resultado Encontrado" });
     }
 
     [HttpPost, Authorize]
@@ -130,7 +129,8 @@ namespace API.Controllers
       return Ok(new {Response = "Fornecedor deletado com sucesso"});
     }
     private List<FornecedorModel>  RestornaFornecedorList(){
-      return _context.Fornecedores
+      return _context.Fornecedores      
+      .Where(x => !x.Excluido)
       .Select(x => 
             new FornecedorModel{ 
               Id = x.Id,
@@ -139,11 +139,9 @@ namespace API.Controllers
               CnpjCpf = x.CnpjCpf
             }).ToList();
     }
-
     private Fornecedor ConsultaFornecedor(string id){
-      return _context.Fornecedores.FirstOrDefault(x => x.Id == Guid.Parse(id));
-    }
-    
+      return _context.Fornecedores.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
+    }    
     private void setPaginacao(PaginationParams model)
     {
         this.PageNumber = model.PageNumber;
