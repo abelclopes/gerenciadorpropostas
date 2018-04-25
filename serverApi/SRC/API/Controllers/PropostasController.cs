@@ -83,8 +83,9 @@ namespace API.Controllers
         throw new ArgumentException($"O Nome da Proposta {model.NomeProposta} já esta em uso");
       }
       
-      Fornecedor fornecedor = await _context.Fornecedores.FirstOrDefaultAsync(x => x.Nome == model.Fornecedor);
-      _context.Propostas.Add(new Proposta(model.NomeProposta, model.Descricao, model.Valor, fornecedor, model.Categoria));
+      Fornecedor fornecedor = await _context.Fornecedores.FirstOrDefaultAsync(x => x.Nome == model.Fornecedor);      
+      Categoria categoria = await _context.Categorias.FirstOrDefaultAsync(x => x.Nome == model.Categoria);
+      _context.Propostas.Add(new Proposta(model.NomeProposta, model.Descricao, model.Valor, fornecedor, categoria));
       await _context.SaveChangesAsync();
 
       return Ok(new {Response = "Proposta salvo com sucesso"});
@@ -94,7 +95,7 @@ namespace API.Controllers
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public IActionResult Put(string id, [FromBody] NovaPropostaModel model)
+    public async Task<IActionResult> Put(string id, [FromBody] NovaPropostaModel model)
     {
       if (model == null ||  string.IsNullOrEmpty(id))
       {
@@ -106,11 +107,12 @@ namespace API.Controllers
       {
           return NotFound();
       }
-      
-      var fornec = new Proposta(model.Nome, model.Email, model.CnpjCpf, model.Telefone);
+      Fornecedor fornecedor = await _context.Fornecedores.FirstOrDefaultAsync(x => x.Nome == model.Fornecedor);      
+      Categoria categoria = await _context.Categorias.FirstOrDefaultAsync(x => x.Nome == model.Categoria);
+      var fornec = new Proposta(model.NomeProposta, model.Descricao, model.Valor, fornecedor, categoria);
       Proposta.Atualizar(fornec, _context);
       _context.Propostas.Update(Proposta);
-      _context.SaveChanges();
+      await _context.SaveChangesAsync();
 
       return Ok(new {Response = "Proposta atualizado com sucesso"});
     }
