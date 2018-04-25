@@ -9,22 +9,24 @@ namespace DOMAIN
 {
     public class Usuario : EntidadeBase
     {
-         public Usuario(){}
+        public Usuario(){}
         public Usuario(string nome)
         {
             Nome = nome;
         }
-        public Usuario(string nome, string cpf, DateTime dataNacimento, Perfil perfil)
+        public Usuario(string nome, string email,string cpf, DateTime dataNacimento, Perfil perfil)
         {
             Nome = nome;
             Cpf = cpf;
+            Email = email;
             DataNacimento = dataNacimento;
             PerfilUsuario = perfil;
         }
-        public Usuario(string nome, string cpf, DateTime dataNacimento, Perfil perfil, string senha)
+        public Usuario(string nome, string email, string cpf, DateTime dataNacimento, Perfil perfil, string senha)
         {
             Nome = nome;
             Cpf = cpf;
+            Email = email;
             DataNacimento = dataNacimento;
             PerfilUsuario = perfil;
             Senha = Util.GetSHA1HashData(senha);
@@ -40,6 +42,7 @@ namespace DOMAIN
         {
             Nome = model.Nome;
             Cpf = model.Cpf;
+            Email = model.Email;
             DataNacimento = model.DataNacimento;
             PerfilUsuario = model.PerfilUsuario;
         }
@@ -51,27 +54,16 @@ namespace DOMAIN
             
             Nome = nome;
         }
-        public async Task Atualizar(string Email, string senha, IContext _context)
+        public async Task AtualizarEmail(string email, IContext _context)
         {
-            if (await _context.Usuarios.AnyAsync(x => !x.Email.Equals(Email)))
-                throw new ArgumentException($"O e-mail {Email} não foi encontrado!");
+            if (!await _context.Usuarios.AnyAsync(x => !x.Email.Equals(email)))
+                throw new ArgumentException($"O e-mail {email} já está em uso!");
             
-            Senha = senha;
+            Email = email;
         }
-        
-        public string SHA1Hash(string input)
+        public void AtualizarSenha(string senha, IContext _context)
         {
-            SHA1 sha = new SHA1CryptoServiceProvider();
-            byte[] data = System.Text.Encoding.ASCII.GetBytes(input);
-            byte[] hash = sha.ComputeHash(data);
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < hash.Length; i++)
-            {
-                sb.Append(hash[i].ToString("X2"));
-            }
-            return sb.ToString();
-        }
-
+            Senha = Util.GetSHA1HashData(senha);
+        }        
     }
 }
