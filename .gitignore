@@ -1,6 +1,7 @@
 
 # Created by https://www.gitignore.io/api/node,angular,aspnetcore
 /jwtpublish/**
+Migrations/
 ### Angular ###
 ## Angular ##
 # compiled output
@@ -363,3 +364,4 @@ typings/
 
 
 # End of https://www.gitignore.io/api/node,angular,aspnetcore
+
