@@ -11,5 +11,6 @@ namespace Model
         public string Cpf { get; set; }
         public string Police { get; set; }
         public DateTime DataNacimento { get; set; }
+        public bool Excluido  { get; set; }
     }
 }
