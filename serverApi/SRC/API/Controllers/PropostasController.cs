@@ -35,7 +35,8 @@ namespace API.Controllers
 
 
     [HttpGet, Authorize]
-    [SwaggerResponse(201)]
+    [SwaggerResponse(201,typeof(PagedList<Proposta>))]
+    //[SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
     public  IActionResult Get(PaginationParamsProposta model)

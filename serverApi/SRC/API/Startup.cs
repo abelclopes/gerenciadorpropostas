@@ -33,7 +33,6 @@ namespace API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {           
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -87,7 +86,7 @@ namespace API
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "Gerenciador de Propostas API", Version = "v1" });
             });
         }
         private static void ResolveDependencies(IServiceCollection services)

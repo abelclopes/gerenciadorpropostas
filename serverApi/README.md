@@ -16,3 +16,8 @@ Or
 * dotnet ef database drop
 Or
 * dotnet ef database update
+
+
+
+## node generete api do swagger
+node ./src/apigen -s http://localhost:5000/swagger/v1/swagger.json -o ./out
