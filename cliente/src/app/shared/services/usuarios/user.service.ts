@@ -5,10 +5,11 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 import { User } from './user.model';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { environment } from '../../../../environments/environment';
 
 @Injectable()
 export class UserService {
-  readonly rootUrl = 'http://localhost:5000/api';
+  readonly rootUrl = environment.URL_API;
   jwtH = new JwtHelperService();
 
   constructor(private http: HttpClient) { }

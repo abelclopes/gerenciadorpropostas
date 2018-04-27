@@ -20,6 +20,7 @@ import { FooterComponent } from './footer/footer.component';
 import { FornecedoresComponent } from './fornecedores/fornecedores.component';
 import { CategoriasComponent } from './categorias/categorias.component';
 import { PropostasComponent } from './propostas/propostas.component';
+import { environment as env } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,6 @@ import { PropostasComponent } from './propostas/propostas.component';
     RouterModule.forRoot(appRoutes)
   ],
   providers: [UserService,AuthGuard,
-    ,
     {
       provide : HTTP_INTERCEPTORS,
       useClass : AuthInterceptor,

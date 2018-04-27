@@ -10,6 +10,9 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   isLoginError : boolean = false;
+  ImageUrl: string = 'http://localhost:4200/assets/faviicon.png';
+  email;
+  password;
   constructor(private userService : UserService,private router : Router) { }
 
   ngOnInit() {
