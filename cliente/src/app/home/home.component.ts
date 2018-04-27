@@ -14,14 +14,8 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.userService.getUsuariosClans().subscribe((data: any) => {
-      console.log(data);
       this.userClaims = data;
     });
-  }
-
-  Logout() {
-    localStorage.removeItem('userToken');
-    this.router.navigate(['/login']);
   }
 
 

@@ -13,12 +13,13 @@ export class LoginComponent implements OnInit {
   constructor(private userService : UserService,private router : Router) { }
 
   ngOnInit() {
+    if(this.userService.isAuthenticaiton()) this.router.navigate(['/dashboard']);
   }
 
   OnSubmit(Email,password){ 
      this.userService.userAuthentication(Email,password).subscribe((data : any)=>{
       localStorage.setItem('userToken',data.token);
-      this.router.navigate(['/home']);
+      this.router.navigate(['/dashboard']);
     },
     (err : HttpErrorResponse)=>{
       this.isLoginError = true;

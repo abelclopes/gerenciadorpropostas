@@ -9,7 +9,8 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 @Injectable()
 export class UserService {
   readonly rootUrl = 'http://localhost:5000/api';
-  helper: JwtHelperService = new JwtHelperService;
+  jwtH = new JwtHelperService();
+
   constructor(private http: HttpClient) { }
 
   registrarUsuario(user: User) {
@@ -31,8 +32,17 @@ export class UserService {
   }
 
   getUsuariosClans(){
-    const decodeToken = this.helper.decodeToken(localStorage.getItem('userToken'));
+    const decodeToken = this.jwtH.decodeToken(localStorage.getItem('userToken'));
    return  this.http.get(this.rootUrl+'/UsuariosClans/'+decodeToken.email); 
   }
+  
+  public isAuthenticaiton(){
+    const user = localStorage.getItem('userToken');
+    if(user != undefined || user != null){
+      return true
+    }
+    return false
+  }
+  
 
 }
