@@ -8,12 +8,13 @@ import {RatingComponent} from './rating/rating.component'
 
 import { SnackbarComponent } from './messages/snackbar/snackbar.component';
 
-import {NotificationService} from './messages/notification.service'
+import {NotificationService} from './messages/notification.service';
+import { DialogModalComponent } from './dialog-modal/dialog-modal.component'
 
 @NgModule({
-  declarations: [InputComponent, RadioComponent, RatingComponent, SnackbarComponent],
+  declarations: [InputComponent, RadioComponent, RatingComponent, SnackbarComponent, DialogModalComponent],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  exports: [InputComponent, RadioComponent,SnackbarComponent,
+  exports: [InputComponent, RadioComponent,SnackbarComponent, DialogModalComponent,
             RatingComponent, CommonModule,
             FormsModule, ReactiveFormsModule ]
 })
@@ -25,4 +26,3 @@ export class SharedModule {
     }
   }
 }
- 
