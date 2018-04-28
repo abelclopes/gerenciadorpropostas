@@ -3,12 +3,13 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using DOMAIN;
+using DOMAIN.Interfaces;
 
 namespace INFRAESTRUCTURE.Data
 {
-     public static class DbInitializer
+    public static class DbInitialize
     {
-        public static void Initialize(ApplicationDbContext context)
+        public static void Seed(this IContext context)
         {
             context.Database.EnsureCreated();
            

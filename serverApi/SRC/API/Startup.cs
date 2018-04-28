@@ -21,6 +21,8 @@ using DOMAIN.Interfaces;
 using INFRAESTRUCTURE;
 using INFRAESTRUCTURE.Data;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace API
 {
@@ -92,16 +94,32 @@ namespace API
         private static void ResolveDependencies(IServiceCollection services)
         {
             services.AddScoped<IContext, ApplicationDbContext>();
+            services.AddScoped<IActivityLog, FileSystemActivityLog>();
+            services.AddScoped<IErrorLog, FileSystemErrorLog>();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
-        
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
-            
-            app.UseCors("CorsPolicy");
+           app.UseResponseCompression();
+            app.Use(async (context, next) =>
+            {
+                await next();
+                if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api/"))
+                {
+                    context.Request.Path = "/index.html";
+                    await next();
+                }
+            });
+
+            app.UseMvcWithDefaultRoute();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
 
             app.UseAuthentication();
+            app.UseCors("CorsPolicy");
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -110,6 +128,12 @@ namespace API
 
             app.UseMvc();
 
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+
+                context.Seed();
+            }
             /********       QUANDO INICIAR A APLICAÇÃO PELO PRIMEIRA VES DESCOMENTAR TRECHO ABAIXO *************/
             /*
             using (var scope = app.ApplicationServices.CreateScope())
