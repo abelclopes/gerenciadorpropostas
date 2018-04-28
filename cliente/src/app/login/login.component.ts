@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
     if(this.userService.isAuthenticaiton()) this.router.navigate(['/dashboard']);
   }
 
-  OnSubmit(Email,password){ 
+  OnSubmit(Email,password){
      this.userService.userAuthentication(Email,password).subscribe((data : any)=>{
       localStorage.setItem('userToken',data.token);
       this.router.navigate(['/dashboard']);

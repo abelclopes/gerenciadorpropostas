@@ -10,7 +10,7 @@
                     <form #loginForm="ngForm" class="col s12 white" (ngSubmit)="OnSubmit(Email.value,Password.value)">
                         <fieldset>
                             <div class="form-group">
-                                <input type="text" class="form-control" #Email ngModel name="email" placeholder="E-mail" required autofocus>
+                                <input type="text" class="form-control" #Email ngModel name="Email" placeholder="E-mail" required autofocus>
                             </div>
                             <div class="form-group">
                                 <input type="password" class="form-control" #Password ngModel name="Password" placeholder="Senha" required>
@@ -25,7 +25,7 @@
                         </fieldset>
                     </form>
                 </div>
-                <img src="{{ImageUrl}}" class="rounded mx-auto d-block" style="width:358px"> 
+                <img src="{{ImageUrl}}" class="rounded mx-auto d-block" style="width:358px">
             </div>
         </div>
     </div>
