@@ -15,38 +15,35 @@ using DOMAIN.EnumHelper;
 using DOMAIN.Paginator;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using StructureMap.Diagnostics;
+using DOMAIN.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Controllers
 {
   [Route("api/[controller]")]
-  public class UsuariosClansController : Controller
+  public class UsuariosClansController : BaseController
   {
     
-    private readonly ApplicationDbContext _context;
-    
-    public UsuariosClansController(ApplicationDbContext context)
-    {
-      _context = context;    
-    }
+    public UsuariosClansController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache)
+    {}
 
 
     [Route("{Email}")]
-    [HttpGet, Authorize]
-    [ProducesResponseType(typeof(UsuarioAuthModel), 201)]
+    [HttpPost, Authorize]
     [SwaggerResponse(401)]
-    [SwaggerResponse(403)]
-    public UsuarioAuthModel GetUser(string Email)
+    [SwaggerResponse(200)]
+    public IActionResult GetUser(string Email)
     {
       var usuarios = new UsuarioAuthModel();
       if(!string.IsNullOrEmpty(Email)){
-        return ConsultaUsuario(Email);
+        return Ok(ConsultaUsuario(Email));
       }
-      return usuarios;
+      return BadRequest("nao encontrado");
     }
     
 
     private UsuarioAuthModel ConsultaUsuario(string Email){
-       var usuario = _context.Usuarios.FirstOrDefault(x => x.Email == Email && !x.Excluido);
+       var usuario = Context.Usuarios.FirstOrDefault(x => x.Email == Email && !x.Excluido);
        
       return new UsuarioAuthModel{
           Nome = usuario.Nome,

@@ -40,9 +40,9 @@ namespace API.Controllers
     [HttpPost]
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
-    public async Task<IActionResult>  Post([FromBody]LoginModel Login)
+    public IActionResult  Post([FromBody]LoginModel Login)
     {
-        var user = await Authenticate(Login);
+        var user = Authenticate(Login);
 
         if (user != null)
         {
@@ -74,13 +74,13 @@ namespace API.Controllers
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-     private async Task<NovoUsuarioModel> Authenticate(LoginModel login)
+     private NovoUsuarioModel Authenticate(LoginModel login)
      {
         NovoUsuarioModel user = null;
         if(string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Password)) return user;
         var encript = Util.GetSHA1HashData(login.Password);
 
-        Usuario usuario = await Context.Usuarios.FirstOrDefaultAsync(x => x.Email == login.Email && x.Senha == encript);
+        Usuario usuario =  Context.Usuarios.FirstOrDefault(x => x.Email == login.Email && x.Senha == encript);
 
         if (!string.IsNullOrEmpty(usuario?.Email))
         {
