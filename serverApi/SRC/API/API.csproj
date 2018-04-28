@@ -1,10 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
     <UserSecretsId>OOERIEI-LAOIFGIOEI-A8D1A4FE-147A-48AA-B098-FE126F1DE538</UserSecretsId>
     <AssemblyName>API</AssemblyName>
     <PackageId>API</PackageId>
   </PropertyGroup>
+  <Target Name="CreateLogsFolder" AfterTargets="AfterPublish">
+    <MakeDir Directories="$(PublishDir)logs" Condition="!Exists('$(PublishDir)logs')" />
+    <MakeDir Directories="$(PublishUrl)logs" Condition="!Exists('$(PublishUrl)logs')" />
+  </Target>
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
@@ -16,8 +21,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="2.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="2.4.0" />
-    <!-- <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="2.0.0-preview1-final" /> -->
-    <!-- <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" /> -->
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.0" />

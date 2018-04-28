@@ -20,43 +20,46 @@ using Model;
 using INFRAESTRUCTURE;
 using DOMAIN;
 using DOMAIN.EnumHelper;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using DOMAIN.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Controllers
 {
   [Route("api/[controller]")]
-  public class AuthController : Controller
+  public class AuthController : BaseController
   {
     private IConfiguration _config;
-    private readonly ApplicationDbContext _context;
-    public AuthController(IConfiguration config, ApplicationDbContext context)
+    public AuthController(IContext context, IMemoryCache memoryCache, IConfiguration config) : base(context, memoryCache)
     {
-      _config = config;
-      _context = context;
+        _config = config;
     }
+   
 
     [AllowAnonymous]
     [HttpPost]
-    public IActionResult  Post([FromBody]LoginModel Login)
+    [SwaggerResponse(201)]
+    [SwaggerResponse(401)]
+    public async Task<IActionResult>  Post([FromBody]LoginModel Login)
     {
-        IActionResult  response = Unauthorized();
-        var user = Authenticate(Login);
+        var user = await Authenticate(Login);
 
         if (user != null)
         {
             var tokenString = BuildToken(user);
             return Ok(new { token = tokenString });
         }
+        return BadRequest("ERROR: Acesso Negado!, O e-mail ou senha invalidos");
 
-        return response;
     }
-    private string BuildToken(UsuarioAuthModel user)
+    private string BuildToken(NovoUsuarioModel user)
     {
 
         var claims = new[] {
             new Claim(JwtRegisteredClaimNames.Sub, user.Nome),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Birthdate, user.DataNacimento.ToString("yyyy-MM-dd")),
-            new Claim(JwtRegisteredClaimNames.GivenName, user.Police),
+            new Claim(JwtRegisteredClaimNames.GivenName, user.PerfilUsuario.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -66,25 +69,25 @@ namespace API.Controllers
         var token = new JwtSecurityToken(_config["Jwt:Issuer"],
         _config["Jwt:Issuer"],
         claims,
-        expires: DateTime.Now.AddMinutes(30),
+        expires: DateTime.Now.AddMinutes(120),
         signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-     private UsuarioAuthModel Authenticate(LoginModel login)
+     private async Task<NovoUsuarioModel> Authenticate(LoginModel login)
      {
-        UsuarioAuthModel user = null;
+        NovoUsuarioModel user = null;
         if(string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Password)) return user;
         var encript = Util.GetSHA1HashData(login.Password);
 
-        Usuario usuario = _context.Usuarios.FirstOrDefault(x => x.Email == login.Email && x.Senha == encript);
+        Usuario usuario = await Context.Usuarios.FirstOrDefaultAsync(x => x.Email == login.Email && x.Senha == encript);
 
-        if (!string.IsNullOrEmpty(usuario.Email))
+        if (!string.IsNullOrEmpty(usuario?.Email))
         {
-            user = new UsuarioAuthModel(){
+            user = new NovoUsuarioModel(){
                 Email = usuario.Email,
                 Nome = usuario.Nome,
-                Police = EnumHelper.GetDescription(usuario.PerfilUsuario),
+                PerfilUsuario = usuario.PerfilUsuario,
                 DataNacimento = usuario.DataNacimento
             };
         }

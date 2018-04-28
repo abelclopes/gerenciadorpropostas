@@ -15,25 +15,17 @@ using DOMAIN.EnumHelper;
 using DOMAIN.Paginator;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using StructureMap.Diagnostics;
+using DOMAIN.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Controllers
 {
   [Route("api/[controller]")]
-  public class UsuariosController : Controller
+  public class UsuariosController : BaseController
   {
-    
-    private int PageNumber;
-    private int PageSize;
-    private readonly ApplicationDbContext _context;
-    
-    public UsuariosController(ApplicationDbContext context)
-    {
-      _context = context;
-      this.PageNumber = 1;
-      this.PageSize = 20;
-    }
-
-
+    public UsuariosController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache)
+    {}
+   
     [HttpGet, Authorize]
     //[HttpGet, Authorize(Policy = "Administrador")]
     [SwaggerResponse(201)]
@@ -42,7 +34,6 @@ namespace API.Controllers
     public  IActionResult Get(PaginationParams model)
     {
       var usuarios = RestornaUsuariosList();
-      this.setPaginacao(model);
       if(!string.IsNullOrEmpty(model.buscaTermo)){ 
         usuarios = usuarios.Where(x => x.Nome.Contains(model.buscaTermo) 
                             ||  x.Cpf.Contains(model.buscaTermo)
@@ -50,9 +41,8 @@ namespace API.Controllers
                             ).ToList();
       }
       if(usuarios.Count() > 0)
-        return Ok(new PagedList<UsuariosModel>(usuarios.AsQueryable(), this.PageNumber, this.PageSize));
-      
-      return Ok(new { Response = "Nenhum Resultado Encontrado"} );
+        return Ok(new PagedList<UsuariosModel>(usuarios.AsQueryable(), model.PageNumber, model.PageSize));
+      return BadRequest(new { Response = "Nenhum Resultado Encontrado"} );
     }
 
     [Route("{id}")]
@@ -82,8 +72,8 @@ namespace API.Controllers
       {
         throw new ArgumentException($"O Email {model.Email} já esta em uso");
       }
-      _context.Usuarios.Add(new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, model.PerfilUsuario, model.Senha));
-      _context.SaveChanges();
+      Context.Usuarios.Add(new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, model.PerfilUsuario, model.Senha));
+      Context.SaveChanges();
 
       return Ok(new {Response = "Usuário salvo com sucesso"});
     }
@@ -110,9 +100,9 @@ namespace API.Controllers
       {
         user.Senha = model.Senha;
       }
-      usuario.Atualizar(user, _context);
-      _context.Usuarios.Update(usuario);
-      _context.SaveChanges();
+      usuario.Atualizar(user, Context);
+      Context.Usuarios.Update(usuario);
+      Context.SaveChanges();
 
       return Ok(new {Response = "Usuário salvo com sucesso"});
     }
@@ -128,14 +118,14 @@ namespace API.Controllers
       }
       var user = ConsultaUsuario(id);
       user.Excluido = true;
-      // _context.Usuarios.Remove(user);
-      _context.Usuarios.Update(user);
-      _context.SaveChanges();
+      // Context.Usuarios.Remove(user);
+      Context.Usuarios.Update(user);
+      Context.SaveChanges();
 
       return Ok(new {Response = "Usuário deletado com sucesso"});
     }
     private List<UsuariosModel>  RestornaUsuariosList(){
-      return _context.Usuarios
+      return Context.Usuarios
       .Where(x => !x.Excluido)
       .Select(x => 
             new UsuariosModel{ 
@@ -148,13 +138,23 @@ namespace API.Controllers
             }).ToList();
     }
 
+        private List<UsuariosModel> RetornarUsuariosValidos()
+        {
+            return MemoryCache.GetOrCreate("usuarios", entry =>
+                           {
+                               entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+                               return Context.Usuarios.AsNoTracking().Where(x => !x.Excluido).Select(x => new UsuariosModel()
+                               {
+                                   DataAtualizacao = x.DataAtualizacao,
+                                   DataCriacao = x.DataCriacao,
+                                   Id = x.Id,
+                                   Email = x.Email,
+                               }).ToList();
+                           });
+        }
+
     private Usuario ConsultaUsuario(string id){
-      return _context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
-    }
-    private void setPaginacao(PaginationParams model)
-    {
-        this.PageNumber = model.PageNumber;
-        this.PageSize = model.PageSize;
+      return Context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
     }
   }
 }

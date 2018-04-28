@@ -15,23 +15,18 @@ using DOMAIN.EnumHelper;
 using DOMAIN.Paginator;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using StructureMap.Diagnostics;
+using DOMAIN.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Controllers
 {
   [Route("api/[controller]")]
-  public class CategoriasController : Controller
+  public class CategoriasController : BaseController
   {
     
     private int PageNumber;
     private int PageSize;
-    private readonly ApplicationDbContext _context;
-    
-    public CategoriasController(ApplicationDbContext context)
-    {
-      _context = context;
-      this.PageNumber = 1;
-      this.PageSize = 20;
-    }
+    public CategoriasController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache){}
 
 
     [HttpGet, Authorize]
@@ -81,8 +76,8 @@ namespace API.Controllers
         throw new ArgumentException($"O Descricao {model.Descricao} já esta em uso");
       }
       var categoria = new Categoria(model.Nome, model.Descricao);
-      _context.Categorias.Add(categoria);
-      _context.SaveChanges();
+      Context.Categorias.Add(categoria);
+      Context.SaveChanges();
 
       return Ok(new {Response = "Categoria salvo com sucesso"});
     }
@@ -104,9 +99,9 @@ namespace API.Controllers
           return NotFound();
       }
       
-      categoria.Atualizar( new Categoria(model.Nome, model.Descricao), _context);
-      _context.Categorias.Update(categoria);
-      _context.SaveChanges();
+      categoria.Atualizar( new Categoria(model.Nome, model.Descricao), Context);
+      Context.Categorias.Update(categoria);
+      Context.SaveChanges();
 
       return Ok(new {Response = "Categoria atualizado com sucesso"});
     }
@@ -121,13 +116,13 @@ namespace API.Controllers
           return BadRequest();
       }
       var user = ConsultaCategoria(id);
-      _context.Categorias.Remove(user);
-      _context.SaveChanges();
+      Context.Categorias.Remove(user);
+      Context.SaveChanges();
 
       return Ok(new {Response = "Categoria deletado com sucesso"});
     }
     private List<CategoriasModel>  RestornaCategoriaList(){
-      return _context.Categorias      
+      return Context.Categorias      
       .Where(x => !x.Excluido)
       .Select(x => 
             new CategoriasModel{ 
@@ -137,7 +132,7 @@ namespace API.Controllers
             }).ToList();
     }
     private Categoria ConsultaCategoria(string id){
-      return _context.Categorias.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
+      return Context.Categorias.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
     }    
     private void setPaginacao(PaginationParams model)
     {

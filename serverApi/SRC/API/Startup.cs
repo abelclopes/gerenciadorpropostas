@@ -102,19 +102,20 @@ namespace API
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
            app.UseResponseCompression();
-            app.Use(async (context, next) =>
-            {
-                await next();
-                if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api/"))
-                {
-                    context.Request.Path = "/index.html";
-                    await next();
-                }
-            });
+           /* descomentar codigo abaixo caso for usar o angular na propria aplicação api como single page application */
+            // app.Use(async (context, next) =>
+            // {
+            //     await next();
+            //     if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api/"))
+            //     {
+            //         context.Request.Path = "/index.html";
+            //         await next();
+            //     }
+            // });
 
-            app.UseMvcWithDefaultRoute();
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
+            // app.UseMvcWithDefaultRoute();
+            // app.UseDefaultFiles();
+            // app.UseStaticFiles();
 
 
             app.UseAuthentication();
