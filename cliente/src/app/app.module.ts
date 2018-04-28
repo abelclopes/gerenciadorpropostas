@@ -19,8 +19,8 @@ import { HeaderComponent } from './header/header.component';
 import { FornecedoresComponent } from './fornecedores/fornecedores.component';
 import { CategoriasComponent } from './categorias/categorias.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { PropostasApi } from './logica-apis';
 import { SharedModule } from './shared/shared.module';
+import { PropostasModule } from './propostas/propostas.module';
 
 @NgModule({
   declarations: [
@@ -38,6 +38,7 @@ import { SharedModule } from './shared/shared.module';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    PropostasModule,
     HttpClientModule,
     ToastrModule.forRoot(),
     SharedModule.forRoot(),
@@ -46,7 +47,6 @@ import { SharedModule } from './shared/shared.module';
   providers: [
     UserService,
     AuthGuard,
-    PropostasApi,
     {
       provide : HTTP_INTERCEPTORS,
       useClass : AuthInterceptor,

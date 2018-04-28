@@ -3,9 +3,10 @@ import { PropostasComponent } from "./component/propostas.component";
 import { SharedModule } from "../shared/shared.module";
 import { NgxPaginateModule } from 'ngx-paginate';
 import { FormsModule } from "@angular/forms";
-import { ModalModule } from 'ng2-modal-module';
 import { RouterModule, Routes } from "@angular/router";
 import { PropostaformComponent } from './component/propostaform/propostaform.component';
+import { BootstrapModalModule } from 'ng2-bootstrap-modal';
+import { NotFoundComponent } from "../not-found/not-found.component";
 
 
 const ROUTES: Routes = [
@@ -21,7 +22,8 @@ const ROUTES: Routes = [
     SharedModule,
     NgxPaginateModule,
     FormsModule,
-    ModalModule,
-    RouterModule.forChild(ROUTES)]
+    RouterModule.forChild(ROUTES),
+    BootstrapModalModule.forRoot({container:document.body})
+  ]
 })
 export class PropostasModule {}

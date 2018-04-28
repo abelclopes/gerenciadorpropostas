@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FileUploadModule } from 'ng5-fileupload';
-import { Ng2ModalWindow } from 'ng2-modal-module';
+import { DialogService } from 'ng2-bootstrap-modal';
+import { DialogModalComponent } from '../../shared/dialog-modal/dialog-modal.component';
 
 @Component({
   selector: 'app-propostas',
@@ -9,13 +10,28 @@ import { Ng2ModalWindow } from 'ng2-modal-module';
 })
 export class PropostasComponent implements OnInit {
   modalId: string = 'modalId';
-  constructor() { }
+  constructor(private dialogService:DialogService) { }
 
   ngOnInit() {
-    Ng2ModalWindow.showModal(this.modalId, {
-      title: 'Modal title',
-      htmlContent: 'Modal content'
-    });
-  }
 
+  }
+  showConfirm() {
+    let disposable = this.dialogService.addDialog(DialogModalComponent, {
+        title:'Confirm title',
+        message:'Confirm message'})
+        .subscribe((isConfirmed)=>{
+            //We get dialog result
+            if(isConfirmed) {
+                alert('accepted');
+            }
+            else {
+                alert('declined');
+            }
+        });
+    //We can close dialog calling disposable.unsubscribe();
+    //If dialog was not closed manually close it by timeout
+    setTimeout(()=>{
+        disposable.unsubscribe();
+    },10000);
+}
 }

@@ -19,7 +19,7 @@ export interface ListaPaginadaPropostasModel {
 
     tamanhoPagina?: number;
 
-    resultado?: Array<models.PropostasModel>;
+    resultado?: Array<models.PropostaModel>;
 
     totalPaginas?: number;
 
