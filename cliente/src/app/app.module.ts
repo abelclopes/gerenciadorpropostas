@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule} from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule } from '@angular/router'
+import { RouterModule, PreloadAllModules } from '@angular/router'
 
 import { AppComponent } from './app.component';
 import { UserService } from './shared/services/usuarios/user.service';
@@ -16,11 +16,11 @@ import { UsuariosComponent } from './usuarios/usuarios.component';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
 import { FornecedoresComponent } from './fornecedores/fornecedores.component';
 import { CategoriasComponent } from './categorias/categorias.component';
-import { PropostasComponent } from './propostas/propostas.component';
-import { environment as env } from '../environments/environment';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { PropostasApi } from './logica-apis';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -30,20 +30,23 @@ import { environment as env } from '../environments/environment';
     LoginComponent,
     DashboardComponent,
     HeaderComponent,
-    FooterComponent,
     FornecedoresComponent,
     CategoriasComponent,
-    PropostasComponent
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
     ToastrModule.forRoot(),
-    BrowserAnimationsModule,
-    RouterModule.forRoot(appRoutes)
+    SharedModule.forRoot(),
+    RouterModule.forRoot(appRoutes, {preloadingStrategy: PreloadAllModules})
   ],
-  providers: [UserService,AuthGuard,
+  providers: [
+    UserService,
+    AuthGuard,
+    PropostasApi,
     {
       provide : HTTP_INTERCEPTORS,
       useClass : AuthInterceptor,

@@ -15,5 +15,6 @@ namespace Model
         public string FornecedorID { get; set; }
         public string CategoriaID { get; set; }  
         public int Status { get; set; }
+        public Byte[] Anexo { get; set; }
     }
 }

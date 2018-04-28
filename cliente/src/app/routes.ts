@@ -6,16 +6,15 @@ import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './auth/auth.guard';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { CategoriasComponent } from './categorias/categorias.component';
-import { PropostasComponent } from './propostas/propostas.component';
 
 export const appRoutes: Routes = [
     { path: 'dashboard', component: DashboardComponent,canActivate:[AuthGuard] },
     { path: 'usuarios', component: UsuariosComponent,canActivate:[AuthGuard],  data: { expectedRole: ['Administrador']} },
     { path: 'fornecedores', component: FornecedoresComponent,canActivate:[AuthGuard],  data: { expectedRole: ['Administrador']} },
     { path: 'categorias', component: CategoriasComponent,canActivate:[AuthGuard],  data: { expectedRole: ['Administrador']} },
-    { path: 'propostas', component: PropostasComponent,canActivate:[AuthGuard],  data: { expectedRole: ['Administrador']} },
+    { path: 'propostas', loadChildren: './propostas/propostas.module'},
     { path: 'dashboard', component: DashboardComponent },
     { path: 'login', component: LoginComponent },
     { path : '', redirectTo:'/login', pathMatch : 'full'}
-    
+
 ];
