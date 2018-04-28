@@ -24,4 +24,4 @@ const ROUTES: Routes = [
     ModalModule,
     RouterModule.forChild(ROUTES)]
 })
-export class CompromissosModule {}
+export class PropostasModule {}
