@@ -20,6 +20,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Controllers
 {
+  [Authorize]
   [Route("api/[controller]")]
   public class CategoriasController : BaseController
   {

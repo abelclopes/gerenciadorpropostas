@@ -20,25 +20,23 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Controllers
 {
+  [Authorize]
   [Route("api/[controller]")]
   public class UsuariosClansController : BaseController
-  {
-    
+  {    
     public UsuariosClansController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache)
     {}
-
-
-    [Route("{Email}")]
-    [HttpPost, Authorize]
-    [SwaggerResponse(401)]
-    [SwaggerResponse(200)]
-    public IActionResult GetUser(string Email)
+   
+    [HttpGet]
+    public IActionResult Post([FromQuery]string email)
     {
       var usuarios = new UsuarioAuthModel();
-      if(!string.IsNullOrEmpty(Email)){
-        return Ok(ConsultaUsuario(Email));
+      if (string.IsNullOrEmpty(email))
+      {
+          return BadRequest();
       }
-      return BadRequest("nao encontrado");
+      return Ok(ConsultaUsuario(email));      
+      
     }
     
 

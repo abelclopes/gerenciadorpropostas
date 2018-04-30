@@ -137,20 +137,12 @@ namespace API
             }
             /********       QUANDO INICIAR A APLICAÇÃO PELO PRIMEIRA VES DESCOMENTAR TRECHO ABAIXO *************/
             /*
-            using (var scope = app.ApplicationServices.CreateScope())
+             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<ApplicationDbContext>();
-                    DbInitializer.Initialize(context);//<---Do your seeding here
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while seeding the database.");
-                }
-            }
+                var __context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+
+                __context.Seed();
+            } 
             */
         }
     }

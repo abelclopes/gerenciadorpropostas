@@ -20,4 +20,4 @@ Or
 
 
 ## node generete api do swagger
-node ./src/apigen -s http://localhost:5000/swagger/v1/swagger.json -o ./out
+java -jar D:\projetos\dotnetcore\gerenciadorpropostas\swagger-codegen-cli-2.3.1.jar generate -i http://localhost:5000/swagger/v1/swagger.json -l typescript-angular
