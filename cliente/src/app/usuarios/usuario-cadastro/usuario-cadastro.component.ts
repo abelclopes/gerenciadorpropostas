@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr'
-import { User } from './../../shared/services/usuarios/user.model';
 import { UserService } from './../../shared/services/usuarios/user.service';
+import { NovoUsuarioModel } from '../../logica-apis';
 
 @Component({
   selector: 'app-usuario-cadastro',
@@ -10,9 +10,9 @@ import { UserService } from './../../shared/services/usuarios/user.service';
   styleUrls: ['./usuario-cadastro.component.css']
 })
 export class UsuarioCadastroComponent implements OnInit {
-  user: User;
+  user: NovoUsuarioModel;
   emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
-
+  senha;
   constructor(private userService: UserService, private toastr: ToastrService) { }
 
   ngOnInit() {
@@ -23,11 +23,11 @@ export class UsuarioCadastroComponent implements OnInit {
     if (form != null)
       form.reset();
     this.user = {
-      Nome: '',
-      Password: '',
-      Email: '',
-      Police: '',
-      DataNascimento: null
+      nome: '',
+      senha: '',
+      email: '',
+      perfilUsuario: null,
+      dataNacimento: null
     }
   }
 

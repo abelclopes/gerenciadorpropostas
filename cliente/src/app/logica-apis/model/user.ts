@@ -11,11 +11,7 @@
  */
 
 
-export interface CategoriasModel {
-    nome?: string;
-    descricao?: string;
-    id?: string;
-    dataCriacao?: Date;
-    dataAtualizacao?: Date;
-    excluido?: boolean;
+export interface User {
+    userID?: string;
+    password?: string;
 }

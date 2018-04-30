@@ -21,6 +21,7 @@ import { CategoriasComponent } from './categorias/categorias.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { SharedModule } from './shared/shared.module';
 import { PropostasModule } from './propostas/propostas.module';
+import { UsuariosClansService, AuthService } from './logica-apis';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,8 @@ import { PropostasModule } from './propostas/propostas.module';
   ],
   providers: [
     UserService,
+    UsuariosClansService,
+    AuthService,
     AuthGuard,
     {
       provide : HTTP_INTERCEPTORS,

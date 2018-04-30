@@ -7,10 +7,11 @@ import { RouterModule, Routes } from "@angular/router";
 import { PropostaformComponent } from './component/propostaform/propostaform.component';
 import { BootstrapModalModule } from 'ng2-bootstrap-modal';
 import { NotFoundComponent } from "../not-found/not-found.component";
+import { AuthGuard } from "../auth/auth.guard";
 
 
 const ROUTES: Routes = [
-  {path:'', component: PropostasComponent}
+  {path:'', component: PropostasComponent,canActivate:[AuthGuard]}
 ]
 
 @NgModule({

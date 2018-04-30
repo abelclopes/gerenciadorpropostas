@@ -18,13 +18,14 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs/Observable';
 
+import { User } from '../model/user';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
 
 
 @Injectable()
-export class UsuariosClansService {
+export class LoginService {
 
     protected basePath = '';
     public defaultHeaders = new HttpHeaders();
@@ -58,14 +59,14 @@ export class UsuariosClansService {
     /**
      * 
      * 
-     * @param email 
+     * @param usuario 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsuariosClansPost(email?: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiUsuariosClansPost(email?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiUsuariosClansPost(email?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiUsuariosClansPost(email?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public apiLoginPost(usuario?: User, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiLoginPost(usuario?: User, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiLoginPost(usuario?: User, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiLoginPost(usuario?: User, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -89,8 +90,8 @@ export class UsuariosClansService {
             headers = headers.set("Content-Type", httpContentTypeSelected);
         }
 
-        return this.httpClient.post<any>(`${this.basePath}/api/UsuariosClans`,
-            email,
+        return this.httpClient.post<any>(`${this.basePath}/api/Login`,
+            usuario,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

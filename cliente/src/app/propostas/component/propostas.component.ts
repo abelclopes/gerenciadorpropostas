@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FileUploadModule } from 'ng5-fileupload';
-import { DialogService } from 'ng2-bootstrap-modal';
 import { DialogModalComponent } from '../../shared/dialog-modal/dialog-modal.component';
+import { DialogService } from 'ng2-bootstrap-modal';
 
 @Component({
   selector: 'app-propostas',
@@ -33,5 +33,5 @@ export class PropostasComponent implements OnInit {
     setTimeout(()=>{
         disposable.unsubscribe();
     },10000);
-}
+  }
 }

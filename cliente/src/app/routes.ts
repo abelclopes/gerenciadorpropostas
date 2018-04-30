@@ -9,12 +9,13 @@ import { CategoriasComponent } from './categorias/categorias.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 
 export const appRoutes: Routes = [
-    { path: 'dashboard', component: DashboardComponent,canActivate:[AuthGuard] },
+    { path: 'dashboard', component: DashboardComponent, canActivate:[AuthGuard] },
     { path: 'usuarios', component: UsuariosComponent,canActivate:[AuthGuard],  data: { expectedRole: ['Administrador']} },
-    { path: 'fornecedores', component: FornecedoresComponent,canActivate:[AuthGuard],  data: { expectedRole: ['Administrador']} },
-    { path: 'categorias', component: CategoriasComponent,canActivate:[AuthGuard],  data: { expectedRole: ['Administrador']} },
-    { path: 'propostas', component: 'propostas'},
+    { path: 'fornecedores', component: FornecedoresComponent,canActivate:[AuthGuard] },
+    { path: 'categorias', component: CategoriasComponent,canActivate:[AuthGuard] },
+    { path: 'propostas', loadChildren: './propostas/propostas.module#PropostasModule',canActivate:[AuthGuard] },
     { path: 'login', component: LoginComponent },
-    { path : '', redirectTo:'/login', pathMatch : 'full'}
+    { path : '', redirectTo:'/login', pathMatch : 'full'},
+    { path: '**', component: NotFoundComponent }
 
 ];

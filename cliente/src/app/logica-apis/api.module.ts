@@ -6,6 +6,7 @@ import { Configuration } from './configuration';
 import { AuthService } from './api/auth.service';
 import { CategoriasService } from './api/categorias.service';
 import { FornecedoresService } from './api/fornecedores.service';
+import { LoginService } from './api/login.service';
 import { PropostasService } from './api/propostas.service';
 import { UsuariosService } from './api/usuarios.service';
 import { UsuariosClansService } from './api/usuariosClans.service';
@@ -18,6 +19,7 @@ import { UsuariosClansService } from './api/usuariosClans.service';
     AuthService,
     CategoriasService,
     FornecedoresService,
+    LoginService,
     PropostasService,
     UsuariosService,
     UsuariosClansService ]

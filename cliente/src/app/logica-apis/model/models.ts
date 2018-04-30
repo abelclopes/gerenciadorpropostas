@@ -10,5 +10,5 @@ export * from './novoUsuarioModel';
 export * from './pagedListProposta';
 export * from './proposta';
 export * from './propostaModel';
-export * from './usuarioAuthModel';
+export * from './user';
 export * from './usuariosModel';
