@@ -1,60 +1,44 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule} from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule, PreloadAllModules } from '@angular/router'
+import { HttpClientModule } from '@angular/common/http';
+
+import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
 
 import { AppComponent } from './app.component';
-import { UserService } from './shared/services/usuarios/user.service';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ToastrModule } from 'ngx-toastr'
-import { UsuarioCadastroComponent } from './usuarios/usuario-cadastro/usuario-cadastro.component';
-import { appRoutes } from './routes';
-import { AuthGuard } from './auth/auth.guard';
-import { AuthInterceptor } from './auth/auth.interceptor';
-import { UsuariosComponent } from './usuarios/usuarios.component';
-import { LoginComponent } from './login/login.component';
+import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthService } from './logica-api';
+import { LoginModule } from './login/login.module';
+import { AuthenticationService } from './login/service/authentication.service';
+import { AuthGuard } from './_guards/auth.guard';
 import { HeaderComponent } from './header/header.component';
-import { FornecedoresComponent } from './fornecedores/fornecedores.component';
-import { CategoriasComponent } from './categorias/categorias.component';
-import { NotFoundComponent } from './not-found/not-found.component';
 import { SharedModule } from './shared/shared.module';
-import { PropostasModule } from './propostas/propostas.module';
-import { UsuariosClansService, AuthService } from './logica-apis';
+import { NotificationService } from './shared/messages/notification.service';
+import { HeaaderService } from './header/header.service';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    UsuarioCadastroComponent,
-    UsuariosComponent,
-    LoginComponent,
     DashboardComponent,
-    HeaderComponent,
-    FornecedoresComponent,
-    CategoriasComponent,
-    NotFoundComponent
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    AppRoutingModule,
+    LoginModule,
     FormsModule,
-    PropostasModule,
-    HttpClientModule,
-    ToastrModule.forRoot(),
-    SharedModule.forRoot(),
-    RouterModule.forRoot(appRoutes, {preloadingStrategy: PreloadAllModules})
+    ReactiveFormsModule,
+    SharedModule,
+    HttpClientModule
   ],
   providers: [
-    UserService,
-    UsuariosClansService,
-    AuthService,
+    AuthenticationService,
     AuthGuard,
-    {
-      provide : HTTP_INTERCEPTORS,
-      useClass : AuthInterceptor,
-      multi : true
-    }],
+    NotificationService, HeaaderService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

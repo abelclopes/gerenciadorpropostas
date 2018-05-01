@@ -1,12 +1,12 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
-    "name": "cliente"
+    "name": "cliente2"
   },
   "apps": [
     {
       "root": "src",
-      "outDir":  "../serverApi/SRC/API/wwwroot",
+      "outDir": "dist",
       "assets": [
         "assets",
         "favicon.ico"
@@ -19,6 +19,7 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
+        "styles.css",
         "vendor/bootstrap/css/bootstrap.min.css",
         "vendor/metisMenu/metisMenu.min.css",
         "assets/css/sb-admin-2.min.css",

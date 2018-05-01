@@ -1,7 +1,12 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../shared/services/usuarios/user.service';
+import { AuthenticationService } from '../login/service/authentication.service';
+import { HttpParams, HttpHeaders, HttpClient } from '@angular/common/http';
+import { CustomHttpUrlEncodingCodec } from '../logica-api/encoder';
+import { Observable } from 'rxjs/Observable';
+import { API_URL } from '../app.api';
+import { HeaaderService } from './header.service';
 
 @Component({
   selector: 'app-header',
@@ -9,33 +14,35 @@ import { UserService } from '../shared/services/usuarios/user.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+
   userClaims: any;
+  email?:string;
+  accessToken?: string;
+  public defaultHeaders = new HttpHeaders();
 
-  constructor(private router: Router, private userService: UserService) { }
+  constructor(protected httpClient: HttpClient, private router: Router, private headerService: HeaaderService) { }
   ngOnInit() {
-    const token = localStorage.getItem('accessToken');
-    console.log(token)
-    if(token == null || token == undefined || token == 'undefined')
-    {
-      this.Logout();
-    }
-    else
-    {
-      this.userService.getUsuariosClans()
-      .subscribe(
-        data => this.userClaims = data);
-    }
+    this.isAuthenticaiton();
+    console.log('chama teste')
+    this.headerService.UsuariosClans()
+    .subscribe(
+      data =>{
+        this.userClaims = data
+        localStorage.setItem('userDetails', JSON.stringify(data))
+        console.log(this.userClaims)
+    });
+    this.userClaims = this.headerService.response;
   }
-
-  title = 'app';
   isAuthenticaiton(){
-    return this.userService.isAuthenticaiton()
+    const authOn = JSON.parse(localStorage.getItem('usuarioCorrente'));
+    if(authOn != null){
+      this.email = authOn['email'];
+      this.accessToken = authOn['token'];
+       return true
+    }
+    return false
   }
-  shoeMenuRole(){
-    this.userClaims.police
-  }
-  Logout() {
-    localStorage.removeItem('accessToken');
-    this.router.navigate(['/login']);
+  Logout(){
+    this.router.navigate(['/logout']);
   }
 }

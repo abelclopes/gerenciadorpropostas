@@ -1,3 +1,1 @@
-import { environment as env } from '../environments/environment';
-
-export const API = env.URL_API;
+export const API_URL = "http://localhost:5000";
