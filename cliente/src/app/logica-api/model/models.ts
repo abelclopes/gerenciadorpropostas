@@ -11,4 +11,3 @@ export * from './pagedListProposta';
 export * from './proposta';
 export * from './propostaModel';
 export * from './usuariosModel';
-

@@ -15,7 +15,7 @@ export interface CategoriasModel {
     nome?: string;
     descricao?: string;
     id?: string;
-    dataCriacao?: Date;
     dataAtualizacao?: Date;
+    dataCriacao?: Date;
     excluido?: boolean;
 }

@@ -11,15 +11,14 @@ import { AuthGuard } from './_guards/auth.guard';
 const routes: Routes = [
   { path : '', redirectTo:'/login', pathMatch : 'full'},
   { path: 'login', loadChildren: './login/login.module#LoginModule' },
-  { path: 'categorias', loadChildren: './categorias/categorias.module#CategoriasModule', canActivate: [AuthGuard]
-  },
+  { path: 'categorias', loadChildren: './categorias/categorias.module#CategoriasModule', canActivate: [AuthGuard]},
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({
   imports: [
-    CommonModule,
     RouterModule.forRoot(routes),
+    CommonModule,
     HttpModule,
     FormsModule,
     ReactiveFormsModule

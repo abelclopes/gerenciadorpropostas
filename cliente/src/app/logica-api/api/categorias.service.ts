@@ -28,7 +28,7 @@ import { Configuration }                                     from '../configurat
 @Injectable()
 export class CategoriasService {
 
-    protected basePath = '';
+    protected basePath = 'https://localhost';
     public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 

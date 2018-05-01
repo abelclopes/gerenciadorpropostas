@@ -6,7 +6,7 @@ import { HttpParams, HttpHeaders, HttpClient } from '@angular/common/http';
 import { CustomHttpUrlEncodingCodec } from '../logica-api/encoder';
 import { Observable } from 'rxjs/Observable';
 import { API_URL } from '../app.api';
-import { HeaaderService } from './header.service';
+import { HeaderService } from './header.service';
 
 @Component({
   selector: 'app-header',
@@ -20,16 +20,15 @@ export class HeaderComponent implements OnInit {
   accessToken?: string;
   public defaultHeaders = new HttpHeaders();
 
-  constructor(protected httpClient: HttpClient, private router: Router, private headerService: HeaaderService) { }
-  ngOnInit() {
-    this.isAuthenticaiton();
-    this.headerService.UsuariosClans()
-    .subscribe(
-      data =>{
-        this.userClaims = data
-        localStorage.setItem('userDetails', JSON.stringify(data))
-    });
-    this.userClaims = this.headerService.response;
+  constructor(protected httpClient: HttpClient, private router: Router, private headerService: HeaderService) { }  ngOnInit() {
+      this.isAuthenticaiton();
+      this.headerService.UsuariosClans()
+      .subscribe(
+        data =>{
+          this.userClaims = data
+          localStorage.setItem('userDetails', JSON.stringify(data))
+      });
+      this.userClaims = this.headerService.response;
   }
   isAuthenticaiton(){
     const authOn = JSON.parse(localStorage.getItem('usuarioCorrente'));

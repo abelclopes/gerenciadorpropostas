@@ -27,7 +27,7 @@ import { Configuration }                                     from '../configurat
 @Injectable()
 export class AuthService {
 
-    protected basePath = '';
+    protected basePath = 'https://localhost';
     public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 

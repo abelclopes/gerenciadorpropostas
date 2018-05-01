@@ -1,5 +1,5 @@
 
-$fileNames = Get-ChildItem "cliente2\src\app\logica-api\api\*.ts" -Recurse | Select-Object -expand fullname
+$fileNames = Get-ChildItem "cliente\src\app\logica-api\api\*.ts" -Recurse | Select-Object -expand fullname
 
 Write-Output "Corrigida url base do cliente da API no seguintes arquivos: "
 
