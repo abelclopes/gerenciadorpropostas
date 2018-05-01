@@ -1,50 +1,41 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, HttpModule, Response } from '@angular/http';
+import { Http, Headers, HttpModule, Response, ResponseType } from '@angular/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map'
 import { API_URL } from './../app.api'
 import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { usuarioAuthModel } from '../logica-api';
+import { Options } from 'selenium-webdriver/safari';
 
 @Injectable()
 export class HeaaderService {
-      public token: string;
-      public email: string;
+    public token: string;
+    public email: string;
+    public response;
 
     constructor(protected httpClient: HttpClient, private http: Http) {}
 
-    UsuariosClans() {
-        var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
-        this.token = currentUser && currentUser.token;
-        this.email = currentUser.email;
-        const httpOptions = {
-          headers: new HttpHeaders({
-            'Content-Type':  'application/json',
-            'Authorization': 'bearer ' +  currentUser.token,
-          })
-        };
-        return this.httpClient.get<any>(`${API_URL}/api/UsuariosClans${this.email}`, httpOptions)
-          .map((res)=>{
-            console.log(res);
-            return false;
-          });
-    }
-  teste(){
-    var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
-    if(currentUser != null){
+    UsuariosClans(): Observable<any> {
+      var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
+
       let headers = new Headers();
       headers.append('Content-Type', 'application/json');
-      headers.append('Authorization', `bearer ${currentUser.token}`);
-      // let obs = new Observable(observer => {
-          this.http.get(`${API_URL}/api/UsuariosClans${currentUser.email}`, {headers: headers, body:'' }).subscribe(
-              (response: Response) => {
+      headers.append('No-Auth', 'true');
+      headers.append('Authorization', `Bearer ${currentUser.token}`);
+      headers.append('x-access-token', `${currentUser.token}`);
 
-                console.log(response);
-              },
-              error=> {
-                console.log(error);
-              });
+
+      let httpHeaders = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('No-Auth', 'true')
+      .set('Authorization', `Bearer ${currentUser.token}`)
+      .set('x-access-token', `${currentUser.token}`)
+      ;
+
+      return this.httpClient.get<any>(`${API_URL}/api/UsuariosClans/${currentUser.email}`,
+        {
+          headers: httpHeaders,
+          responseType: 'json'
+        });
+
     }
-    // });
-  }
 }

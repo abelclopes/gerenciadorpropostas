@@ -20,15 +20,16 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Controllers
 {
-  [Authorize]
+  
   [Route("api/[controller]")]
   public class UsuariosClansController : BaseController
   {    
     public UsuariosClansController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache)
     {}
    
-    [HttpGet]
-    public IActionResult Post([FromQuery]string email)
+    [HttpGet("{email}")]
+    [Authorize]
+    public IActionResult get(string email)
     {
       var usuarios = new UsuarioAuthModel();
       if (string.IsNullOrEmpty(email))

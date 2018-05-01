@@ -2,7 +2,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../login/service/authentication.service';
-import {UsuariosModel, usuarioAuthModel } from '../logica-api';
 import { HttpParams, HttpHeaders, HttpClient } from '@angular/common/http';
 import { CustomHttpUrlEncodingCodec } from '../logica-api/encoder';
 import { Observable } from 'rxjs/Observable';
@@ -25,7 +24,14 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     this.isAuthenticaiton();
     console.log('chama teste')
-    this.headerService.teste();
+    this.headerService.UsuariosClans()
+    .subscribe(
+      data =>{
+        this.userClaims = data
+        localStorage.setItem('userDetails', JSON.stringify(data))
+        console.log(this.userClaims)
+    });
+    this.userClaims = this.headerService.response;
   }
   isAuthenticaiton(){
     const authOn = JSON.parse(localStorage.getItem('usuarioCorrente'));
