@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map'
 import { API_URL } from './../app.api'
 import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { Options } from 'selenium-webdriver/safari';
 
 @Injectable()
 export class HeaaderService {
