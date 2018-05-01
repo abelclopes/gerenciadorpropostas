@@ -7,6 +7,9 @@ namespace DOMAIN
 {
     public class Categoria : EntidadeBase
     {
+        public Categoria()
+        {
+        }
         public Categoria(string nome, string descricao)
         {
             Nome = nome;

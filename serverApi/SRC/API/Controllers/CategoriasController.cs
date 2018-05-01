@@ -17,6 +17,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using StructureMap.Diagnostics;
 using DOMAIN.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using API.Model;
 
 namespace API.Controllers
 {
@@ -34,18 +35,10 @@ namespace API.Controllers
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public  IActionResult Get(PaginationParams model)
-    {
-      var categorias = RestornaCategoriaList();
-      this.setPaginacao(model);
-      if(!string.IsNullOrEmpty(model.buscaTermo)){ 
-        categorias = categorias.Where(x => x.Nome.Contains(model.buscaTermo) 
-                            ||  x.Descricao.Contains(model.buscaTermo)
-                            ).ToList();
-      }
-      if(categorias.Count() > 0)
-        return Ok(new PagedList<CategoriasModel>(categorias.AsQueryable(), this.PageNumber, this.PageSize));
-      return Ok(new { Response = "Nenhum Resultado Encontrado" });
+    public ListaPaginada<CategoriasModel> Get(PaginationParams model)
+    {      
+      var listaPaginada = new ListaPaginada<CategoriasModel>(model.PageNumber, model.PageSize);
+      return listaPaginada.Carregar(RestornaCategoriaList());
     }
 
     [Route("{id}")]
@@ -57,7 +50,7 @@ namespace API.Controllers
     {
       var categorias = new CategoriasModel();
       if(!string.IsNullOrEmpty(id)){
-        return Ok(RestornaCategoriaList().FirstOrDefault(x => x.Id == Guid.Parse(id)));
+        return Ok(ConsultaCategoria(id));
       }
       return Ok(new { Response = "Nenhum Resultado Encontrado" });
     }
@@ -72,7 +65,7 @@ namespace API.Controllers
       {
           return BadRequest();
       }
-      if(RestornaCategoriaList().Any(x => x.Descricao == model.Descricao))
+      if(Context.Categorias.Any(x => x.Descricao == model.Descricao))
       {
         throw new ArgumentException($"O Descricao {model.Descricao} já esta em uso");
       }
@@ -80,16 +73,18 @@ namespace API.Controllers
       Context.Categorias.Add(categoria);
       Context.SaveChanges();
 
-      return Ok(new {Response = "Categoria salvo com sucesso"});
+      MemoryCache.Remove("categorias");
+
+      return Ok(new {OK = true, Response = "Categoria salvo com sucesso"});
     }
     
     [HttpPut("{id}"), Authorize]
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public IActionResult Put(string id, [FromBody] NovaCategoriaModel model)
+    public IActionResult Put(string id, [FromQuery] NovaCategoriaModel model)
     {
-      if (model == null ||  string.IsNullOrEmpty(id))
+      if (model.Nome == null ||  string.IsNullOrEmpty(id))
       {
           return BadRequest();
       }
@@ -104,7 +99,9 @@ namespace API.Controllers
       Context.Categorias.Update(categoria);
       Context.SaveChanges();
 
-      return Ok(new {Response = "Categoria atualizado com sucesso"});
+      MemoryCache.Remove("categorias");
+
+      return Ok(new {ok = true, Response = "Categoria atualizado com sucesso"});
     }
     
     [HttpDelete("{id}"), Authorize]
@@ -116,25 +113,31 @@ namespace API.Controllers
       if(string.IsNullOrEmpty(id)){
           return BadRequest();
       }
-      var user = ConsultaCategoria(id);
-      Context.Categorias.Remove(user);
+      var cat = ConsultaCategoria(id);
+      cat.Excluido = true;
+      Context.Categorias.Update(cat);
       Context.SaveChanges();
 
-      return Ok(new {Response = "Categoria deletado com sucesso"});
+      MemoryCache.Remove("categorias");
+      return Ok(new {ok = true, Response = "Categoria deletado com sucesso"});
     }
     private List<CategoriasModel>  RestornaCategoriaList(){
-      return Context.Categorias      
-      .Where(x => !x.Excluido)
-      .Select(x => 
-            new CategoriasModel{ 
-              Id = x.Id,
-              Nome = x.Nome,
-              Descricao = x.Descricao
-            }).ToList();
-    }
+      return MemoryCache.GetOrCreate("categorias", entry =>
+                          {
+                            entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+                            return Context.Categorias.Where(x => !x.Excluido)
+                              .Select(x => new CategoriasModel
+                              { 
+                                Id = x.Id,
+                                Nome = x.Nome,
+                                Descricao = x.Descricao
+                              }).ToList();
+                          });
+  }
     private Categoria ConsultaCategoria(string id){
-      return Context.Categorias.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
-    }    
+      var Uid = Guid.Parse(id.ToUpper());
+      return Context.Categorias.FirstOrDefault(x => x.Id == Uid && !x.Excluido);
+    }
     private void setPaginacao(PaginationParams model)
     {
         this.PageNumber = model.PageNumber;
