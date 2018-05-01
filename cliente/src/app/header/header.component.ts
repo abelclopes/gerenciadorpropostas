@@ -23,13 +23,11 @@ export class HeaderComponent implements OnInit {
   constructor(protected httpClient: HttpClient, private router: Router, private headerService: HeaaderService) { }
   ngOnInit() {
     this.isAuthenticaiton();
-    console.log('chama teste')
     this.headerService.UsuariosClans()
     .subscribe(
       data =>{
         this.userClaims = data
         localStorage.setItem('userDetails', JSON.stringify(data))
-        console.log(this.userClaims)
     });
     this.userClaims = this.headerService.response;
   }

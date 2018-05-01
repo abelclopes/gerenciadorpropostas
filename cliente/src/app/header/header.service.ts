@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map'
 import { API_URL } from './../app.api'
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 
-@Injectable()
+
 export class HeaaderService {
     public token: string;
     public email: string;
@@ -27,8 +27,7 @@ export class HeaaderService {
       .set('Content-Type', 'application/json')
       .set('No-Auth', 'true')
       .set('Authorization', `Bearer ${currentUser.token}`)
-      .set('x-access-token', `${currentUser.token}`)
-      ;
+      .set('x-access-token', `${currentUser.token}`);
 
       return this.httpClient.get<any>(`${API_URL}/api/UsuariosClans/${currentUser.email}`,
         {
