@@ -13,7 +13,10 @@ import { CategoriasEditComponent } from './categorias-edit/categorias-edit.compo
 const routes: Routes = [
   //{ path : '', redirectTo:'/login', pathMatch : 'full'},
   { path: '', component: CategoriasListComponent },
-  { path: 'categorias', component: CategoriasListComponent},
+  { path: 'categorias', component: CategoriasListComponent}
+  { path: 'categorias/nova', component: CategoriasFormComponent},
+  { path: 'categorias/edit/:id', component: CategoriasFormComponent},
+  { path: 'categorias/datalhes/:id', component: CategoriasDetalhesComponent}
 ];
 
 @NgModule({
