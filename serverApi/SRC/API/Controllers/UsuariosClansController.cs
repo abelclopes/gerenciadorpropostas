@@ -44,6 +44,7 @@ namespace API.Controllers
        var usuario = Context.Usuarios.FirstOrDefault(x => x.Email == Email && !x.Excluido);
        
       return new UsuarioAuthModel{
+          Id = usuario.Id,
           Nome = usuario.Nome,
           Email = usuario.Email,
           Police = EnumHelper.GetDescription(usuario.PerfilUsuario),
