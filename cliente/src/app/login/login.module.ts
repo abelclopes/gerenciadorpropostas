@@ -6,7 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  //{ path : '', redirectTo:'/login', pathMatch : 'full'},
   { path: '', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
 ];
