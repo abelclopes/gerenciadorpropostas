@@ -1,5 +1,5 @@
 export interface PagedListModel {
-    totalItems?: number;
+    totalItens?: number;
     pageNumber?: number;
     pageSize?: number;
     resultado?: Array<any>;

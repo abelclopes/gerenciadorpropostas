@@ -6,7 +6,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
 
 import {NgxPaginationModule} from 'ngx-pagination';
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -19,13 +18,15 @@ import { SharedModule } from './shared/shared.module';
 import { NotificationService } from './shared/messages/notification.service';
 import { HeaderService } from './header/header.service';
 import { CategoriaService } from './categorias/service/categoria.service';
+import { PaginationFilter } from './shared/pagination-filter.pipe';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
-    HeaderComponent
+    HeaderComponent,
+    PaginationFilter
   ],
   imports: [
     BrowserModule,
@@ -42,7 +43,8 @@ import { CategoriaService } from './categorias/service/categoria.service';
     AuthenticationService,
     CategoriaService,
     AuthGuard,
-    NotificationService, HeaderService
+    NotificationService, HeaderService,
+    PaginationFilter
   ],
   bootstrap: [AppComponent]
 })
