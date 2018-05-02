@@ -15,42 +15,29 @@ using DOMAIN.EnumHelper;
 using DOMAIN.Paginator;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using StructureMap.Diagnostics;
+using DOMAIN.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
+using API.Model;
 
 namespace API.Controllers
 {
   [Route("api/[controller]")]
-  public class FornecedoresController : Controller
+  public class FornecedoresController : BaseController
   {
     
     private int PageNumber;
     private int PageSize;
-    private readonly ApplicationDbContext _context;
-    
-    public FornecedoresController(ApplicationDbContext context)
-    {
-      _context = context;
-      this.PageNumber = 1;
-      this.PageSize = 20;
-    }
+    public FornecedoresController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache){}
 
 
     [HttpGet, Authorize]
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public  IActionResult Get(PaginationParams model)
+    public  ListaPaginada<FornecedorModel> Get(PaginationParams model)
     {
-      var fornecedors = RestornaFornecedorList();
-      this.setPaginacao(model);
-      if(!string.IsNullOrEmpty(model.buscaTermo)){ 
-        fornecedors = fornecedors.Where(x => x.Nome.Contains(model.buscaTermo) 
-                            ||  x.CnpjCpf.Contains(model.buscaTermo)
-                            ||  x.Email.Contains(model.buscaTermo)
-                            ).ToList();
-      }
-      if(fornecedors.Count() > 0)
-        return Ok(new PagedList<FornecedorModel>(fornecedors.AsQueryable(), this.PageNumber, this.PageSize));
-      return Ok(new { Response = "Nenhum Resultado Encontrado" });
+      var listaPaginada = new ListaPaginada<FornecedorModel>(model.PageNumber, model.PageSize);
+      return listaPaginada.Carregar(RestornaFornecedorList());
     }
 
     [Route("{id}")]
@@ -82,10 +69,10 @@ namespace API.Controllers
         throw new ArgumentException($"O Email {model.Email} já esta em uso");
       }
       
-      _context.Fornecedores.Add(new Fornecedor(model.Nome, model.Email, model.CnpjCpf, model.Telefone));
-      _context.SaveChanges();
+      Context.Fornecedores.Add(new Fornecedor(model.Nome, model.Email, model.CnpjCpf, model.Telefone));
+      Context.SaveChanges();
 
-      return Ok(new {Response = "Fornecedor salvo com sucesso"});
+      return Ok(new {ok= true, Response = "Fornecedor salvo com sucesso"});
     }
     
     [HttpPut("{id}"), Authorize]
@@ -106,9 +93,9 @@ namespace API.Controllers
       }
       
       var fornec = new Fornecedor(model.Nome, model.Email, model.CnpjCpf, model.Telefone);
-      fornecedor.Atualizar(fornec, _context);
-      _context.Fornecedores.Update(fornecedor);
-      _context.SaveChanges();
+      fornecedor.Atualizar(fornec, Context);
+      Context.Fornecedores.Update(fornecedor);
+      Context.SaveChanges();
 
       return Ok(new {Response = "Fornecedor atualizado com sucesso"});
     }
@@ -123,25 +110,29 @@ namespace API.Controllers
           return BadRequest();
       }
       var user = ConsultaFornecedor(id);
-      _context.Fornecedores.Remove(user);
-      _context.SaveChanges();
+      Context.Fornecedores.Remove(user);
+      Context.SaveChanges();
 
       return Ok(new {Response = "Fornecedor deletado com sucesso"});
     }
-    private List<FornecedorModel>  RestornaFornecedorList(){
-      return _context.Fornecedores      
-      .Where(x => !x.Excluido)
-      .Select(x => 
-            new FornecedorModel{ 
-              Id = x.Id,
-              Nome = x.Nome, 
-              Email = x.Email, 
-              CnpjCpf = x.CnpjCpf
-            }).ToList();
-    }
+   private List<FornecedorModel>  RestornaFornecedorList(){
+      return MemoryCache.GetOrCreate("fornecedor", entry =>
+                          {
+                            entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+                            return Context.Fornecedores.Where(x => !x.Excluido)
+                            .Select(x => new FornecedorModel
+                              {
+                                Id = x.Id,
+                                Nome = x.Nome,
+                                CnpjCpf = x.CnpjCpf,
+                                Telefone = x.Telefone
+                              }).ToList();
+                          });
+  }
     private Fornecedor ConsultaFornecedor(string id){
-      return _context.Fornecedores.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
-    }    
+      var Uid = Guid.Parse(id.ToUpper());
+      return Context.Fornecedores.FirstOrDefault(x => x.Id == Uid && !x.Excluido);
+    }
     private void setPaginacao(PaginationParams model)
     {
         this.PageNumber = model.PageNumber;
