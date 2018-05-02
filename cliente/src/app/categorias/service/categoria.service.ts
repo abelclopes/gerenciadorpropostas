@@ -23,8 +23,9 @@ export class CategoriaService {
       .set('x-access-token', `${currentUser.token}`);
     }
 
-    public getCategorias(pagina, tamanho, buscaTermo?: string): Observable<PagedListModel> {
-      return this.httpClient.get<PagedListModel>(`${API_URL}/api/categorias?PageNumber=${pagina}&PageSize=${tamanho}`,{
+    public getCategorias(pagina, tamanho, buscaTermo?: any): Observable<PagedListModel> {
+      if(buscaTermo == undefined){ buscaTermo ='';}
+      return this.httpClient.get<PagedListModel>(`${API_URL}/api/categorias?PageNumber=${pagina}&PageSize=${tamanho}&buscaTermo=${buscaTermo}`,{
         headers: this.httpHeaders, responseType: 'json'
       });
     }

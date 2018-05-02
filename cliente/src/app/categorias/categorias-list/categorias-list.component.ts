@@ -3,6 +3,7 @@ import { Categoria,CategoriasService as CategoriasServiceApi } from '../../logic
 import { CategoriaService } from '../service/categoria.service'
 import { PagedListModel } from '../../shared/paginacao/PagedListModel';
 import { Subject } from 'rxjs';
+import { CategoriaModel } from '../model/categoria.model';
 
 @Component({
   selector: 'app-categorias-list',
@@ -18,10 +19,11 @@ export class CategoriasListComponent implements OnInit {
   paginaAtual: number;
   tamanhoPagina = 10
   totalItens: number;
-  listaPaginadaCategoriasModel: Array<any>
+  listaPagedListModel: PagedListModel
 
-  constructor(private catService: CategoriaService)
-  {
+  filter: Categoria = new CategoriaModel();
+
+  constructor(private catService: CategoriaService){
     this.paginaAtual = 1;
   }
 
@@ -43,9 +45,8 @@ export class CategoriasListComponent implements OnInit {
       .switchMap(termo => this.catService.getCategorias(this.paginaAtual, this.tamanhoPagina))
       .subscribe(x => {
         this.categorias = x.resultado;
-        this.totalItens = x.totalItems;
+        this.totalItens = x.totalItens;
       })
-
       this.termoFiltro.next("");
   }
   delete(id: string){

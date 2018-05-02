@@ -1,12 +1,16 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
-import { CommonModule } from '@angular/common';
 import { CategoriasListComponent } from './categorias-list/categorias-list.component';
 import { CategoriasFormComponent } from './categorias-form/categorias-form.component';
 import { CategoriasEditComponent } from './categorias-edit/categorias-edit.component';
+
 import { CategoriaService } from './service/categoria.service';
+
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 
@@ -21,6 +25,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     CommonModule,
     FormsModule,
+    NgxPaginationModule,
     ReactiveFormsModule
   ],
   declarations: [
