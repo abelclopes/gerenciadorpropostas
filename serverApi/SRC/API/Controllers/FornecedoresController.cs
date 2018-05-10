@@ -36,8 +36,13 @@ namespace API.Controllers
     [SwaggerResponse(403)]
     public  ListaPaginada<FornecedorModel> Get(PaginationParams model)
     {
+      var fornecedor = RestornaFornecedorList();
+      if(!string.IsNullOrEmpty(model.buscaTermo))
+      {
+        fornecedor = fornecedor.Where(x => x.Nome.ToLower().Contains(model.buscaTermo.ToLower()) || x.CnpjCpf.Contains(model.buscaTermo.ToLower())).ToList();
+      }
       var listaPaginada = new ListaPaginada<FornecedorModel>(model.PageNumber, model.PageSize);
-      return listaPaginada.Carregar(RestornaFornecedorList());
+      return listaPaginada.Carregar(fornecedor);
     }
 
     [Route("{id}")]

@@ -28,7 +28,7 @@ export class FornecedoresListComponent implements OnInit {
   }
 
   filtrar(termo: string): void {
-    this.termoFiltro.next(termo['path'][0].value);
+    this.termoFiltro.next(termo);
   }
 
   paginar(pagina: number, termo: string): void {
