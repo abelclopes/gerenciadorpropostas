@@ -7,6 +7,9 @@ import { UsuariosEditComponent } from './usuarios-edit/usuarios-edit.component';
 import { UsuariosFormComponent } from './usuarios-form/usuarios-form.component';
 import { UsuarioService } from './service/usuario.service';
 
+import { 
+  FormsModule,
+  ReactiveFormsModule }   from '@angular/forms';
 const routes: Routes = [
   { path: '', component: UsuariosListComponent },
   { path: 'editar/:id', component: UsuariosEditComponent },
@@ -17,6 +20,10 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     NgxPaginationModule,
     CommonModule,
+    FormsModule, 
+    ReactiveFormsModule,   
+    FormsModule,
+    ReactiveFormsModule
   ],
   declarations: [UsuariosListComponent, UsuariosEditComponent, UsuariosFormComponent],
   providers:[

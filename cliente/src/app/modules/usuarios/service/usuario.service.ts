@@ -25,22 +25,22 @@ export class UsuarioService {
 
     public getUsuarios(pagina, tamanho, buscaTermo?: any): Observable<UsuarioPagedListModel> {
       if(buscaTermo == undefined){ buscaTermo ='';}
-      return this.httpClient.get<UsuarioPagedListModel>(`${API_URL}/api/propostas?PageNumber=${pagina}&PageSize=${tamanho}&buscaTermo=${buscaTermo}`,{
+      return this.httpClient.get<UsuarioPagedListModel>(`${API_URL}/api/usuarios?PageNumber=${pagina}&PageSize=${tamanho}&buscaTermo=${buscaTermo}`,{
         headers: this.httpHeaders, responseType: 'json'
       });
     }
-    public novaUsuario(model: UsuariosModel){
+    public novoUsuario(model: UsuariosModel){
       let data = JSON.stringify(model);
-      return this.httpClient.post<UsuariosModel>(`${API_URL}/api/propostas/`,data,{headers: this.httpHeaders, responseType: 'json'});
+      return this.httpClient.post<UsuariosModel>(`${API_URL}/api/usuarios/`,data,{headers: this.httpHeaders, responseType: 'json'});
     }
     public getUsuarioById(id: string): Observable<UsuariosModel> {
-      return this.httpClient.get<UsuariosModel>(`${API_URL}/api/propostas/${id}`,{
+      return this.httpClient.get<UsuariosModel>(`${API_URL}/api/usuarios/${id}`,{
         headers: this.httpHeaders, responseType: 'json'
       });
     }
     public updateUsuario(model: UsuariosModel): Observable<UsuarioPagedListModel> {
       let data = JSON.stringify(model);
-      let url = `${API_URL}/api/propostas/${model.id}`;
+      let url = `${API_URL}/api/usuarios/${model.id}`;
       return this.httpClient.put(url,data,
         {
           headers: this.httpHeaders
@@ -48,7 +48,12 @@ export class UsuarioService {
       );
     }
     public delete(id: string): any {
-      let url = `${API_URL}/api/propostas/${id}`;
+      let url = `${API_URL}/api/usuarios/${id}`;
       return this.httpClient.delete(url, { headers: this.httpHeaders } );
+    }
+    
+    public getPerfis(): any {
+      let url = `${API_URL}/api/usuarios/perfis/`;
+      return this.httpClient.get(url, { headers: this.httpHeaders } );
     }
 }
