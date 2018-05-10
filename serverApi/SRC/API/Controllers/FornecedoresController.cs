@@ -72,6 +72,7 @@ namespace API.Controllers
       Context.Fornecedores.Add(new Fornecedor(model.Nome, model.Email, model.CnpjCpf, model.Telefone));
       Context.SaveChanges();
 
+      MemoryCache.Remove("fornecedor");
       return Ok(new {ok= true, Response = "Fornecedor salvo com sucesso"});
     }
     
@@ -97,7 +98,8 @@ namespace API.Controllers
       Context.Fornecedores.Update(fornecedor);
       Context.SaveChanges();
 
-      return Ok(new {Response = "Fornecedor atualizado com sucesso"});
+      MemoryCache.Remove("fornecedor");
+      return Ok(new {ok=true, Response = "Fornecedor atualizado com sucesso"});
     }
     
     [HttpDelete("{id}"), Authorize]
@@ -109,11 +111,12 @@ namespace API.Controllers
       if(string.IsNullOrEmpty(id)){
           return BadRequest();
       }
-      var user = ConsultaFornecedor(id);
-      Context.Fornecedores.Remove(user);
+      var forn = ConsultaFornecedor(id);
+      forn.Excluido = true;
+      Context.Fornecedores.Update(forn);
       Context.SaveChanges();
-
-      return Ok(new {Response = "Fornecedor deletado com sucesso"});
+      MemoryCache.Remove("fornecedor");
+      return Ok(new {ok= true, Response = "Fornecedor deletado com sucesso"});
     }
    private List<FornecedorModel>  RestornaFornecedorList(){
       return MemoryCache.GetOrCreate("fornecedor", entry =>
@@ -125,6 +128,7 @@ namespace API.Controllers
                                 Id = x.Id,
                                 Nome = x.Nome,
                                 CnpjCpf = x.CnpjCpf,
+                                Email = x.Email,
                                 Telefone = x.Telefone
                               }).ToList();
                           });
