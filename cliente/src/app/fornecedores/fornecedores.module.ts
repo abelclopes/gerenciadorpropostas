@@ -10,8 +10,6 @@ import { FornecedoresFormComponent } from './fornecedores-form/fornecedores-form
 
 import { FornecedorService } from './service/fornecedor.service';
 
-import { NgxPaginationModule } from 'ngx-pagination';
-
 
 const routes: Routes = [
   { path: '', component: FornecedoresListComponent },
@@ -24,7 +22,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     CommonModule,
     FormsModule,
-    NgxPaginationModule,
     ReactiveFormsModule
   ],
   declarations: [
