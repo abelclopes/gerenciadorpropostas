@@ -32,22 +32,21 @@ export class CategoriasListComponent implements OnInit {
   }
 
   paginar(pagina: number, termo: string): void {
+    console.log(termo)
     this.paginaAtual = pagina;
     this.termoFiltro.next(termo);
+    console.log(pagina)
   }
 
   ngOnInit() {
-    // this.catService.getCategorias()
-    //   .subscribe(response => this.categorias = response);
-    this.catService.getCategorias(this.paginaAtual, this.tamanhoPagina)
-      this.termoFiltro
-      .debounceTime(200)
-      .switchMap(termo => this.catService.getCategorias(this.paginaAtual, this.tamanhoPagina))
-      .subscribe(x => {
-        this.categorias = x.resultado;
-        this.totalItens = x.totalItens;
-      })
-      this.termoFiltro.next("");
+    this.termoFiltro
+    .debounceTime(200)
+    .switchMap(termo => this.catService.getCategorias(this.paginaAtual, this.tamanhoPagina,termo))
+    .subscribe(x => {
+      this.categorias = x.resultado;
+      this.totalItens = x.totalItens;
+    })
+    this.termoFiltro.next("");
   }
   delete(id: string){
     console.log(id);

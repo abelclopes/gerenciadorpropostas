@@ -37,8 +37,13 @@ namespace API.Controllers
     [SwaggerResponse(403)]
     public ListaPaginada<CategoriasModel> Get(PaginationParams model)
     {      
+      var categorias = RestornaCategoriaList();
+      if(!string.IsNullOrEmpty(model.buscaTermo))
+      {
+        categorias =  categorias.Where(x => x.Nome.ToLower().Contains(model.buscaTermo.ToLower())).ToList();
+      }
       var listaPaginada = new ListaPaginada<CategoriasModel>(model.PageNumber, model.PageSize);
-      return listaPaginada.Carregar(RestornaCategoriaList());
+      return listaPaginada.Carregar(categorias);
     }
 
     [Route("{id}")]

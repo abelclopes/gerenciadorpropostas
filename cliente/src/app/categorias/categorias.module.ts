@@ -9,6 +9,8 @@ import { CategoriasFormComponent } from './categorias-form/categorias-form.compo
 import { CategoriasEditComponent } from './categorias-edit/categorias-edit.component';
 
 import { CategoriaService } from './service/categoria.service';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+
 
 import { NgxPaginationModule } from 'ngx-pagination';
 
@@ -24,7 +26,8 @@ const routes: Routes = [
   imports: [
     RouterModule.forChild(routes),
     CommonModule,
-    FormsModule,
+    FormsModule,  
+    NgxDatatableModule,
     NgxPaginationModule,
     ReactiveFormsModule
   ],

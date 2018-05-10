@@ -9,6 +9,7 @@ Migrations/
 /tmp
 /app/**/*.js
 /app/**/*.js.map
+/vscode/**
 
 # dependencies
 /node_modules

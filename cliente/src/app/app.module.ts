@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
 import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import {NgxPaginationModule} from 'ngx-pagination';
 import { AppComponent } from './app.component';
@@ -36,8 +37,10 @@ import { PaginationFilter } from './shared/pagination-filter.pipe';
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
+    NgxDatatableModule,
     HttpClientModule,
     NgxPaginationModule
+    
   ],
   providers: [
     AuthenticationService,

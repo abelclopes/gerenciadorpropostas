@@ -1,65 +1,69 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-          <ul class="nav navbar-nav navbar-right">
-              <li><a [routerLink]="['nova']"  class="btn btn-primary">Adicionar Nova</a></li>
-
-          </ul>
-        </div>
-        <div class="col-lg-12">
-          <h1 class="page-header">Categorias</h1>
-        </div>
-        <div class="col-lg-12">
-          <input class="form-control" #filtrarCategorias id="filtrar-Compromisso" (keyup)="filtrar(filtrarCategorias.value)" placeholder="Filtrar pelo Nome"/>
+            <h1 class="page-header">Categorias</h1>
         </div>
         <!-- /.col-lg-12 -->
-      </div>
-      <!-- /.row -->
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="panel panel-default">
-              <div class="panel-heading">
-                 Totas Categorias
-              </div>
-              <div class="panel-body">
-                  <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
-
-                        <tr>
-                            <th>Categoria</th>
-                            <th>Descrição</th>
-                            <th>Data de Cadastro</th>
-                            <th colspan="2">Ações</th>
-                        </tr>
-
-                        <tr class="odd gradeX" *ngFor="let cat of categorias | paginate: { itemsPerPage: tamanhoPagina, currentPage: paginaAtual, totalItems: totalItens }">
-                            <td>{{cat.nome}}</td>
-                            <td>{{cat.descricao}}</td>
-                            <td>{{cat.dataCriacao | date:'dd/MM/y'}}</td>
-                            <td class="center"><a routerLink='editar/{{cat.id}}'><i class="fa fa-edit"></i></a></td>
-                            <td class="center"><a (click)='delete(cat.id)'><i class="fa fa-trash"></i></a></td>
-                        </tr>
-                  </table>
-                  <div class="row col-md-12 margin-top">
-                    <pagination-controls (pageChange)="paginar($event, filtrarCategorias.value)"
-                    previousLabel="Anterior "
-                    nextLabel="Próximo"
-                    maxSize="9"
-                    directionLinks="true"
-                    autoHide="true"
-                    screenReaderPaginationLabel="Pagination"
-                    screenReaderPageLabel="page"
-                    screenReaderCurrentLabel="Você está na pagina"
-                    ></pagination-controls>
-
-                  </div>
-                    <!-- /.table-responsive -->
-                </div>
-                    <!-- /.panel-body -->
-            </div>
-                <!-- /.panel -->
-          </div>
-            <!-- /.col-lg-12 -->
-        </div>
-        <!-- /.row -->
     </div>
-    <!-- /#page-wrapper -->
+      <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+              
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Totas Categorias
+                </div>
+                <div class="panel-body">
+                        <div class="col-lg-12">
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a [routerLink]="['nova']"  class="btn btn-primary btn-small ">Adicionar Nova</a></li>
+                    
+                            </ul>
+                        </div>
+                        <input
+                        type='text'
+                        #filtrarCategorias
+                        style="margin-top: 10px"
+                        class="form-control "
+                        placeholder='Pesquisar'
+                        (keyup)='filtrar(filtrarCategorias.value)'
+                        />
+                        <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th>Descrição</th>
+                                    <th>Data de Cadastro</th>
+                                    <th colspan="2">Ações</th>
+                                </tr>
+        
+                                <tr class="odd gradeX" *ngFor="let cat of categorias | paginate: { itemsPerPage: tamanhoPagina, currentPage: paginaAtual, totalItems: totalItens }">
+                                    <td>{{cat.nome}}</td>
+                                    <td>{{cat.descricao}}</td>
+                                    <td>{{cat.dataCriacao | date:'dd/MM/y'}}</td>
+                                    <td class="center"><a routerLink='editar/{{cat.id}}'><i class="fa fa-edit"></i></a></td>
+                                    <td class="center"><a (click)='delete(cat.id)'><i class="fa fa-trash"></i></a></td>
+                                </tr>
+                          </table>
+                          <div class="row col-md-12 margin-top">
+                            <pagination-controls (pageChange)="paginar($event, filtrarCategorias.value)"
+                            previousLabel="Anterior "
+                            nextLabel="Próximo"
+                            maxSize="9"
+                            directionLinks="true"
+                            autoHide="true"
+                            screenReaderPaginationLabel="Pagination"
+                            screenReaderPageLabel="page"
+                            screenReaderCurrentLabel="Você está na pagina"
+                            ></pagination-controls>
+
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /#page-wrapper -->

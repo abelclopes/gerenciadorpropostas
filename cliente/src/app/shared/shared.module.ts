@@ -9,12 +9,11 @@ import {RatingComponent} from './rating/rating.component'
 import { SnackbarComponent } from './messages/snackbar/snackbar.component';
 
 import {NotificationService} from './messages/notification.service';
-import { DialogModalComponent } from './dialog-modal/dialog-modal.component'
 
 @NgModule({
-  declarations: [InputComponent, RadioComponent, RatingComponent, SnackbarComponent, DialogModalComponent],
+  declarations: [InputComponent, RadioComponent, RatingComponent, SnackbarComponent],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  exports: [InputComponent, RadioComponent,SnackbarComponent, DialogModalComponent,
+  exports: [InputComponent, RadioComponent,SnackbarComponent,
             RatingComponent, CommonModule,
             FormsModule, ReactiveFormsModule ]
 })
