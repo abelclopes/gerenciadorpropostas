@@ -28,7 +28,7 @@ export class FornecedoresListComponent implements OnInit {
   }
 
   filtrar(termo: string): void {
-    this.termoFiltro.next(termo);
+    this.termoFiltro.next(termo['path'][0].value);
   }
 
   paginar(pagina: number, termo: string): void {
@@ -37,12 +37,9 @@ export class FornecedoresListComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.catService.getFornecedors()
-    //   .subscribe(response => this.Fornecedors = response);
-    this.catService.getFornecedors(this.paginaAtual, this.tamanhoPagina)
       this.termoFiltro
       .debounceTime(200)
-      .switchMap(termo => this.catService.getFornecedors(this.paginaAtual, this.tamanhoPagina))
+      .switchMap(termo => this.catService.getFornecedors(this.paginaAtual, this.tamanhoPagina,termo))
       .subscribe(x => {
         this.fornecedores = x.resultado;
         this.totalItens = x.totalItens;
