@@ -13,6 +13,7 @@ const routes: Routes = [
   { path: 'login', loadChildren: './login/login.module#LoginModule' },
   { path: 'fornecedores', loadChildren: './fornecedores/fornecedores.module#FornecedoresModule', canActivate: [AuthGuard]},
   { path: 'categorias', loadChildren: './categorias/categorias.module#CategoriasModule', canActivate: [AuthGuard]},
+  { path: 'propostas', loadChildren: './propostas/propostas.module#PropostasModule', canActivate: [AuthGuard]},
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] }
 ];
 
