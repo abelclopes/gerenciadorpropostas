@@ -4,6 +4,10 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map'
+
+import { of } from 'rxjs/observable/of';
+import 'rxjs/add/operator/delay';
+
 import { PropostaPagedListModel, PropostaModel} from '../model';
 import { API_URL } from '../../../app.api';
 
@@ -50,4 +54,9 @@ export class PropostaService {
       let url = `${API_URL}/api/propostas/${id}`;
       return this.httpClient.delete(url, { headers: this.httpHeaders } );
     }
+
+    public createUpload(model: FormData): Observable<PropostaModel> {
+      let url = `${API_URL}/api/propostas/`;
+      return this.httpClient.post(url, model,{headers: this.httpHeaders, responseType: 'json'});
+  } 
 }
