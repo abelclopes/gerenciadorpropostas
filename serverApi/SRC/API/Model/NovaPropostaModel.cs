@@ -1,5 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
+
 using DOMAIN;
 using Model;
 
@@ -15,6 +17,6 @@ namespace Model
         public string FornecedorID { get; set; }
         public string CategoriaID { get; set; }  
         public int Status { get; set; }
-        public Byte[] Anexo { get; set; }
+        public IFormFile Anexo { get; set; }
     }
 }

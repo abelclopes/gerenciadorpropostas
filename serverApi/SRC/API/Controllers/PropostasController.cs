@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 using Model;
 using INFRAESTRUCTURE;
@@ -73,7 +74,7 @@ namespace API.Controllers
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public async Task<IActionResult> Post([FromBody] NovaPropostaModel model)
+    public async Task<IActionResult> Post([FromForm] NovaPropostaModel model)
     {
        if (model == null)
       {
@@ -83,12 +84,28 @@ namespace API.Controllers
       {
         throw new ArgumentException($"O Nome da Proposta {model.NomeProposta} já esta em uso");
       }
-      
-      _context.Propostas.Add(new Proposta(model.NomeProposta,
+       var proposta = new Proposta(model.NomeProposta,
                                  model.Descricao, model.Valor, 
                                 ConsultaFornecedor(model.FornecedorID), 
                                 ConsultaCategoria(model.CategoriaID), 
-                                (PropostaStatus)Enum.ToObject(typeof(PropostaStatus) , model.Status)));
+                                (PropostaStatus)Enum.ToObject(typeof(PropostaStatus),
+                                 model.Status));
+      if(model.Anexo != null)
+      {
+        using (Stream stream = vm.pdf.OpenReadStream())
+        {
+            using (var binaryReader = new BinaryReader(stream))
+            {
+                var fileContent = binaryReader.ReadBytes((int)vm.pdf.Length);
+                proposta.Anexo = new PropostaAnexo(fileContent, model.Anexo.FileName, model.Anexo.ContentType);
+            }
+        }
+
+      }
+
+
+
+      _context.Propostas.Add();
       await _context.SaveChangesAsync();
 
       return Ok(new {Response = "Proposta salvo com sucesso"});
