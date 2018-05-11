@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../service/usuario.service';
 import { Router } from '@angular/router';
-import { UsuariosNovoModel, UsuarioNovoModel } from '../model';
+import { UsuarioNovoModel } from '../model';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
@@ -10,7 +10,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
   styleUrls: ['./usuarios-form.component.css']
 })
 export class UsuariosFormComponent implements OnInit {
-  usuarioModel: UsuariosNovoModel;
+  usuarioModel: UsuarioNovoModel;
   nome: string;
   descricao: string;
   options: {id:number, nome:string}[];
@@ -51,7 +51,7 @@ export class UsuariosFormComponent implements OnInit {
       senha: this.usuarioModel.senha,
       cpf: this.usuarioModel.cpf,
       dataNacimento: this.usuarioModel.dataNacimento,
-      perfilUsuario: this.usuarioModel.perfilUsuario
+      perfilUsuario: this.usuarioModel.perfil
     });
   }
 
