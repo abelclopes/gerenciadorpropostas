@@ -28,7 +28,7 @@ export class PropostaService {
         headers: this.httpHeaders, responseType: 'json'
       });
     }
-    public novaProposta(model: PropostaModel){
+    public novoProposta(model: PropostaModel){
       let data = JSON.stringify(model);
       return this.httpClient.post<PropostaModel>(`${API_URL}/api/propostas/`,data,{headers: this.httpHeaders, responseType: 'json'});
     }
@@ -49,5 +49,11 @@ export class PropostaService {
     public delete(id: string): any {
       let url = `${API_URL}/api/propostas/${id}`;
       return this.httpClient.delete(url, { headers: this.httpHeaders } );
+    }
+    
+    public getStatus(): any {
+      let url = `${API_URL}/api/propostas/status`;
+      return this.httpClient.get(url, { headers: this.httpHeaders } );
+  
     }
 }
