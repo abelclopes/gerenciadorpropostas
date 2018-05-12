@@ -16,6 +16,7 @@ using DOMAIN.EnumHelper;
 using DOMAIN.Paginator;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using StructureMap.Diagnostics;
+using System.IO;
 
 namespace API.Controllers
 {
@@ -90,22 +91,22 @@ namespace API.Controllers
                                 ConsultaCategoria(model.CategoriaID), 
                                 (PropostaStatus)Enum.ToObject(typeof(PropostaStatus),
                                  model.Status));
+                                 
+
+      await _context.Propostas.AddAsync(proposta);
+
       if(model.Anexo != null)
       {
-        using (Stream stream = vm.pdf.OpenReadStream())
+        using (Stream stream = model.Anexo.OpenReadStream())
         {
             using (var binaryReader = new BinaryReader(stream))
             {
-                var fileContent = binaryReader.ReadBytes((int)vm.pdf.Length);
-                proposta.Anexo = new PropostaAnexo(fileContent, model.Anexo.FileName, model.Anexo.ContentType);
+                var fileContent = binaryReader.ReadBytes((int)model.Anexo.Length);
+                var propostaAnexo = new PropostaAnexo(fileContent, model.Anexo.FileName, model.Anexo.ContentType, proposta);                
+                await _context.PropostaAnexos.AddAsync(propostaAnexo);
             }
         }
-
       }
-
-
-
-      _context.Propostas.Add();
       await _context.SaveChangesAsync();
 
       return Ok(new {Response = "Proposta salvo com sucesso"});
