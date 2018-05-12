@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Threading.Tasks;
 using DOMAIN.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -26,10 +28,17 @@ namespace DOMAIN
         [MaxLength(500)]
         public string Descricao { get; set; }
         public double Valor { get; set; }
-        public virtual Fornecedor Fornecedor { get; set; }
-        public virtual Categoria Categoria { get; set; }
         public PropostaStatus Status { get; set; }
-        public virtual PropostaAnexo Anexo { get; set;}
+        [ForeignKey("Categoria")]
+        public Guid CategoriaId { get; set; }
+        public virtual Categoria Categoria { get; set; }
+        [ForeignKey("Fornecedor")]
+        public Guid FornecedorId { get; set; }
+        public virtual Fornecedor Fornecedor { get; set; }
+        public virtual ICollection<PropostaHistorico> PropostaHistorico { get; set; }
+
+
+
 
         public void Atualizar(Proposta model, IContext context)
         {
