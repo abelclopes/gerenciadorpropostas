@@ -29,7 +29,7 @@ namespace DOMAIN
         public virtual Fornecedor Fornecedor { get; set; }
         public virtual Categoria Categoria { get; set; }
         public PropostaStatus Status { get; set; }
-        public Byte[] Anexo { get; set;}
+        public virtual PropostaAnexo Anexo { get; set;}
 
         public void Atualizar(Proposta model, IContext context)
         {
