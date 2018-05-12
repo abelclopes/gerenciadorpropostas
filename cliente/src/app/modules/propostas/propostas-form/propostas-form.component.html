@@ -17,16 +17,21 @@
               </div>
               <div class="panel-body">
                   <div class="row">
-                      <div class="col-lg-12">
-                        <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" novalidate>
+                      <div class="col-lg-12">                         
+                        <form [formGroup]="propostaForm" (ngSubmit)="onSubmit()" novalidate>
+                            <div class="form-group">
+                                <label for="name">Proposta</label>
+                                <input type="text" id="nomeProposta" class="form-control"
+                                        formControlName="nomeProposta" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Proposta</label>
+                                <textarea type="text" id="nomeProposta" class="form-control"
+                                        formControlName="nomeProposta" required><textarea></textarea>
+                            </div>
                           <div class="form-group">
-                              <label for="name">Name</label>
-                              <input type="text" id="nome" class="form-control"
-                                     formControlName="nome" required>
-                          </div>
-                          <div class="form-group">
-                              <label for="pdf">pdf</label>
-                              <input type="file" #Anexo class="form-control" (change)="fileChange(uploader.files)" placeholder="Upload pdf">
+                              <label for="pdf">Enviar PDF</label>
+                              <input type="file" #Anexo class="form-control" (change)="fileChange(propostas.files)" placeholder="Upload pdf">
                           </div>
                           <button type="submit" class="btn btn-success">
                               Save

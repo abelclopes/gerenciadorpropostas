@@ -1,5 +1,7 @@
 import { Component, Input, OnChanges, OnInit, EventEmitter, Output, ViewChild, ViewEncapsulation  } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
 import { PropostaModel } from '../model';
 import { PropostaService } from '../service/proposta.service';
 @Component({
@@ -8,10 +10,12 @@ import { PropostaService } from '../service/proposta.service';
   styleUrls: ['./propostas-form.component.css']
 })
 export class PropostasFormComponent implements OnInit {
-  @Input() upload: PropostaModel;
+  @Input() proposta: PropostaModel;
   @Output() created: EventEmitter<PropostaModel> = new EventEmitter<PropostaModel>();
   @Output() updated: EventEmitter<PropostaModel> = new EventEmitter<PropostaModel>();
-  @ViewChild("uploader") uploader: any;
+  @ViewChild("propostas") propostas: any;
+
+  CategoriaOptions: {id:number, nome:string}[];
 
   propostaForm: FormGroup;
 
@@ -23,21 +27,21 @@ export class PropostasFormComponent implements OnInit {
   get valor() { return this.propostaForm.get('valor'); }
 
 
-  constructor(private propostaService: PropostaService) { }
+  constructor(private propostaService: PropostaService, private router : Router, private fb: FormBuilder) { }
 
   ngOnInit() {
-    this.propostaForm = new FormGroup({
-        nomeProposta: new FormControl(null),
-        descricao: new FormControl(null),
-        fornecedor: new FormControl(null),
-        categoria: new FormControl(null),
+    this.propostaForm =  this.fb.group({
+        nomeProposta: ['', Validators.required ],
+        descricao: ['', Validators.required ],
+        fornecedor: ['', Validators.required ],
+        categoria: ['', Validators.required ],
         anexo: new FormControl(null),
-        valor: new FormControl(null)
+        valor: ['', Validators.required ]
     }, { updateOn: 'submit' });
   }
   onSubmit() {
     if (this.propostaForm.valid) {
-        this.propostaService.createUpload(this.prepareSaveUpload()).subscribe((upload) => this.created.emit(upload));
+        this.propostaService.createUpload(this.prepareSaveUpload()).subscribe((proposta) => this.created.emit(proposta));
     }
   }
   prepareSaveUpload(): FormData {
