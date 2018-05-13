@@ -50,4 +50,9 @@ export class FornecedorService {
       const url = `${API_URL}/api/fornecedores/${id}`;
       return this.httpClient.delete(url, { headers: this.httpHeaders } );
     }
+    
+    search(busca: any){
+      const url = `${API_URL}/api/fornecedores/getall/${busca}`;
+      return this.httpClient.get(url, { headers: this.httpHeaders } );
+    }
 }
