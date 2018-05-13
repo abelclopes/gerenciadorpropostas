@@ -3,19 +3,19 @@ import {CommonModule} from '@angular/common'
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 
 import {InputComponent} from './input/input.component'
-import {RadioComponent} from './radio/radio.component'
-import {RatingComponent} from './rating/rating.component'
 
 import { SnackbarComponent } from './messages/snackbar/snackbar.component';
 
 import {NotificationService} from './messages/notification.service';
+import { ANNOTATIONS } from '@angular/core/src/util/decorators';
 
 @NgModule({
-  declarations: [InputComponent, RadioComponent, RatingComponent, SnackbarComponent],
+  declarations: [InputComponent, SnackbarComponent],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  exports: [InputComponent, RadioComponent,SnackbarComponent,
-            RatingComponent, CommonModule,
-            FormsModule, ReactiveFormsModule ]
+  exports: [InputComponent, SnackbarComponent,
+            CommonModule,
+            FormsModule, ReactiveFormsModule
+           ]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders {
