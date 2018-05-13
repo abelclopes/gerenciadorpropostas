@@ -26,6 +26,10 @@ export class HeaderComponent implements OnInit {
         data =>{
           this.userClaims = data
           localStorage.setItem('userDetails', JSON.stringify(data))
+      }, err =>{
+        if(err.status == 401){
+          this.Logout();
+        }
       });
       this.userClaims = this.headerService.response;
   }
