@@ -20,6 +20,16 @@ import { HeaderService } from './components/header/header.service';
 import { PaginationFilter } from './shared/pagination-filter.pipe';
 import { LoginModule } from './components/login/login.module';
 
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+
+import { LoadingBarModule } from '@ngx-loading-bar/core';
+
+import { AutocompleteModule } from 'ng2-input-autocomplete';
+
+import { LoadingModule, ANIMATION_TYPES } from 'ngx-loading';
+
+// import { CoreModule } from './core/core.module';
+import { LoadingService } from './LoadingService';
 
 @NgModule({
   declarations: [
@@ -29,6 +39,7 @@ import { LoginModule } from './components/login/login.module';
     PaginationFilter
   ],
   imports: [
+    NgbModule.forRoot(),
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
@@ -38,14 +49,23 @@ import { LoginModule } from './components/login/login.module';
     SharedModule,
     NgxDatatableModule,
     HttpClientModule,
-    NgxPaginationModule
-    
+    NgxPaginationModule,
+    LoadingBarModule.forRoot(),
+    LoadingModule.forRoot({
+      animationType: ANIMATION_TYPES.wanderingCubes,
+      backdropBackgroundColour: 'rgba(0,0,0,1)', 
+      backdropBorderRadius: '4px',
+      primaryColour: '#ffffff', 
+      secondaryColour: '#ffffff', 
+      tertiaryColour: '#ffffff'
+  }),
+  AutocompleteModule.forRoot()
   ],
   providers: [
     AuthenticationService,
     AuthGuard,
     NotificationService, HeaderService,
-    PaginationFilter
+    PaginationFilter, LoadingService
   ],
   bootstrap: [AppComponent]
 })
