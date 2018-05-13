@@ -8,6 +8,9 @@ import { PropostasListComponent } from './propostas-list/propostas-list.componen
 import { PropostasFormComponent } from './propostas-form/propostas-form.component';
 import { PropostasEditComponent } from './propostas-edit/propostas-edit.component';
 import { PropostaService } from './service/proposta.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AutocompleteModule } from 'ng2-input-autocomplete';
+import { FornecedorService } from '../fornecedores/service/fornecedor.service';
 
 
 const routes: Routes = [
@@ -21,12 +24,13 @@ const routes: Routes = [
     NgxPaginationModule,
     CommonModule,
     FormsModule, 
-    ReactiveFormsModule,   
-    FormsModule
+    ReactiveFormsModule,
+    NgbModule,
+    AutocompleteModule.forRoot()
   ],
   declarations: [PropostasListComponent, PropostasFormComponent, PropostasEditComponent],
   providers:[
-    PropostaService
+    PropostaService,FornecedorService
   ]
 })
 export class PropostasModule { }

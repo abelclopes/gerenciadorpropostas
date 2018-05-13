@@ -17,6 +17,8 @@ using DOMAIN.Paginator;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using StructureMap.Diagnostics;
 using System.IO;
+using System.Net.Http;
+using System.Text;
 
 namespace API.Controllers
 {
@@ -75,11 +77,12 @@ namespace API.Controllers
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public async Task<IActionResult> Post([FromForm] NovaPropostaModel model)
+    public async Task<IActionResult>  Post([FromForm] NovaPropostaModel model)
     {
-       if (model == null)
+
+      if (model.NomeProposta == null)
       {
-          return BadRequest();
+          return BadRequest(new {Erro = "aconteceu algo errado, tenta novamente!"});
       }
       if(RestornaPropostaList().Any(x => x.NomeProposta == model.NomeProposta))
       {
@@ -91,7 +94,7 @@ namespace API.Controllers
                                 ConsultaCategoria(model.CategoriaID), 
                                 (PropostaStatus)Enum.ToObject(typeof(PropostaStatus),
                                  model.Status));
-                                 
+        proposta.Id = Guid.NewGuid();       
 
       await _context.Propostas.AddAsync(proposta);
 
@@ -107,7 +110,7 @@ namespace API.Controllers
             }
         }
       }
-      await _context.SaveChangesAsync();
+       await _context.SaveChangesAsync();
 
       return Ok(new {Response = "Proposta salvo com sucesso"});
     }

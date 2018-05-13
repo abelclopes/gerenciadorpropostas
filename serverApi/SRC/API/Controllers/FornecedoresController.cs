@@ -53,7 +53,7 @@ namespace API.Controllers
     public IActionResult GetFornecedor(string id)
     {
       var Fornecedors = new FornecedorModel();
-      if(!string.IsNullOrEmpty(id)){
+      if(!string.IsNullOrEmpty(id) && RestornaFornecedorList().Any(x => x.Id == Guid.Parse(id))){
         return Ok(RestornaFornecedorList().FirstOrDefault(x => x.Id == Guid.Parse(id)));
       }
       return Ok(new { Response = "Nenhum Resultado Encontrado" });

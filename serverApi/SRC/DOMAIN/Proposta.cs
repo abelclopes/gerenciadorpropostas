@@ -18,8 +18,10 @@ namespace DOMAIN
             NomeProposta = nomeProposta;
             Descricao = descricao;
             Fornecedor = fornecedor;
+            FornecedorId = fornecedor.Id;            
             Valor = valor;
             Categoria = categoria;
+            CategoriaId = categoria.Id;
             Status = status;
         }
 
@@ -45,8 +47,10 @@ namespace DOMAIN
             NomeProposta = model.NomeProposta;
             Descricao = model.Descricao;
             Fornecedor = model.Fornecedor;
+            FornecedorId = model.Fornecedor.Id;
             Valor = model.Valor;
             Categoria = model.Categoria;
+            CategoriaId = model.Categoria.Id;
             Status = model.Status;
         }
     }
