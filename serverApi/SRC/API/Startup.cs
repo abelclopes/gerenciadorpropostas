@@ -139,15 +139,6 @@ namespace API
 
                 context.Seed();
             }
-            /********       QUANDO INICIAR A APLICAÇÃO PELO PRIMEIRA VES DESCOMENTAR TRECHO ABAIXO *************/
-            /*
-             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                var __context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-
-                __context.Seed();
-            } 
-            */
         }
     }
 }
