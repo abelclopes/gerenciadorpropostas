@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { UsuarioPagedListModel, UsuariosModel } from '../model';
 import { UsuarioService } from '../service/usuario.service';
+import { PerfilUsuarioEnum, PerfilUsuario, Perfil } from '../model';
 
 @Component({
   selector: 'app-usuarios-list',
@@ -13,7 +14,7 @@ export class UsuariosListComponent implements OnInit {
   private termoFiltro = new Subject<string>();
   usuarios: UsuariosModel[]
 
-
+  perfis:any[];
   paginaAtual: number;
   tamanhoPagina = 10
   totalItens: number;
@@ -41,8 +42,11 @@ export class UsuariosListComponent implements OnInit {
       .subscribe(x => {
         this.usuarios = x.resultado;
         this.totalItens = x.totalItens;
+        console.log(this.usuarios[0]);
+        
       })
       this.termoFiltro.next("");
+      this.setPerfis();
   }
   delete(id: string){
     console.log(id);
@@ -56,5 +60,22 @@ export class UsuariosListComponent implements OnInit {
         console.log(err);
       }
     );;
+  }
+  getUserPerfi(usuario: UsuariosModel){    
+    let permissao = this.perfis.find(x=>x.id == usuario.perfil);
+    return permissao.descricao;
+  }
+
+  setPerfis(){
+    let  names: Perfil[] = [];
+    let i:number =1;
+    for(var n in PerfilUsuario) {
+        if(typeof PerfilUsuario[n] === 'number') {          
+          names.push({'id': i, 'descricao': n});
+          i++;
+        }
+    }    
+    localStorage.setItem('usuariosPerfis', JSON.stringify(names));
+    this.perfis = names;
   }
 }
