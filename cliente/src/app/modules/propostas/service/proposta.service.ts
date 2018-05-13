@@ -21,8 +21,8 @@ export class PropostaService {
       var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
       this.httpHeaders = new HttpHeaders()
       .set('Accept', 'Application/json')
-      .set('Content-Type', 'Application/json;charset=UTF-8')
-      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('Content-Type', 'Application/json')
+      //.set('Content-Type', 'application/x-www-form-urlencoded')
       .set('No-Auth', 'true')
       .set('Authorization', `Bearer ${currentUser.token}`)
       .set('x-access-token', `${currentUser.token}`);
