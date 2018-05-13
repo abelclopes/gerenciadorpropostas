@@ -11,11 +11,11 @@ namespace DOMAIN
         
         [Description("Administrador")]
         Administrador = 1,
-        [Description("AnalistaDeCompras")]
+        [Description("Analista De Compras")]
         AnalistaDeCompras = 2,
-        [Description("AnalistaFinanceiro")]
+        [Description("Analista Financeiro")]
         AnalistaFinanceiro = 3,
-        [Description("DiretorFinanceiro")]
+        [Description("Diretor Financeiro")]
         DiretorFinanceiro = 4
     }
 }
