@@ -19,6 +19,7 @@ using StructureMap.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using API.Model;
 
 namespace API.Controllers
 {
@@ -43,20 +44,23 @@ namespace API.Controllers
     //[SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public  IActionResult Get(PaginationParamsProposta model)
+    public  ListaPaginada<Proposta> Get([FromQuery]PaginationParamsProposta model)
     {
-      var propostas = RestornaPropostaList();
-      this.setPaginacao(model);
-      if(!string.IsNullOrEmpty(model.NomeProposta) || !string.IsNullOrEmpty(model.Valor.ToString()) || !string.IsNullOrEmpty(model.FornecedorID)){ 
-        propostas = propostas.Where(x => x.NomeProposta.Contains(model.NomeProposta) 
-                            ||  x.Valor.Equals(model.Valor)
-                            ||  x.Fornecedor.Id == Guid.Parse(model.FornecedorID)
-                            ||  x.Categoria.Id == Guid.Parse(model.CategoriaID)
-                            ).ToList();
+      var listaPaginada = new ListaPaginada<Proposta>(model.PageNumber, model.PageSize);
+      var propostas = new List<Proposta>();
+      if(RestornaPropostaList().Any()){
+        propostas = RestornaPropostaList();
+        this.setPaginacao(model);
+        if(!string.IsNullOrEmpty(model.NomeProposta) || model.Valor > 0 && !string.IsNullOrEmpty(model.Valor.ToString()) || !string.IsNullOrEmpty(model.FornecedorID)){ 
+          propostas = propostas.Where(x => x.NomeProposta.Contains(model.NomeProposta) 
+                              ||  x.Valor.Equals(model.Valor)
+                              ||  x.Fornecedor.Id == Guid.Parse(model.FornecedorID)
+                              ||  x.Categoria.Id == Guid.Parse(model.CategoriaID)
+                              ).ToList();
+        }
+        return listaPaginada.Carregar(propostas);        
       }
-      if(propostas.Count() > 0)
-        return Ok(new PagedList<Proposta>(propostas.AsQueryable(), this.PageNumber, this.PageSize));
-      return Ok(new { Response = "Nenhum Resultado Encontrado" });
+      return listaPaginada.Carregar(propostas);
     }
 
     [Route("{id}")]
@@ -94,7 +98,6 @@ namespace API.Controllers
                                 ConsultaCategoria(model.CategoriaID), 
                                 (PropostaStatus)Enum.ToObject(typeof(PropostaStatus),
                                  model.Status));
-        proposta.Id = Guid.NewGuid();       
 
       await _context.Propostas.AddAsync(proposta);
 

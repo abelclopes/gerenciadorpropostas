@@ -23,7 +23,7 @@ namespace INFRAESTRUCTURE
         {
             modelBuilder.Entity<Categoria>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<Fornecedor>(entity =>
@@ -32,7 +32,7 @@ namespace INFRAESTRUCTURE
                     .IsUnique()
                     .HasFilter("([CnpjCpf] IS NOT NULL)");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<Proposta>(entity =>
@@ -41,7 +41,7 @@ namespace INFRAESTRUCTURE
 
                 entity.HasIndex(e => e.FornecedorId);
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Descricao).HasMaxLength(500);
 
@@ -60,7 +60,7 @@ namespace INFRAESTRUCTURE
 
                 entity.HasIndex(e => e.UsuarioId);
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
                 entity.HasOne(d => d.Proposta)
                     .WithMany(p => p.PropostaHistorico)
@@ -73,7 +73,7 @@ namespace INFRAESTRUCTURE
                     .IsUnique()
                     .HasFilter("([Cpf] IS NOT NULL)");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
             });
             base.OnModelCreating(modelBuilder);
         }
