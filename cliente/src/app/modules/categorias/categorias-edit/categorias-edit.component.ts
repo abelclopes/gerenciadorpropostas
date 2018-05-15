@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CategoriaService } from '../service/categoria.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { CategoriaModel } from '../model/categoria.model';
 
 @Component({
@@ -15,7 +15,8 @@ export class CategoriasEditComponent implements OnInit {
   nome: string;
   descricao: string;
 
-  constructor(private catService: CategoriaService,private router : Router, private route: ActivatedRoute) { }
+  constructor(private catService: CategoriaService,private router : Router,
+    private fb: FormBuilder, private route: ActivatedRoute) { }
 
   ngOnInit() {
 
@@ -28,7 +29,7 @@ export class CategoriasEditComponent implements OnInit {
       }
     );
 
-    this.categoriaForm = new FormGroup({
+    this.categoriaForm = this.fb.group({
       'nome': new FormControl(this.nome, [
         Validators.required,
         Validators.minLength(4)

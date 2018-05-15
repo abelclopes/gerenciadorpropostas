@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DOMAIN.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ namespace DOMAIN
         public string CnpjCpf { get; set; }
         public string Email { get; set; }
         public string Telefone { get; set; }
+        public ICollection<Proposta> Propostas { get; set; }
 
         public void Atualizar(Fornecedor model, IContext _context)
         {

@@ -15,7 +15,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-lg-12">
-                            <form (ngSubmit)="onSubmit()" [formGroup]="fornecedorForm">
+                            <form (ngSubmit)="onSubmit(fornecedorForm.value)" [formGroup]="fornecedorForm">
                                 <div class="form-group">
                                     <label>Fornecedor</label>
                                     <input class="form-control" placeholder="Nome da Fornecedor"
@@ -40,7 +40,7 @@
                                 <button [disabled]="!fornecedorForm.valid" class="btn btn-lg btn-success"
                                 type="submit">Salvar</button>
                                 <button type="reset" (click)="resetForm()" class="btn btn-lg btn-default">Limpar formulário</button>
-                                <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+                                <div *ngIf="errors" class="alert alert-danger">{{error}}</div>
                             </form>
                         </div>
                     </div>

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Threading.Tasks;
 using DOMAIN.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -11,18 +12,20 @@ namespace DOMAIN
         public PropostaAnexo()
         {
         }
-        public PropostaAnexo(byte[] nome, string _fileName, string _contentType)
+
+        public PropostaAnexo(byte[] fileContent, string fileName, string contentType, Proposta proposta)
         {
-            this.Nome = nome;
-            this.fileContent = _fileContent;
-            this.contentType = _contentType;
+            Nome = fileName;
+            FileContent = fileContent;
+            ContentType = contentType;
+            Proposta = proposta;
         }
 
         public string Nome { get; set; }
         public string ContentType { get ; set;}
         public byte[] FileContent { get ; set;}
-        public virtual Proposta Proposta { get ; set;}
-        public void Atualizar(PropostaAnexo model, Proposta proposta)
+        public Proposta Proposta { get; set; }
+        public void Add(PropostaAnexo model, Proposta proposta)
         {
             this.Nome = model.Nome;
             this.ContentType = model.ContentType;

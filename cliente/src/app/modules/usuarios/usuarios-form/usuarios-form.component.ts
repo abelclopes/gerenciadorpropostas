@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { UsuarioService } from '../service/usuario.service';
-import { Router } from '@angular/router';
-import { UsuarioNovoModel } from '../model';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { UsuarioService } from '../service/usuario.service';
+import { UsuarioNovoModel } from '../model';
 
 @Component({
   selector: 'app-usuarios-form',
@@ -17,7 +18,7 @@ export class UsuariosFormComponent implements OnInit {
 
   usuarioForm: FormGroup;
 
-  constructor(private userService: UsuarioService,private router : Router, private fb: FormBuilder) { }
+  constructor(private userService: UsuarioService, private router : Router, private fb: FormBuilder) { }
 
   ngOnInit() {
     this.userService.getPerfis().subscribe(res => this.options = res);

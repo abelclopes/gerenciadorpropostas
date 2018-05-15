@@ -30,7 +30,9 @@
         "vendor/jquery/jquery.min.js",
         "vendor/bootstrap/js/bootstrap.min.js",
         "vendor/metisMenu/metisMenu.min.js",
-        "assets/js/sb-admin-2.min.js"
+        "assets/js/sb-admin-2.min.js",     
+        "../node_modules/jquery-mask-plugin/dist/jquery.mask.min.js",
+        "../node_modules/ng2-input-autocomplete/bundles/ng2-input-autocompleteModule.umd.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

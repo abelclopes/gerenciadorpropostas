@@ -362,7 +362,7 @@ typings/
 # dotenv environment variables file
 .env
 
-
+/data/*
 
 # End of https://www.gitignore.io/api/node,angular,aspnetcore
 

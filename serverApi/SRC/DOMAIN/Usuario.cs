@@ -4,6 +4,7 @@ using DOMAIN.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
+using System.Collections.Generic;
 
 namespace DOMAIN
 {
@@ -38,6 +39,7 @@ namespace DOMAIN
         public DateTime DataNacimento { get; set; }
         public virtual Perfil PerfilUsuario { get; set; }
 
+        public virtual PropostaHistorico PropostaHistoricos { get; set; }
         public void Atualizar(Usuario model, IContext _context)
         {
             Nome = model.Nome;

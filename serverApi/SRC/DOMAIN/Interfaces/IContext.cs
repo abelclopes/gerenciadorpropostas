@@ -12,6 +12,7 @@ namespace DOMAIN.Interfaces
         DbSet<Usuario> Usuarios { get; set; }
         DbSet<Fornecedor> Fornecedores { get; set; }
         DbSet<Proposta> Propostas { get; set; }
+        DbSet<PropostaAnexo> PropostaAnexos { get; set; }
         DbSet<PropostaHistorico> PropostasHistoricos { get; set; }
         DbSet<Categoria> Categorias { get; set; }        
         DatabaseFacade Database { get; }

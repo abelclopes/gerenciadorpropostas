@@ -43,9 +43,22 @@ namespace API.Controllers
         categorias =  categorias.Where(x => x.Nome.ToLower().Contains(model.buscaTermo.ToLower())).ToList();
       }
       var listaPaginada = new ListaPaginada<CategoriasModel>(model.PageNumber, model.PageSize);
-      return listaPaginada.Carregar(categorias);
+      return listaPaginada.Carregar(categorias);      
     }
-
+    
+    [Route("GetAll")]
+    [HttpGet, Authorize]
+    [SwaggerResponse(201)]
+    [SwaggerResponse(401)]
+    [SwaggerResponse(403)]
+    public IActionResult GetCategorias()
+    {
+      var categorias = RestornaCategoriaList();
+      if(categorias == null){
+        return BadRequest(new {Error="Nenhuma categoria encontrada", Response = "Nenhum Resultado Encontrado" });
+      }
+      return Ok(new {ok="sucesso", Response = categorias});
+    }
     [Route("{id}")]
     [HttpGet, Authorize]
     [ProducesResponseType(typeof(CategoriasModel), 201)]

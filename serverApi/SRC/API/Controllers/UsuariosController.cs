@@ -17,6 +17,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using StructureMap.Diagnostics;
 using DOMAIN.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using API.Model;
 
 namespace API.Controllers
 {
@@ -31,7 +32,7 @@ namespace API.Controllers
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public  IActionResult Get(PaginationParams model)
+    public  ListaPaginada<UsuariosModel> Get(PaginationParams model)
     {
       var usuarios = RestornaUsuariosList();
       if(!string.IsNullOrEmpty(model.buscaTermo)){ 
@@ -40,9 +41,8 @@ namespace API.Controllers
                             ||  x.Email.Contains(model.buscaTermo)
                             ).ToList();
       }
-      if(usuarios.Count() > 0)
-        return Ok(new PagedList<UsuariosModel>(usuarios.AsQueryable(), model.PageNumber, model.PageSize));
-      return BadRequest(new { Response = "Nenhum Resultado Encontrado"} );
+      var listaPaginada = new ListaPaginada<UsuariosModel>(model.PageNumber, model.PageSize);
+      return listaPaginada.Carregar(usuarios);
     }
 
     [Route("{id}")]
@@ -75,6 +75,7 @@ namespace API.Controllers
       Context.Usuarios.Add(new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, model.PerfilUsuario, model.Senha));
       Context.SaveChanges();
 
+      MemoryCache.Remove("fornecedor");
       return Ok(new {Response = "Usuário salvo com sucesso"});
     }
     
@@ -104,6 +105,7 @@ namespace API.Controllers
       Context.Usuarios.Update(usuario);
       Context.SaveChanges();
 
+      MemoryCache.Remove("fornecedor");
       return Ok(new {Response = "Usuário salvo com sucesso"});
     }
     
@@ -122,37 +124,27 @@ namespace API.Controllers
       Context.Usuarios.Update(user);
       Context.SaveChanges();
 
+      MemoryCache.Remove("fornecedor");
       return Ok(new {Response = "Usuário deletado com sucesso"});
     }
+
     private List<UsuariosModel>  RestornaUsuariosList(){
-      return Context.Usuarios
-      .Where(x => !x.Excluido)
-      .Select(x => 
-            new UsuariosModel{ 
-              Id = x.Id,
-              Nome = x.Nome, 
-              Email = x.Email, 
-              Cpf = x.Cpf,
-              DataNacimento = x.DataNacimento,
-              Perfil = x.PerfilUsuario //EnumHelper.GetDescription(x.PerfilUsuario), 
-            }).ToList();
+      return MemoryCache.GetOrCreate("usuarios", entry =>
+                          {
+                            entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+                            return Context.Usuarios.Where(x => !x.Excluido)
+                            .Select(x => new UsuariosModel
+                              {
+                                Id = x.Id,
+                                Nome = x.Nome, 
+                                Email = x.Email, 
+                                Cpf = x.Cpf,
+                                DataNacimento = x.DataNacimento,
+                                Perfil = x.PerfilUsuario,
+                                //PerfilDescricao = EnumHelper.GetDescription(x.PerfilUsuario), 
+                              }).ToList();
+          });
     }
-
-        private List<UsuariosModel> RetornarUsuariosValidos()
-        {
-            return MemoryCache.GetOrCreate("usuarios", entry =>
-                           {
-                               entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
-                               return Context.Usuarios.AsNoTracking().Where(x => !x.Excluido).Select(x => new UsuariosModel()
-                               {
-                                   DataAtualizacao = x.DataAtualizacao,
-                                   DataCriacao = x.DataCriacao,
-                                   Id = x.Id,
-                                   Email = x.Email,
-                               }).ToList();
-                           });
-        }
-
     private Usuario ConsultaUsuario(string id){
       return Context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
     }

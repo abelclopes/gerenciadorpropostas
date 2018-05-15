@@ -11,6 +11,7 @@ import { CategoriaModel } from '../model/categoria.model';
 export class CategoriasFormComponent implements OnInit {
   nome: string;
   descricao: string;
+  error:boolean
   constructor(private catService: CategoriaService,private router : Router) { }
 
   ngOnInit() {
@@ -28,5 +29,7 @@ export class CategoriasFormComponent implements OnInit {
         }
       );
   }
-
+  resetForm(){
+    return;
+  }
 }

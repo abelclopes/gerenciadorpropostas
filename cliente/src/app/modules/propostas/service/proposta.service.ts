@@ -19,8 +19,10 @@ export class PropostaService {
     constructor(protected httpClient: HttpClient, private http: Http) {
 
       var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
-       this.httpHeaders = new HttpHeaders()
-      .set('Content-Type', 'application/json')
+      this.httpHeaders = new HttpHeaders()
+      .set('Accept', 'Application/json')
+      .set('Content-Type', 'Application/json')
+      //.set('Content-Type', 'application/x-www-form-urlencoded')
       .set('No-Auth', 'true')
       .set('Authorization', `Bearer ${currentUser.token}`)
       .set('x-access-token', `${currentUser.token}`);
@@ -32,9 +34,9 @@ export class PropostaService {
         headers: this.httpHeaders, responseType: 'json'
       });
     }
-    public novaProposta(model: PropostaModel){
+    public novoProposta(model: PropostaModel){
       let data = JSON.stringify(model);
-      return this.httpClient.post<PropostaModel>(`${API_URL}/api/propostas/`,data,{headers: this.httpHeaders, responseType: 'json'});
+      return this.httpClient.post<PropostaModel>(`${API_URL}/api/propostas/`,model,{headers: this.httpHeaders, responseType: 'json'});
     }
     public getPropostaById(id: string): Observable<PropostaModel> {
       return this.httpClient.get<PropostaModel>(`${API_URL}/api/propostas/${id}`,{
@@ -54,9 +56,29 @@ export class PropostaService {
       let url = `${API_URL}/api/propostas/${id}`;
       return this.httpClient.delete(url, { headers: this.httpHeaders } );
     }
+    
+    public getStatus(): any {
+      let url = `${API_URL}/api/propostas/status`;
+      return this.httpClient.get(url, { headers: this.httpHeaders } );
+  
+    }
 
-    public createUpload(model: FormData): Observable<PropostaModel> {
-      let url = `${API_URL}/api/propostas/`;
-      return this.httpClient.post(url, model,{headers: this.httpHeaders, responseType: 'json'});
-  } 
+    public createUpload(model: FormData): any {
+      console.log(model);
+     // debugger;
+      var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
+      let httpHeaders = new HttpHeaders()
+     // .set('Content-Type', 'Application/json;')
+      .set('No-Auth', 'true')
+      .set('Authorization', `Bearer ${currentUser.token}`)
+      .set('x-access-token', `${currentUser.token}`);
+      let url = `${API_URL}/api/propostas`;
+      return this.httpClient.post(url, model,{headers: httpHeaders , responseType: 'json'});
+    } 
+
+    
+    getCategorias(): any {
+      let url = `${API_URL}/api/categorias/getall`;
+      return this.httpClient.get(url, { headers: this.httpHeaders } );
+    }
 }

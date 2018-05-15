@@ -20,15 +20,22 @@ import { HeaderService } from './components/header/header.service';
 import { PaginationFilter } from './shared/pagination-filter.pipe';
 import { LoginModule } from './components/login/login.module';
 
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+
+import { LoadingService } from './LoadingService';
+import { KzMaskDirective } from './shared/mascara.directive';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
     HeaderComponent,
+    KzMaskDirective,
     PaginationFilter
   ],
   imports: [
+    NgbModule.forRoot(),
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
@@ -39,13 +46,12 @@ import { LoginModule } from './components/login/login.module';
     NgxDatatableModule,
     HttpClientModule,
     NgxPaginationModule
-    
   ],
   providers: [
     AuthenticationService,
     AuthGuard,
     NotificationService, HeaderService,
-    PaginationFilter
+    PaginationFilter, LoadingService
   ],
   bootstrap: [AppComponent]
 })

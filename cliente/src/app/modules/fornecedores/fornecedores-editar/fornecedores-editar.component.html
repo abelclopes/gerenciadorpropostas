@@ -14,33 +14,37 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-lg-12">
-                            <form (ngSubmit)="onSubmit()" [formGroup]="fornecedorForm">
+                        <div class="col-lg-12" *ngIf="fornecedor">
+                            <form (ngSubmit)="onSubmit(fornecedorForm.value)" [formGroup]="fornecedorForm" autocomplete="off">
                                 <div class="form-group">
                                     <label>Fornecedor</label>
-                                    <input class="form-control" placeholder="Nome da Fornecedor"
-                                    [(ngModel)]="model.nome" formControlName="nome" required>
+                                    <input class="form-control" placeholder="Nome da Fornecedor" autocomplete="off"
+                                    [(ngModel)]="fornecedor.nome" formControlName="nome" required>
                                     <p class="help-block"></p>
                                 </div>
                                 <div class="form-group">
                                     <label>E-mail</label>
-                                    <input class="form-control" placeholder="Email"
-                                    [(ngModel)]="model.email" formControlName="email" required>
+                                    <input class="form-control" placeholder="Email" autocomplete="off"
+                                    [(ngModel)]="fornecedor.email" formControlName="email" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Telefone</label>
-                                    <input class="form-control" placeholder="Telefone"
-                                    [(ngModel)]="model.telefone" formControlName="telefone" required>
+                                    <input class="form-control" placeholder="Telefone" autocomplete="off"
+                                    [(ngModel)]="fornecedor.telefone" formControlName="telefone"  kzMask="(99)99999-999"  required>
+
+CPF: <input type="text" kzMask="999.999.999-99">
+CNPJ: <input type="text" kzMask="99.999.999/9999-99">
+CEP: <input type="text" kzMask="99999-999">
                                 </div>
                                 <div class="form-group">
-                                    <label>Cnpj/Cpf</label>
-                                    <input class="form-control" placeholder="cnpjCpf"
-                                    [(ngModel)]="model.cnpjCpf"  formControlName="cnpjCpf" required>
+                                    <label>Cnpj/Cpf</label> 
+                                    <input class="form-control" placeholder="cnpjCpf" autocomplete="off"
+                                    [(ngModel)]="fornecedor.cnpjCpf"  formControlName="cnpjCpf"  maxlength="19" required>
                                 </div>
                                 <button [disabled]="!fornecedorForm.valid" class="btn btn-lg btn-success"
                                 type="submit">Salvar</button>
                                 <button type="reset" (click)="resetForm()" class="btn btn-lg btn-default">Limpar formulário</button>
-                                <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+                                <div *ngIf="errors()" class="alert alert-danger">{{error}}</div>
                             </form>
                         </div>
                     </div>
@@ -54,3 +58,4 @@
     </div>
     <!-- /.row -->
   </div>
+  

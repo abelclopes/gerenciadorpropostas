@@ -12,7 +12,8 @@ import { LoginModel } from '../../../logica-api';
 export class LoginComponent implements OnInit {
   email: string;
   password: string;
-
+  loading = false;
+  error =false;
   constructor(private authService: AuthenticationService, private router : Router) { }
 
   ngOnInit() {

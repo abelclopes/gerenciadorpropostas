@@ -53,8 +53,25 @@ namespace API.Controllers
     public IActionResult GetFornecedor(string id)
     {
       var Fornecedors = new FornecedorModel();
-      if(!string.IsNullOrEmpty(id)){
+      if(!string.IsNullOrEmpty(id) && RestornaFornecedorList().Any(x => x.Id == Guid.Parse(id))){
         return Ok(RestornaFornecedorList().FirstOrDefault(x => x.Id == Guid.Parse(id)));
+      }
+      return Ok(new { Response = "Nenhum Resultado Encontrado" });
+    }
+    
+
+    [Route("GetAll/{busca}")]
+    [HttpGet, Authorize]
+    [ProducesResponseType(typeof(FornecedorModel), 201)]
+    [SwaggerResponse(401)]
+    [SwaggerResponse(403)]
+    public IActionResult GetBuscarFornecedor([FromRoute]string busca)
+    {
+      var Fornecedors = new FornecedorModel();
+      if(!string.IsNullOrEmpty(busca)){
+        var forncedores = RestornaFornecedorList().Where(x => x.CnpjCpf.Contains(busca) 
+        || x.Nome.Contains(busca) || x.Email.Contains(busca) || x.Telefone.Contains(busca)).ToList();
+        return Ok(new {Ok="sucesso", Response = forncedores, total = forncedores.Count()});
       }
       return Ok(new { Response = "Nenhum Resultado Encontrado" });
     }

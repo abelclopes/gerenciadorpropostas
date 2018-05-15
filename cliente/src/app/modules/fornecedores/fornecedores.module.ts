@@ -12,7 +12,6 @@ import { FornecedorService } from './service/fornecedor.service';
 
 
 import { NgxPaginationModule } from 'ngx-pagination';
-
 const routes: Routes = [
   { path: '', component: FornecedoresListComponent },
   { path: 'editar/:id', component: FornecedoresEditarComponent },
