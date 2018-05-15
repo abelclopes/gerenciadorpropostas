@@ -6,7 +6,7 @@
 <input type="text" [(AlMaskValue)]="phoneValue01" [AlMask]="phoneMask01" ngModel>
 <br><br>
 <span>Phone 02 ({{ phoneValue02 }}):</span><br>
-<input type="text" [(AlMaskValue)]="phoneValue02" [AlMask]="phoneMask02" [spKeepMask]="true" ngModel>
+<input type="text" [(AlMaskValue)]="phoneValue02" [AlMask]="phoneMask02" [AlKeepMask]="true" ngModel>
 
 
 

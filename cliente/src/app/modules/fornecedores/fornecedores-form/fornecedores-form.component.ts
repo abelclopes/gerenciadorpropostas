@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FornecedorModel } from '../model/fornecedor.model';
 
-import { GeproMaskUtil } from '../../../shared/diretivas/mask.directive';
+import { GeproMaskUtilService } from '../../../shared/diretivas';
 
 @Component({
   selector: 'app-fornecedores-form',
@@ -13,7 +13,7 @@ import { GeproMaskUtil } from '../../../shared/diretivas/mask.directive';
   styleUrls: ['./fornecedores-form.component.css']
 })
 export class FornecedoresFormComponent implements OnInit {
-  public maskTelefone = GeproMaskUtil.PHONE_MASK_GENERATOR;
+  public maskTelefone = GeproMaskUtilService.PHONE_MASK_GENERATOR;
 
   nome: string;
   descricao: string;

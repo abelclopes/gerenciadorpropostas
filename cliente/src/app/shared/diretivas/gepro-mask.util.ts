@@ -1,6 +1,6 @@
 import { MaskGenerator } from "./interfaces/mask-generator.interface";
 
-export class GeproMaskUtil {
+export class GeproMaskUtilService {
 
     private static PHONE_SMALL = '(999) 999-9999';
     private static PHONE_BIG = '(999) 9999-9999';
@@ -8,30 +8,30 @@ export class GeproMaskUtil {
     private static CNPJ = '99.999.999/9999-99';
 
     public static PHONE_MASK_GENERATOR: MaskGenerator = {
-        generateMask: () =>  GeproMaskUtil.PHONE_SMALL,
+        generateMask: () =>  GeproMaskUtilService.PHONE_SMALL,
     }
 
     public static DYNAMIC_PHONE_MASK_GENERATOR: MaskGenerator = {
         generateMask: (value: string) => {
-            return GeproMaskUtil.hasMoreDigits(value, GeproMaskUtil.PHONE_SMALL) ? 
-                GeproMaskUtil.PHONE_BIG : 
-                GeproMaskUtil.PHONE_SMALL;
+            return GeproMaskUtilService.hasMoreDigits(value, GeproMaskUtilService.PHONE_SMALL) ? 
+                GeproMaskUtilService.PHONE_BIG : 
+                GeproMaskUtilService.PHONE_SMALL;
         },
     }
 
     public static CPF_MASK_GENERATOR: MaskGenerator = {
-        generateMask: () => GeproMaskUtil.CPF,
+        generateMask: () => GeproMaskUtilService.CPF,
     }
 
     public static CNPJ_MASK_GENERATOR: MaskGenerator = {
-        generateMask: () => GeproMaskUtil.CNPJ,
+        generateMask: () => GeproMaskUtilService.CNPJ,
     }
 
     public static PERSON_MASK_GENERATOR: MaskGenerator = {
         generateMask: (value: string) => {
-            return GeproMaskUtil.hasMoreDigits(value, GeproMaskUtil.CPF) ? 
-                GeproMaskUtil.CNPJ : 
-                GeproMaskUtil.CPF;
+            return GeproMaskUtilService.hasMoreDigits(value, GeproMaskUtilService.CPF) ? 
+                GeproMaskUtilService.CNPJ : 
+                GeproMaskUtilService.CPF;
         },
     }
 

@@ -23,32 +23,33 @@ import { LoginModule } from './components/login/login.module';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import { LoadingService } from './LoadingService';
-import { KzMaskDirective } from './shared/mascara.directive';
-import { NgxCurrencyModule } from "ngx-currency";
-import { CURRENCY_MASK_CONFIG } from 'ngx-currency/src/currency-mask.config';
+import { MaskDirective } from './shared/diretivas/mask.directive';
+import { ModalModule } from 'ngx-bootstrap';
 
 import { CustomCurrencyMaskConfig } from './shared/diretivas/custon-currency-masck-config';
+
+
+import { NgxCurrencyModule } from "ngx-currency";
+import { CURRENCY_MASK_CONFIG } from 'ngx-currency/src/currency-mask.config';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
     HeaderComponent,
-    KzMaskDirective,
     PaginationFilter
   ],
   imports: [
-    NgbModule.forRoot(),
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    LoginModule,
-    FormsModule,
     ReactiveFormsModule,
-    SharedModule,
     NgxDatatableModule,
     HttpClientModule,
     NgxPaginationModule,
+    NgbModule.forRoot(),
+    SharedModule.forRoot(),
+    ModalModule.forRoot(),
     NgxCurrencyModule
   ],
   providers: [

@@ -16,16 +16,18 @@ export class HeaderService {
     UsuariosClans(): Observable<any> {
 
       const currentUser: tokenUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
-      let httpHeaders = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('No-Auth', 'true')
-      .set('Authorization', `Bearer ${currentUser.token}`)
-      .set('x-access-token', currentUser.token);
-      return this.httpClient.get(`${API_URL}/api/UsuariosClans/${currentUser.email}`,
+      if(currentUser != null){
+        let httpHeaders = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('No-Auth', 'true')
+        .set('Authorization', `Bearer ${currentUser.token}`)
+        .set('x-access-token', currentUser.token);
+        return this.httpClient.get(`${API_URL}/api/UsuariosClans/${currentUser.email}`,
         {
           headers: httpHeaders,
           responseType: 'json'
         });
+      }
     }
 }
 export class tokenUser{

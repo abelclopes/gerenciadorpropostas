@@ -20,22 +20,23 @@ export class HeaderComponent implements OnInit {
   public defaultHeaders = new HttpHeaders();
 
   constructor(protected httpClient: HttpClient, private router: Router, private headerService: HeaderService) { }  ngOnInit() {
-      this.isAuthenticaiton();
-      this.headerService.UsuariosClans()
-      .subscribe(
-        data =>{
-          this.userClaims = data
-          localStorage.setItem('userDetails', JSON.stringify(data))
-      }, err =>{
-        if(err.status == 401){
-          this.Logout();
-        }
-      });
-      this.userClaims = this.headerService.response;
+      if(this.isAuthenticaiton()){
+        this.headerService.UsuariosClans()
+        .subscribe(
+          data =>{
+            this.userClaims = data
+            localStorage.setItem('userDetails', JSON.stringify(data))
+        }, err =>{
+          if(err.status == 401){
+            this.Logout();
+          }
+        });
+        this.userClaims = this.headerService.response;
+      }
   }
   isAuthenticaiton(){
     const authOn = JSON.parse(localStorage.getItem('usuarioCorrente'));
-    if(authOn != null){
+    if(authOn != null && authOn != undefined){
       this.email = authOn['email'];
       this.accessToken = authOn['token'];
        return true
@@ -43,6 +44,7 @@ export class HeaderComponent implements OnInit {
     return false
   }
   Logout(){
+    localStorage.clear();
     this.router.navigate(['/logout']);
   }
 }

@@ -7,24 +7,29 @@ import { CommonModule } from '@angular/common';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HttpModule } from '@angular/http';
 import { AuthGuard } from './_guards/auth.guard';
+import { SharedModule } from './shared/shared.module';
+import * as $ from 'jquery';
+import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.component';
+
 
 const routes: Routes = [
-  { path : '', redirectTo:'/login', pathMatch : 'full'},
+ // { path : '', redirectTo:'/dashboard', pathMatch : 'full'},
   { path: 'login', loadChildren: './components/login/login.module#LoginModule' },
   { path: 'fornecedores', loadChildren: './modules/fornecedores/fornecedores.module#FornecedoresModule', canActivate: [AuthGuard]},
   { path: 'categorias', loadChildren: './modules/categorias/categorias.module#CategoriasModule', canActivate: [AuthGuard]},
   { path: 'propostas', loadChildren: './modules/propostas/propostas.module#PropostasModule', canActivate: [AuthGuard]},
   { path: 'usuarios', loadChildren: './modules/usuarios/usuarios.module#UsuariosModule', canActivate: [AuthGuard]},
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] }
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },  
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules}),
     CommonModule,
     HttpModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules})
   ],
   declarations: [],
   exports: [

@@ -23,7 +23,7 @@ export class MaskDirective {
     @Input('AlMask') 
     public maskGenerator: MaskGenerator;
 
-    @Input('spKeepMask') 
+    @Input('AlKeepMask') 
     public keepMask: boolean;
 
     @Input('AlMaskValue') 

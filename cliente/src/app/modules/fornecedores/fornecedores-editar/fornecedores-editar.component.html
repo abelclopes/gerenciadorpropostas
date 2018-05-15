@@ -30,16 +30,17 @@
                                 <div class="form-group">
                                     <label>Telefone</label>
                                     <input class="form-control" placeholder="Telefone" autocomplete="off"
-                                    [(ngModel)]="fornecedor.telefone" formControlName="telefone"  
-                                    [(AlMaskValue)]="maskTelefone" [AlMask]="maskTelefone"
+                                    ngModel formControlName="telefone"  
                                     required>
+                                    <!-- [(AlMaskValue)]="maskTelefone" [AlMask]="maskTelefone" -->
                                 </div>
                                 <div class="form-group">
                                     <label>Cnpj/Cpf</label> 
                                     <input class="form-control" placeholder="cnpjCpf" autocomplete="off"
-                                    [(ngModel)]="fornecedor.cnpjCpf"  formControlName="cnpjCpf"  maxlength="19"                                    
-                                    [(AlMaskValue)]="maskCnpj" [AlMask]="maskCnpj"
+                                    formControlName="cnpjCpf"  maxlength="19"                                    
+                                    ngModel 
                                     required>
+                                    <!-- [(AlMaskValue)]="maskCnpj" [AlMask]="maskCnpj" -->
                                 </div>
                                 <button [disabled]="!fornecedorForm.valid" class="btn btn-lg btn-success"
                                 type="submit">Salvar</button>
