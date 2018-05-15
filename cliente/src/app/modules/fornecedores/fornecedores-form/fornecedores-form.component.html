@@ -30,7 +30,8 @@
                                 <div class="form-group">
                                     <label>Telefone</label>
                                     <input class="form-control" placeholder="Telefone"
-                                     formControlName="telefone" required>
+                                     formControlName="telefone" required
+                                     [(AlMaskValue)]="maskTelefone" [AlMask]="maskTelefone">
                                 </div>
                                 <div class="form-group">
                                     <label>Cnpj/Cpf</label>

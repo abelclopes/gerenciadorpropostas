@@ -4,7 +4,7 @@ import { MaskGenerator } from './interfaces/mask-generator.interface';
 
 
 @Directive({
-    selector: '[spMask]' 
+    selector: '[AlMask]' 
 })
 export class MaskDirective {
 
@@ -20,13 +20,13 @@ export class MaskDirective {
     private value: string = null;
     private displayValue: string = null;
 
-    @Input('spMask') 
+    @Input('AlMask') 
     public maskGenerator: MaskGenerator;
 
     @Input('spKeepMask') 
     public keepMask: boolean;
 
-    @Input('spMaskValue') 
+    @Input('AlMaskValue') 
     public set maskValue(value: string) {
         if (value !== this.value) {
             this.value = value;
@@ -34,7 +34,7 @@ export class MaskDirective {
         }
     };
 
-    @Output('spMaskValueChange') 
+    @Output('AlMaskValueChange') 
     public changeEmitter = new EventEmitter<string>();
 
     @HostListener('input', ['$event'])
