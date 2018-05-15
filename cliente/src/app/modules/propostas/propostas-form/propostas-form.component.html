@@ -46,14 +46,14 @@
                             <div class="form-group">
                                 <label for="name">Categoria (*)</label>
                                 <select type="text" id="categoria" class="form-control"
-                                formControlName="categoria" required>
+                                formControlName="categoria" required autocomplete="false">
                                 <option *ngFor="let cat of CategoriaOptions" [value]="cat.id">{{cat.nome}}</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="name">Valor (*)</label>
                                 <input type="text" id="valor" class="form-control"
-                                formControlName="valor" required>
+                                formControlName="valor" required  autocomplete="false">
                             </div>
                           <div class="form-group">
                               <label for="pdf">Enviar PDF</label>

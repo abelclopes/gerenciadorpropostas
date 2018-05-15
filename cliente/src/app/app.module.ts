@@ -22,20 +22,16 @@ import { LoginModule } from './components/login/login.module';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
-import { LoadingBarModule } from '@ngx-loading-bar/core';
-
-import { AutocompleteModule } from 'ng2-input-autocomplete';
-
-import { LoadingModule, ANIMATION_TYPES } from 'ngx-loading';
-
-// import { CoreModule } from './core/core.module';
 import { LoadingService } from './LoadingService';
+import { KzMaskDirective } from './shared/mascara.directive';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
     HeaderComponent,
+    KzMaskDirective,
     PaginationFilter
   ],
   imports: [
@@ -49,17 +45,7 @@ import { LoadingService } from './LoadingService';
     SharedModule,
     NgxDatatableModule,
     HttpClientModule,
-    NgxPaginationModule,
-    LoadingBarModule.forRoot(),
-    LoadingModule.forRoot({
-      animationType: ANIMATION_TYPES.wanderingCubes,
-      backdropBackgroundColour: 'rgba(0,0,0,1)', 
-      backdropBorderRadius: '4px',
-      primaryColour: '#ffffff', 
-      secondaryColour: '#ffffff', 
-      tertiaryColour: '#ffffff'
-  }),
-  AutocompleteModule.forRoot()
+    NgxPaginationModule
   ],
   providers: [
     AuthenticationService,

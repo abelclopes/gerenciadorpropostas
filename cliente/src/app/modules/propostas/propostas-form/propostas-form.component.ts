@@ -6,7 +6,6 @@ import { PropostaModel } from '../model';
 import { PropostaService } from '../service/proposta.service';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { LoadingService } from '../../../LoadingService';
-import { LoadingBarService } from '@ngx-loading-bar/core';
 import { FornecedorModel } from '../../fornecedores/model';
 import { FornecedorService } from '../../fornecedores/service/fornecedor.service';
 import { Observable, Subject } from 'rxjs';  
@@ -48,14 +47,12 @@ export class PropostasFormComponent implements OnInit {
 
   closeResult: string;
   constructor(private propostaService: PropostaService, 
-    private loadingBar: LoadingBarService,  
     private router : Router, 
     private fb: FormBuilder,
     private fornecedorService: FornecedorService
   ) {}
 
   ngOnInit(){
-    this.startLoading()
     this.propostaForm =  this.fb.group({
         nomeProposta: new FormControl(null),
         descricao: new FormControl(null),
@@ -70,31 +67,9 @@ export class PropostasFormComponent implements OnInit {
     this.propostaService.getCategorias()
     .subscribe(data =>{
         this.CategoriaOptions = data.response;
-        this.stopLoading();
     })
 
   } 
-  startLoading() {
-    this.loadingBar.start();
-  }
-  
-  stopLoading() {
-    this.loadingBar.complete();
-  }
-  
-  // ngOnChanges() {
-  //   this.startLoading()
-  //   this.propostaForm =  this.fb.group({
-  //     nomeProposta:  new FormControl(null),
-  //     descricao: new FormControl(null),
-  //     fornecedor: new FormControl(null),
-  //     fornecedorID: new FormControl(null),
-  //     categoria: new FormControl(null),
-  //     anexo: new FormControl(null),
-  //     valor: new FormControl(null)
-  //   }, { updateOn: 'submit' });
-  //   this.uploader.nativeElement.value = "";
-  // }
   onSubmit() {
     console.log('enviar....... ');
     if (this.propostaForm.valid) {
@@ -129,7 +104,6 @@ export class PropostasFormComponent implements OnInit {
       }
   }
 
- // Push a search term into the observable stream.  
  search(term: string): void {  
   this.termoFiltro
       .debounceTime(200)

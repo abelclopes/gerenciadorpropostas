@@ -9,7 +9,6 @@ import { PropostasFormComponent } from './propostas-form/propostas-form.componen
 import { PropostasEditComponent } from './propostas-edit/propostas-edit.component';
 import { PropostaService } from './service/proposta.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AutocompleteModule } from 'ng2-input-autocomplete';
 import { FornecedorService } from '../fornecedores/service/fornecedor.service';
 
 
@@ -25,8 +24,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule, 
     ReactiveFormsModule,
-    NgbModule,
-    AutocompleteModule.forRoot()
+    NgbModule
   ],
   declarations: [PropostasListComponent, PropostasFormComponent, PropostasEditComponent],
   providers:[
