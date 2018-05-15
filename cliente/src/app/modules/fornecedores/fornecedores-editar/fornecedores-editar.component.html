@@ -30,16 +30,16 @@
                                 <div class="form-group">
                                     <label>Telefone</label>
                                     <input class="form-control" placeholder="Telefone" autocomplete="off"
-                                    [(ngModel)]="fornecedor.telefone" formControlName="telefone"  kzMask="(99)99999-999"  required>
-
-CPF: <input type="text" kzMask="999.999.999-99">
-CNPJ: <input type="text" kzMask="99.999.999/9999-99">
-CEP: <input type="text" kzMask="99999-999">
+                                    [(ngModel)]="fornecedor.telefone" formControlName="telefone"  
+                                    [(AlMaskValue)]="maskTelefone" [AlMask]="maskTelefone"
+                                    required>
                                 </div>
                                 <div class="form-group">
                                     <label>Cnpj/Cpf</label> 
                                     <input class="form-control" placeholder="cnpjCpf" autocomplete="off"
-                                    [(ngModel)]="fornecedor.cnpjCpf"  formControlName="cnpjCpf"  maxlength="19" required>
+                                    [(ngModel)]="fornecedor.cnpjCpf"  formControlName="cnpjCpf"  maxlength="19"                                    
+                                    [(AlMaskValue)]="maskCnpj" [AlMask]="maskCnpj"
+                                    required>
                                 </div>
                                 <button [disabled]="!fornecedorForm.valid" class="btn btn-lg btn-success"
                                 type="submit">Salvar</button>

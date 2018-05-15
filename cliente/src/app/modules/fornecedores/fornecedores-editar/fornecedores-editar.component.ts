@@ -4,12 +4,16 @@ import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms'
 import { FornecedorService } from '../service/fornecedor.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
+import { GeproMaskUtil } from '../../../shared/diretivas/mask.directive';
 @Component({
   selector: 'app-fornecedores-editar',
   templateUrl: './fornecedores-editar.component.html',
   styleUrls: ['./fornecedores-editar.component.css']
 })
 export class FornecedoresEditarComponent implements OnInit {
+  public maskTelefone = GeproMaskUtil.PHONE_MASK_GENERATOR;
+  public maskCnpj = GeproMaskUtil.CNPJ;
+  
   fornecedor: FornecedorModel;
   fornecedorForm: FormGroup
 

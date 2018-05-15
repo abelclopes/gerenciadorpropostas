@@ -24,7 +24,10 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import { LoadingService } from './LoadingService';
 import { KzMaskDirective } from './shared/mascara.directive';
+import { NgxCurrencyModule } from "ngx-currency";
+import { CURRENCY_MASK_CONFIG } from 'ngx-currency/src/currency-mask.config';
 
+import { CustomCurrencyMaskConfig } from './shared/diretivas/custon-currency-masck-config';
 
 @NgModule({
   declarations: [
@@ -45,13 +48,15 @@ import { KzMaskDirective } from './shared/mascara.directive';
     SharedModule,
     NgxDatatableModule,
     HttpClientModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    NgxCurrencyModule
   ],
   providers: [
     AuthenticationService,
     AuthGuard,
     NotificationService, HeaderService,
-    PaginationFilter, LoadingService
+    PaginationFilter, LoadingService,
+    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }
   ],
   bootstrap: [AppComponent]
 })

@@ -17,3 +17,8 @@ component
   public phoneValue02: string;
   public phoneMask01 = GeproMaskUtil.PHONE_MASK_GENERATOR;
   public phoneMask02 = GeproMaskUtil.DYNAMIC_PHONE_MASK_GENERATOR;
+
+
+https://github.com/nbfontana/ngx-currency
+ver detalhes disto
+  https://github.com/cesarrew/ng2-currency-mask
