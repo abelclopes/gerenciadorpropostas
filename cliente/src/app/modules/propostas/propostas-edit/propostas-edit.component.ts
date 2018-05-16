@@ -55,9 +55,11 @@ export class PropostasEditComponent implements OnInit {
   ) {}
 
   ngOnInit(){
+    this.loadingService.showLoading()
     this.propostaService.getPropostaById(this.route.snapshot.paramMap.get('id'))
     .subscribe(
       data => {
+        this.loadingService.hideLoading()
         this.proposta = data;
       }, err => {
         console.log(err);
