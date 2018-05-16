@@ -9,6 +9,8 @@ import { LoadingService } from '../../../LoadingService';
 import { FornecedorModel } from '../../fornecedores/model';
 import { FornecedorService } from '../../fornecedores/service/fornecedor.service';
 import { Observable, Subject } from 'rxjs';  
+import { GeproMaskUtilService } from '../../../shared/diretivas';
+
 
 @Component({
   moduleId: module.id.toString(),
@@ -49,12 +51,13 @@ export class PropostasFormComponent implements OnInit {
   constructor(private propostaService: PropostaService, 
     private router : Router, 
     private fb: FormBuilder,
+    public loadingService: LoadingService,
     private fornecedorService: FornecedorService
   ) {}
 
   ngOnInit(){
     this.propostaForm =  this.fb.group({
-        nomeProposta: new FormControl(null),
+        nomeProposta: ['', Validators.required, Validators.minLength(5)],
         descricao: new FormControl(null),
         fornecedor: new FormControl(null),
         fornecedorID: new FormControl(null),
@@ -71,7 +74,8 @@ export class PropostasFormComponent implements OnInit {
 
   } 
   onSubmit() {
-    console.log('enviar....... ');
+    
+  this.loadingService.showLoading();
     if (this.propostaForm.valid) {
         console.log('is valid');
         this.bodyText = 'This text can be updated in modal 1';

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { LoadingService } from './LoadingService';
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +9,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
-  loading =false;
+  loading = false;
+
+  OnInit(){
+    
+  }
+ 
+  
 }

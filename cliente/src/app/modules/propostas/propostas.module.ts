@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '../../shared/shared.module';
 
 import { PropostasListComponent } from './propostas-list/propostas-list.component';
 import { PropostasFormComponent } from './propostas-form/propostas-form.component';
@@ -10,6 +11,20 @@ import { PropostasEditComponent } from './propostas-edit/propostas-edit.componen
 import { PropostaService } from './service/proposta.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FornecedorService } from '../fornecedores/service/fornecedor.service';
+
+import { CurrencyMaskModule } from "ng2-currency-mask";
+import { CurrencyMaskConfig, CURRENCY_MASK_CONFIG } from "ng2-currency-mask/src/currency-mask.config";
+
+
+export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
+  align: "right",
+  allowNegative: true,
+  decimal: ",",
+  precision: 2,
+  prefix: "",
+  suffix: "",
+  thousands: "."
+};
 
 
 const routes: Routes = [
@@ -24,11 +39,14 @@ const routes: Routes = [
     CommonModule,
     FormsModule, 
     ReactiveFormsModule,
-    NgbModule
+    NgbModule,
+    SharedModule,
+    CurrencyMaskModule
   ],
   declarations: [PropostasListComponent, PropostasFormComponent, PropostasEditComponent],
   providers:[
-    PropostaService,FornecedorService
+    PropostaService,FornecedorService,
+    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }
   ]
 })
 export class PropostasModule { }

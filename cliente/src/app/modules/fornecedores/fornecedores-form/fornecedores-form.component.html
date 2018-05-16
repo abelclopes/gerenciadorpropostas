@@ -34,7 +34,9 @@
                                 <div class="form-group">
                                     <label>Cnpj/Cpf</label>
                                     <input class="form-control" placeholder="cnpjCpf"
-                                     formControlName="cnpjCpf" required>
+                                     formControlName="cnpjCpf"
+                                     [AlMask]="maskCpfCnpfj"
+                                     required>
                                 </div>
                                 <button [disabled]="!fornecedorForm.valid" class="btn btn-lg btn-success"
                                 type="submit">Salvar</button>

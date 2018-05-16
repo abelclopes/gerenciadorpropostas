@@ -21,16 +21,19 @@ import { PaginationFilter } from './shared/pagination-filter.pipe';
 import { LoginModule } from './components/login/login.module';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-
+import { LoadingModule } from 'ngx-loading';
 import { LoadingService } from './LoadingService';
 import { MaskDirective } from './shared/diretivas/mask.directive';
 import { ModalModule } from 'ngx-bootstrap';
 
 import { CustomCurrencyMaskConfig } from './shared/diretivas/custon-currency-masck-config';
 
+import { CurrencyMaskModule } from "ng2-currency-mask";
 
-import { NgxCurrencyModule } from "ngx-currency";
 import { CURRENCY_MASK_CONFIG } from 'ngx-currency/src/currency-mask.config';
+
+import { TextMaskModule } from 'angular2-text-mask';
+
 
 @NgModule({
   declarations: [
@@ -50,7 +53,9 @@ import { CURRENCY_MASK_CONFIG } from 'ngx-currency/src/currency-mask.config';
     NgbModule.forRoot(),
     SharedModule.forRoot(),
     ModalModule.forRoot(),
-    NgxCurrencyModule
+    LoadingModule,
+    TextMaskModule,
+    CurrencyMaskModule
   ],
   providers: [
     AuthenticationService,

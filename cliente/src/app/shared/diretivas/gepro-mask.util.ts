@@ -2,8 +2,8 @@ import { MaskGenerator } from "./interfaces/mask-generator.interface";
 
 export class GeproMaskUtilService {
 
-    private static PHONE_SMALL = '(999) 999-9999';
-    private static PHONE_BIG = '(999) 9999-9999';
+    private static PHONE_SMALL = '(99) 9999-9999';
+    private static PHONE_BIG = '(99) 99999-9999';
     private static CPF = '999.999.999-99';
     private static CNPJ = '99.999.999/9999-99';
 
