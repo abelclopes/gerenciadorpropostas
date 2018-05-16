@@ -55,11 +55,10 @@ export class PropostasEditComponent implements OnInit {
   ) {}
 
   ngOnInit(){
-    this.loadingService.showLoading()
+    this.loadingService.showLoading();
     this.propostaService.getPropostaById(this.route.snapshot.paramMap.get('id'))
     .subscribe(
       data => {
-        this.loadingService.hideLoading()
         this.proposta = data;
       }, err => {
         console.log(err);
@@ -70,10 +69,11 @@ export class PropostasEditComponent implements OnInit {
         descricao:  [ Validators.required, Validators.minLength(4) ],
         fornecedor:  [ Validators.required, Validators.minLength(4) ],
         fornecedorID:  [ Validators.required, Validators.minLength(4) ],
-        categoria: [ Validators.required ],
-        anexo: [ Validators.required, Validators.minLength(4) ],
+        categoria: new FormControl(null),
+        anexo: new FormControl(null),
         valor: [ Validators.required, Validators.minLength(4) ],
     }, { updateOn: 'submit' });
+    
     this.uploader.nativeElement.value = "";
 
     this.propostaService.getCategorias()
