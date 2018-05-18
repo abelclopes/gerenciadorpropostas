@@ -35,13 +35,13 @@
                             <th colspan="2">Ações</th>
                         </tr>
 
-                        <tr class="odd gradeX" *ngFor="let forn of propostas | paginate: { itemsPerPage: tamanhoPagina, currentPage: paginaAtual, totalItems: totalItens }">
-                          <td>{{forn.cnpjCpf}}</td>
-                            <td>{{forn.nome}}</td>
-                            <td>{{forn.telefone}}</td>
-                            <td>{{forn.dataCriacao | date:'dd/MM/y'}}</td>
-                            <td class="center"><a routerLink='editar/{{forn.id}}'><i class="fa fa-edit"></i></a></td>
-                            <td class="center"><a (click)='delete(forn.id)'><i class="fa fa-trash"></i></a></td>
+                        <tr class="odd gradeX" *ngFor="let proposta of propostas | paginate: { itemsPerPage: tamanhoPagina, currentPage: paginaAtual, totalItems: totalItens }">
+                          <td>{{proposta.nomeProposta}}</td>
+                            <td>{{proposta.fornecedor.Nome}}</td>
+                            <td>{{proposta.status}}</td>
+                            <td>{{proposta.dataCriacao | date:'dd/MM/y'}}</td>
+                            <td class="center"><a routerLink='editar/{{proposta.id}}'><i class="fa fa-edit"></i></a></td>
+                            <td class="center"><a (click)='delete(proposta.id)'><i class="fa fa-trash"></i></a></td>
                         </tr>
                   </table>
                 </div>
