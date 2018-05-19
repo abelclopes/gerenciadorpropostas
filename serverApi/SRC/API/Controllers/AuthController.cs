@@ -5,16 +5,17 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
+using System.Security.Cryptography;
+using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-using System.Security.Cryptography;
 
 using Model;
 using INFRAESTRUCTURE;
@@ -59,7 +60,7 @@ namespace API.Controllers
             new Claim(JwtRegisteredClaimNames.Sub, user.Nome),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Birthdate, user.DataNacimento.ToString("yyyy-MM-dd")),
-            new Claim(JwtRegisteredClaimNames.GivenName, user.PerfilUsuario.ToString()),
+            new Claim(JwtRegisteredClaimNames.GivenName, user.PermissaoId.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -80,14 +81,14 @@ namespace API.Controllers
         if(string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Password)) return user;
         var encript = Util.GetSHA1HashData(login.Password);
 
-        Usuario usuario =  Context.Usuarios.FirstOrDefault(x => x.Email == login.Email && x.Senha == encript);
-
+        Usuario usuario =  Context.Usuarios.Include(x => x.PermissaoUsuario).FirstOrDefault(x => x.Email == login.Email && x.Senha == encript);
         if (!string.IsNullOrEmpty(usuario?.Email))
         {
+            usuario.PermissaoUsuario.Id.ToString();
             user = new NovoUsuarioModel(){
                 Email = usuario.Email,
                 Nome = usuario.Nome,
-                PerfilUsuario = usuario.PerfilUsuario,
+                PermissaoId = usuario.PermissaoUsuario.Id,
                 DataNacimento = usuario.DataNacimento
             };
         }

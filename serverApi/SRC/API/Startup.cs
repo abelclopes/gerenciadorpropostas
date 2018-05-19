@@ -23,6 +23,8 @@ using INFRAESTRUCTURE.Data;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Filters;
+using Newtonsoft.Json;
 
 namespace API
 {
@@ -45,6 +47,7 @@ namespace API
                     b => b.MigrationsAssembly("API")
                 )
             );
+            services.AddMemoryCache();
           
             ResolveDependencies(services);
           
@@ -56,7 +59,17 @@ namespace API
                     "application/json"
                 };
             });
-
+            services.AddMemoryCache();
+            services.AddMvc(Options =>
+            {
+                Options.Filters.Add(new ExceptionFilter());
+                Options.Filters.Add(new ActivityLogFilter());
+            })
+            .AddJsonOptions(options =>
+            {
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
+            });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -71,8 +84,6 @@ namespace API
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                 };
             });
-
-            ResolveDependencies(services);
 
             services.AddCors(options =>
             {

@@ -1,20 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
+using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using System.Data;
+using System.Security.Cryptography;
+using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+
 
 using Model;
 using INFRAESTRUCTURE;
 using DOMAIN;
 using DOMAIN.EnumHelper;
-using DOMAIN.Paginator;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using StructureMap.Diagnostics;
 using DOMAIN.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using API.Model;
@@ -72,7 +79,8 @@ namespace API.Controllers
       {
         throw new ArgumentException($"O Email {model.Email} já esta em uso");
       }
-      Context.Usuarios.Add(new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, model.PerfilUsuario, model.Senha));
+      var permissaoUsuario = Context.PermissaoUsuarios.FirstOrDefault(x => x.Id == model.PermissaoId);
+      Context.Usuarios.Add(new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, permissaoUsuario , model.Senha));
       Context.SaveChanges();
 
       MemoryCache.Remove("fornecedor");
@@ -95,8 +103,9 @@ namespace API.Controllers
       {
           return NotFound();
       }
-      
-      var user = new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, model.PerfilUsuario);
+
+      var permissaoUsuario = Context.PermissaoUsuarios.FirstOrDefault(x => x.Id == model.PermissaoId);      
+      var user = new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, permissaoUsuario);
       if(!string.IsNullOrEmpty(model.Senha))
       {
         user.Senha = model.Senha;
@@ -132,7 +141,7 @@ namespace API.Controllers
       return MemoryCache.GetOrCreate("usuarios", entry =>
                           {
                             entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
-                            return Context.Usuarios.Where(x => !x.Excluido)
+                            return Context.Usuarios.Include(x => x.PermissaoUsuario).Include(x => x.PermissaoUsuario).Where(x => !x.Excluido)
                             .Select(x => new UsuariosModel
                               {
                                 Id = x.Id,
@@ -140,7 +149,7 @@ namespace API.Controllers
                                 Email = x.Email, 
                                 Cpf = x.Cpf,
                                 DataNacimento = x.DataNacimento,
-                                Perfil = x.PerfilUsuario,
+                                PermissaoUsuario = x.PermissaoUsuario,
                                 //PerfilDescricao = EnumHelper.GetDescription(x.PerfilUsuario), 
                               }).ToList();
           });

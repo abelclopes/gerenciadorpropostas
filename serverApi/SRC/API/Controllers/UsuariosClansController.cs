@@ -42,13 +42,13 @@ namespace API.Controllers
     
 
     private UsuarioAuthModel ConsultaUsuario(string Email){
-       var usuario = Context.Usuarios.FirstOrDefault(x => x.Email == Email && !x.Excluido);
+       var usuario = Context.Usuarios.Include(x => x.PermissaoUsuario).FirstOrDefault(x => x.Email == Email && !x.Excluido);
        
       return new UsuarioAuthModel{
           Id = usuario.Id,
           Nome = usuario.Nome,
           Email = usuario.Email,
-          Police = EnumHelper.GetDescription(usuario.PerfilUsuario),
+          Police = usuario.PermissaoUsuario.Permissao,
           Excluido = usuario.Excluido
       };
     }

@@ -11,7 +11,7 @@ namespace Model
         public string Email { get; set; }
         public string Senha { get; set; }
         public DateTime DataNacimento { get; set; }
-        public virtual Perfil PerfilUsuario { get; set; }
+        public Guid PermissaoId { get; set; }
 
     }
 }

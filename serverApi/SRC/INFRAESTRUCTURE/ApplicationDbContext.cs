@@ -13,6 +13,7 @@ namespace INFRAESTRUCTURE
         :base(options)
         { }
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<PermissaoUsuario> PermissaoUsuarios { get; set; }
         public DbSet<Fornecedor> Fornecedores { get; set; }
         public DbSet<Proposta> Propostas { get; set; }
         public DbSet<PropostaAnexo> PropostaAnexos { get; set; }
@@ -22,6 +23,11 @@ namespace INFRAESTRUCTURE
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Categoria>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<PermissaoUsuario>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
             });
@@ -72,6 +78,8 @@ namespace INFRAESTRUCTURE
                 entity.HasIndex(e => e.Cpf)
                     .IsUnique()
                     .HasFilter("([Cpf] IS NOT NULL)");
+
+                entity.HasOne(d => d.PermissaoUsuario);   
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
             });

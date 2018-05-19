@@ -15,21 +15,21 @@ namespace DOMAIN
         {
             Nome = nome;
         }
-        public Usuario(string nome, string email,string cpf, DateTime dataNacimento, Perfil perfil)
+        public Usuario(string nome, string email,string cpf, DateTime dataNacimento, PermissaoUsuario permissaoUsuario)
         {
             Nome = nome;
             Cpf = cpf;
             Email = email;
             DataNacimento = dataNacimento;
-            PerfilUsuario = perfil;
+            PermissaoUsuario = permissaoUsuario;
         }
-        public Usuario(string nome, string email, string cpf, DateTime dataNacimento, Perfil perfil, string senha)
+        public Usuario(string nome, string email, string cpf, DateTime dataNacimento, PermissaoUsuario permissaoUsuario, string senha)
         {
             Nome = nome;
             Cpf = cpf;
             Email = email;
             DataNacimento = dataNacimento;
-            PerfilUsuario = perfil;
+            PermissaoUsuario = permissaoUsuario;
             Senha = Util.GetSHA1HashData(senha);
         }
         public string Nome { get; set; }
@@ -37,7 +37,7 @@ namespace DOMAIN
         public string Email { get; set; }
         public string Senha { get; set; }
         public DateTime DataNacimento { get; set; }
-        public virtual Perfil PerfilUsuario { get; set; }
+        public virtual PermissaoUsuario PermissaoUsuario { get; set; }
 
         public virtual PropostaHistorico PropostaHistoricos { get; set; }
         public void Atualizar(Usuario model, IContext _context)
@@ -46,7 +46,7 @@ namespace DOMAIN
             Cpf = model.Cpf;
             Email = model.Email;
             DataNacimento = model.DataNacimento;
-            PerfilUsuario = model.PerfilUsuario;
+            PermissaoUsuario = model.PermissaoUsuario;
         }
         
         public async Task Atualizar(string nome, IContext _context)
