@@ -141,17 +141,17 @@ namespace API.Controllers
     }
     private List<CategoriasModel>  RestornaCategoriaList(){
       return MemoryCache.GetOrCreate("categorias", entry =>
-                          {
-                            entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
-                            return Context.Categorias.Where(x => !x.Excluido)
-                              .Select(x => new CategoriasModel
-                              { 
-                                Id = x.Id,
-                                Nome = x.Nome,
-                                Descricao = x.Descricao
-                              }).ToList();
-                          });
-  }
+                            {
+                              entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+                              return Context.Categorias.Where(x => !x.Excluido)
+                                .Select(x => new CategoriasModel
+                                { 
+                                  Id = x.Id,
+                                  Nome = x.Nome,
+                                  Descricao = x.Descricao
+                                }).ToList();
+                            });
+    }
     private Categoria ConsultaCategoria(string id){
       var Uid = Guid.Parse(id.ToUpper());
       return Context.Categorias.FirstOrDefault(x => x.Id == Uid && !x.Excluido);

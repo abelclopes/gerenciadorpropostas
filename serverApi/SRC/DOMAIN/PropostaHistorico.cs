@@ -9,6 +9,13 @@ namespace DOMAIN
 {
     public class PropostaHistorico : EntidadeBase
     {
+        public PropostaHistorico(Proposta proposta, Usuario usuario)
+        {
+            PropostaId = proposta.Id;
+            PropostaId = proposta.Id;
+            PropostaStatus = proposta.Status;
+            UsuarioId = usuario.Id;
+        }
         public Guid PropostaId { get; set; }
 
         public Proposta Proposta { get; set; }

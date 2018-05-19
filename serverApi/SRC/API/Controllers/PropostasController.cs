@@ -20,23 +20,20 @@ using System.IO;
 using System.Net.Http;
 using System.Text;
 using API.Model;
+using DOMAIN.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Controllers
 {
   [Route("api/[controller]")]
-  public class PropostasController : Controller
+  public class PropostasController : BaseController
   {
     
     private int PageNumber;
     private int PageSize;
-    private readonly ApplicationDbContext _context;
-    
-    public PropostasController(ApplicationDbContext context)
-    {
-      _context = context;
-      this.PageNumber = 1;
-      this.PageSize = 20;
-    }
+    public PropostasController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache){}
+
+
 
 
     [HttpGet, Authorize]
@@ -44,10 +41,10 @@ namespace API.Controllers
     //[SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public  ListaPaginada<Proposta> Get([FromQuery]PaginationParamsProposta model)
+    public  ListaPaginada<PropostaModel> Get([FromQuery]PaginationParamsProposta model)
     {
-      var listaPaginada = new ListaPaginada<Proposta>(model.PageNumber, model.PageSize);
-      var propostas = new List<Proposta>();
+      var listaPaginada = new ListaPaginada<PropostaModel>(model.PageNumber, model.PageSize);
+      var propostas = new List<PropostaModel>();
       if(RestornaPropostaList().Any()){
         propostas = RestornaPropostaList();
         this.setPaginacao(model);
@@ -99,7 +96,7 @@ namespace API.Controllers
                                 (PropostaStatus)Enum.ToObject(typeof(PropostaStatus),
                                  model.Status));
 
-      await _context.Propostas.AddAsync(proposta);
+      await Context.Propostas.AddAsync(proposta);
 
       if(model.Anexo != null)
       {
@@ -109,11 +106,14 @@ namespace API.Controllers
             {
                 var fileContent = binaryReader.ReadBytes((int)model.Anexo.Length);
                 var propostaAnexo = new PropostaAnexo(fileContent, model.Anexo.FileName, model.Anexo.ContentType, proposta);                
-                await _context.PropostaAnexos.AddAsync(propostaAnexo);
+                await Context.PropostaAnexos.AddAsync(propostaAnexo);
             }
         }
       }
-       await _context.SaveChangesAsync();
+      var usuario = new Usuario();
+      var propostaHistorico = new PropostaHistorico(proposta, usuario );
+      await Context.PropostasHistoricos.AddAsync(propostaHistorico);
+      await Context.SaveChangesAsync();
 
       return Ok(new {Response = "Proposta salvo com sucesso"});
     }
@@ -140,9 +140,9 @@ namespace API.Controllers
                                 ConsultaCategoria(model.CategoriaID), 
                                 (PropostaStatus)Enum.ToObject(typeof(PropostaStatus) , model.Status)
                     );
-      proposta.Atualizar(propost, _context);
-      _context.Propostas.Update(proposta);
-      await _context.SaveChangesAsync();
+      proposta.Atualizar(propost, Context);
+      Context.Propostas.Update(proposta);
+      await Context.SaveChangesAsync();
 
       return Ok(new {Response = "Proposta atualizado com sucesso"});
     }
@@ -157,24 +157,42 @@ namespace API.Controllers
           return BadRequest();
       }
       var user = ConsultaProposta(id);
-      _context.Propostas.Remove(user);
-      _context.SaveChanges();
+      Context.Propostas.Remove(user);
+      Context.SaveChanges();
 
       return Ok(new {Response = "Proposta deletado com sucesso"});
     }
-    private List<Proposta> RestornaPropostaList(){
-      return _context.Propostas.Where(x => !x.Excluido).ToList();
-    }
+    // private List<Proposta> RestornaPropostaList(){
+    //   return Context.Propostas.Where(x => !x.Excluido).ToList();
+    // }
+    private List<PropostaModel>  RestornaPropostaList(){
+      return MemoryCache.GetOrCreate("propsotas", entry =>
+            {
+              entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+              return Context.Propostas.Where(x => !x.Excluido)
+                .Select(x => new PropostaModel
+                { 
+                  Id = x.Id,
+                  NomeProposta = x.NomeProposta,
+                  Descricao = x.Descricao,
+                  Fornecedor = x.Fornecedor,
+                  Categoria = x.Categoria,
+                  //PropostaHistorico = (x.PropostaHistorico.Any())? x.PropostaHistorico: null,
+                  DataCriacao = x.DataCriacao,
+                  Status = x.Status
+                }).ToList();
+            });
+  }
     private Proposta ConsultaProposta(string id){
-      return _context.Propostas.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
+      return Context.Propostas.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
     }    
     private Fornecedor ConsultaFornecedor(string fornecedorID)
     {   
-        return _context.Fornecedores.FirstOrDefault(x => x.Id == Guid.Parse(fornecedorID));           
+        return Context.Fornecedores.FirstOrDefault(x => x.Id == Guid.Parse(fornecedorID));           
     }
     private Categoria ConsultaCategoria(string categoriaID)
     {   
-        return _context.Categorias.FirstOrDefault(x => x.Id == Guid.Parse(categoriaID));
+        return Context.Categorias.FirstOrDefault(x => x.Id == Guid.Parse(categoriaID));
     }
     private void setPaginacao(PaginationParamsProposta model)
     {
