@@ -21,7 +21,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace API.Controllers
 {
   
-  [Route("api/[controller]")]
+  [Route("api/usuarios/Clans")]
   public class UsuariosClansController : BaseController
   {    
     public UsuariosClansController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache)
@@ -42,15 +42,13 @@ namespace API.Controllers
     
 
     private UsuarioAuthModel ConsultaUsuario(string Email){
-       var usuario = Context.Usuarios.Include(x => x.PermissaoUsuario).FirstOrDefault(x => x.Email == Email && !x.Excluido);
-       
-      return new UsuarioAuthModel{
-          Id = usuario.Id,
-          Nome = usuario.Nome,
-          Email = usuario.Email,
-          Police = usuario.PermissaoUsuario.Permissao,
-          Excluido = usuario.Excluido
-      };
+       return Context.Usuarios.Include(x => x.PermissaoUsuario).Select(x => new UsuarioAuthModel{
+          Id = x.Id,
+          Nome = x.Nome,
+          Email = x.Email,
+          Police = x.PermissaoUsuario.Permissao,
+          Excluido = x.Excluido
+      }).FirstOrDefault(x => x.Email == Email && !x.Excluido);     
     }
   }
 }

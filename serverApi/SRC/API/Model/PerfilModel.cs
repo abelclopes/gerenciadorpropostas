@@ -4,9 +4,10 @@ using Model;
 
 namespace Model
 {
-    public class PerfilsModel
+    public class PerfilsModel : EntidadeBase
     {
-        public int id { get; set; }
-        public string nome { get; set; }
+        public string Permissao { get; set; }
+        public int Nivel { get; set; }
+
     }
 }
