@@ -22,19 +22,18 @@ using System.Text;
 using API.Model;
 using DOMAIN.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
   [Route("api/[controller]")]
   public class PropostasController : BaseController
   {
-    
-    private int PageNumber;
-    private int PageSize;
-    public PropostasController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache){}
-
-
-
+    private readonly ILogger _logger;
+    public PropostasController(IContext context, IMemoryCache memoryCache, ILogger<PropostasController> logger) : base(context, memoryCache)
+    {
+      this._logger = logger;
+    }
 
     [HttpGet, Authorize]
     [SwaggerResponse(201,typeof(PagedList<Proposta>))]
@@ -47,7 +46,6 @@ namespace API.Controllers
       var propostas = new List<PropostaModel>();
       if(RestornaPropostaList().Any()){
         propostas = RestornaPropostaList();
-        this.setPaginacao(model);
         if(!string.IsNullOrEmpty(model.NomeProposta) || model.Valor > 0 && !string.IsNullOrEmpty(model.Valor.ToString()) || !string.IsNullOrEmpty(model.FornecedorID)){ 
           propostas = propostas.Where(x => x.NomeProposta.Contains(model.NomeProposta) 
                               ||  x.Valor.Equals(model.Valor)
@@ -80,15 +78,16 @@ namespace API.Controllers
     [SwaggerResponse(403)]
     public async Task<IActionResult>  Post([FromForm] NovaPropostaModel model)
     {
+      this._logger.LogInformation("Log.NovaPropostaModel", "Getting item {ID}", model);
 
       if (model.NomeProposta == null)
       {
           return BadRequest(new {Erro = "aconteceu algo errado, tenta novamente!"});
       }
-      if(RestornaPropostaList().Any(x => x.NomeProposta == model.NomeProposta))
-      {
-        throw new ArgumentException($"O Nome da Proposta {model.NomeProposta} já esta em uso");
-      }
+      // if(RestornaPropostaList().Any(x => x.NomeProposta == model.NomeProposta))
+      // {
+      //   throw new ArgumentException($"O Nome da Proposta {model.NomeProposta} já esta em uso");
+      // }
        var proposta = new Proposta(model.NomeProposta,
                                  model.Descricao, model.Valor, 
                                 ConsultaFornecedor(model.FornecedorID), 
@@ -110,12 +109,14 @@ namespace API.Controllers
             }
         }
       }
-      var usuario = new Usuario();
+      var usuario = Context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(model.Usuario));
       var propostaHistorico = new PropostaHistorico(proposta, usuario );
       await Context.PropostasHistoricos.AddAsync(propostaHistorico);
       await Context.SaveChangesAsync();
 
-      return Ok(new {Response = "Proposta salvo com sucesso"});
+      MemoryCache.Remove("propostas");
+
+      return Ok(new {ok= "true", Response = "Proposta salvo com sucesso"});
     }
     
     [HttpPut("{id}"), Authorize]
@@ -144,6 +145,8 @@ namespace API.Controllers
       Context.Propostas.Update(proposta);
       await Context.SaveChangesAsync();
 
+      MemoryCache.Remove("propostas");
+
       return Ok(new {Response = "Proposta atualizado com sucesso"});
     }
     
@@ -160,13 +163,14 @@ namespace API.Controllers
       Context.Propostas.Remove(user);
       Context.SaveChanges();
 
+      MemoryCache.Remove("propostas");
       return Ok(new {Response = "Proposta deletado com sucesso"});
     }
     // private List<Proposta> RestornaPropostaList(){
     //   return Context.Propostas.Where(x => !x.Excluido).ToList();
     // }
     private List<PropostaModel>  RestornaPropostaList(){
-      return MemoryCache.GetOrCreate("propsotas", entry =>
+      return MemoryCache.GetOrCreate("propostas", entry =>
             {
               entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
               return Context.Propostas.Where(x => !x.Excluido)
@@ -193,11 +197,6 @@ namespace API.Controllers
     private Categoria ConsultaCategoria(string categoriaID)
     {   
         return Context.Categorias.FirstOrDefault(x => x.Id == Guid.Parse(categoriaID));
-    }
-    private void setPaginacao(PaginationParamsProposta model)
-    {
-        this.PageNumber = model.PageNumber;
-        this.PageSize = model.PageSize;
     }
   }
 }

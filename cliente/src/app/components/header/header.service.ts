@@ -22,7 +22,7 @@ export class HeaderService {
         .set('No-Auth', 'true')
         .set('Authorization', `Bearer ${currentUser.token}`)
         .set('x-access-token', currentUser.token);
-        return this.httpClient.get(`${API_URL}/api/UsuariosClans/${currentUser.email}`,
+        return this.httpClient.get(`${API_URL}/api/Usuarios/Clans/${currentUser.email}`,
         {
           headers: httpHeaders,
           responseType: 'json'

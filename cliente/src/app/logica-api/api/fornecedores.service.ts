@@ -28,7 +28,7 @@ import { Configuration }                                     from '../configurat
 @Injectable()
 export class FornecedoresService {
 
-    protected basePath = 'https://localhost';
+    protected basePath = '';
     public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 
@@ -249,6 +249,53 @@ export class FornecedoresService {
         return this.httpClient.get<any>(`${this.basePath}/api/Fornecedores`,
             {
                 params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param busca 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiFornecedoresGetAllByBuscaGet(busca: string, observe?: 'body', reportProgress?: boolean): Observable<FornecedorModel>;
+    public apiFornecedoresGetAllByBuscaGet(busca: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<FornecedorModel>>;
+    public apiFornecedoresGetAllByBuscaGet(busca: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<FornecedorModel>>;
+    public apiFornecedoresGetAllByBuscaGet(busca: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (busca === null || busca === undefined) {
+            throw new Error('Required parameter busca was null or undefined when calling apiFornecedoresGetAllByBuscaGet.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.apiKeys["Authorization"]) {
+            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        let consumes: string[] = [
+        ];
+
+        return this.httpClient.get<FornecedorModel>(`${this.basePath}/api/Fornecedores/GetAll/${encodeURIComponent(String(busca))}`,
+            {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

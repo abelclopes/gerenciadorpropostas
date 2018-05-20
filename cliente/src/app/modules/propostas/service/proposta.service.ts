@@ -4,12 +4,14 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/catch';
 
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/delay';
 
 import { PropostaPagedListModel, PropostaModel} from '../model';
 import { API_URL } from '../../../app.api';
+import { MyResponse } from '../../../logica-api/model/my-response';
 
 @Injectable()
 export class PropostaService {
@@ -63,22 +65,31 @@ export class PropostaService {
   
     }
 
-    public createUpload(model: FormData): any {
-      console.log(model);
-     // debugger;
+    public createUpload(model: FormData): Observable<any> {
+      // debugger;
       var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
+      var currentUserDetails = JSON.parse(localStorage.getItem('userDetails'));
+      model.append("usuario", currentUserDetails.id);
+      console.log(model);
+      
       let httpHeaders = new HttpHeaders()
      // .set('Content-Type', 'Application/json;')
       .set('No-Auth', 'true')
       .set('Authorization', `Bearer ${currentUser.token}`)
       .set('x-access-token', `${currentUser.token}`);
       let url = `${API_URL}/api/propostas`;
-      return this.httpClient.post(url, model,{headers: httpHeaders , responseType: 'json'});
+      return this.httpClient.post(url, model,{headers: httpHeaders})
+      //.map(this.extractObject);
     } 
 
     
     getCategorias(): any {
       let url = `${API_URL}/api/categorias/getall`;
       return this.httpClient.get(url, { headers: this.httpHeaders } );
+    }
+
+    private extractObject(res: Response): Object {
+      const data: any = res.json();
+      return data || {};
     }
 }

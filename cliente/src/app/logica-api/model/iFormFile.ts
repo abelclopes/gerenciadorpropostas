@@ -11,13 +11,11 @@
  */
 
 
-export interface FornecedorModel {
-    nome?: string;
-    cnpjCpf?: string;
-    email?: string;
-    telefone?: string;
-    id?: string;
-    dataCriacao?: Date;
-    dataAtualizacao?: Date;
-    excluido?: boolean;
+export interface IFormFile {
+    contentType?: string;
+    contentDisposition?: string;
+    headers?: { [key: string]: Array<string>; };
+    length?: number;
+    name?: string;
+    fileName?: string;
 }

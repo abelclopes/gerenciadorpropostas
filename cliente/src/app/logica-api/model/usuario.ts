@@ -9,13 +9,16 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { PermissaoUsuario } from './permissaoUsuario';
 
 
-export interface FornecedorModel {
+export interface Usuario {
     nome?: string;
-    cnpjCpf?: string;
+    cpf?: string;
     email?: string;
-    telefone?: string;
+    senha?: string;
+    dataNacimento?: Date;
+    permissaoUsuario?: PermissaoUsuario;
     id?: string;
     dataCriacao?: Date;
     dataAtualizacao?: Date;

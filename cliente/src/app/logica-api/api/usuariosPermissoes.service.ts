@@ -24,7 +24,7 @@ import { Configuration }                                     from '../configurat
 
 
 @Injectable()
-export class UsuariosClansService {
+export class UsuariosPermissoesService {
 
     protected basePath = '';
     public defaultHeaders = new HttpHeaders();
@@ -58,17 +58,13 @@ export class UsuariosClansService {
     /**
      * 
      * 
-     * @param email 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsuariosClansByEmailGet(email: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiUsuariosClansByEmailGet(email: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiUsuariosClansByEmailGet(email: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiUsuariosClansByEmailGet(email: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-        if (email === null || email === undefined) {
-            throw new Error('Required parameter email was null or undefined when calling apiUsuariosClansByEmailGet.');
-        }
+    public apiUsuariosPermissoesGet(observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiUsuariosPermissoesGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiUsuariosPermissoesGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiUsuariosPermissoesGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -89,7 +85,7 @@ export class UsuariosClansService {
         let consumes: string[] = [
         ];
 
-        return this.httpClient.get<any>(`${this.basePath}/api/usuarios/Clans/${encodeURIComponent(String(email))}`,
+        return this.httpClient.get<any>(`${this.basePath}/api/Usuarios/Permissoes`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

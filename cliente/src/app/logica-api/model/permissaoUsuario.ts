@@ -11,11 +11,9 @@
  */
 
 
-export interface FornecedorModel {
-    nome?: string;
-    cnpjCpf?: string;
-    email?: string;
-    telefone?: string;
+export interface PermissaoUsuario {
+    permissao?: string;
+    nivel?: number;
     id?: string;
     dataCriacao?: Date;
     dataAtualizacao?: Date;

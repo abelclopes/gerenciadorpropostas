@@ -83,7 +83,7 @@ namespace API.Controllers
       Context.Usuarios.Add(new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, permissaoUsuario , model.Senha));
       Context.SaveChanges();
 
-      MemoryCache.Remove("fornecedor");
+      MemoryCache.Remove("usuarios");
       return Ok(new {Response = "Usuário salvo com sucesso"});
     }
     
@@ -114,7 +114,7 @@ namespace API.Controllers
       Context.Usuarios.Update(usuario);
       Context.SaveChanges();
 
-      MemoryCache.Remove("fornecedor");
+      MemoryCache.Remove("usuarios");
       return Ok(new {Response = "Usuário salvo com sucesso"});
     }
     
@@ -133,7 +133,7 @@ namespace API.Controllers
       Context.Usuarios.Update(user);
       Context.SaveChanges();
 
-      MemoryCache.Remove("fornecedor");
+      MemoryCache.Remove("usuarios");
       return Ok(new {Response = "Usuário deletado com sucesso"});
     }
 

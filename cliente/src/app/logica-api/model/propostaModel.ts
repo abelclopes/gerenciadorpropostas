@@ -11,6 +11,7 @@
  */
 import { Categoria } from './categoria';
 import { Fornecedor } from './fornecedor';
+import { PropostaHistorico } from './propostaHistorico';
 
 
 export interface PropostaModel {
@@ -18,11 +19,12 @@ export interface PropostaModel {
     descricao?: string;
     valor?: number;
     fornecedor?: Fornecedor;
+    propostaHistorico?: Array<PropostaHistorico>;
     categoria?: Categoria;
     status?: PropostaModel.StatusEnum;
     id?: string;
-    dataAtualizacao?: Date;
     dataCriacao?: Date;
+    dataAtualizacao?: Date;
     excluido?: boolean;
 }
 export namespace PropostaModel {

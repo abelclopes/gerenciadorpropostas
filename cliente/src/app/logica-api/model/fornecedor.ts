@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { Proposta } from './proposta';
 
 
 export interface Fornecedor {
@@ -16,8 +17,9 @@ export interface Fornecedor {
     cnpjCpf?: string;
     email?: string;
     telefone?: string;
+    propostas?: Array<Proposta>;
     id?: string;
-    dataAtualizacao?: Date;
     dataCriacao?: Date;
+    dataAtualizacao?: Date;
     excluido?: boolean;
 }

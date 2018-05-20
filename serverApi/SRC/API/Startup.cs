@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Filters;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace API
 {
@@ -39,7 +40,15 @@ namespace API
 
         public void ConfigureServices(IServiceCollection services)
         {           
-            services.AddDbContext<ApplicationDbContext>(options =>
+            
+            // services.Configure<FormOptions>(x =>
+            // {
+            //     x.ValueLengthLimit = int.Parse(Configuration["maxAllowedContentLength:MaxValue"]);
+            //     x.MultipartBodyLengthLimit = int.Parse(Configuration["maxAllowedContentLength:MaxValue"]);
+            //     x.MultipartHeadersLengthLimit = int.Parse(Configuration["maxAllowedContentLength:MaxValue"]);
+            // });
+
+           services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                 //options.UseMySql(                    
                     Configuration.GetConnectionString("DefaultConnection"),
@@ -47,7 +56,6 @@ namespace API
                     b => b.MigrationsAssembly("API")
                 )
             );
-            services.AddMemoryCache();
           
             ResolveDependencies(services);
           
@@ -59,17 +67,7 @@ namespace API
                     "application/json"
                 };
             });
-            services.AddMemoryCache();
-            services.AddMvc(Options =>
-            {
-                Options.Filters.Add(new ExceptionFilter());
-                Options.Filters.Add(new ActivityLogFilter());
-            })
-            .AddJsonOptions(options =>
-            {
-                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
-            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -84,6 +82,8 @@ namespace API
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                 };
             });
+
+            ResolveDependencies(services);
 
             services.AddCors(options =>
             {

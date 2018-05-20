@@ -17,14 +17,5 @@ export interface NovoUsuarioModel {
     email?: string;
     senha?: string;
     dataNacimento?: Date;
-    perfilUsuario?: NovoUsuarioModel.PerfilUsuarioEnum;
-}
-export namespace NovoUsuarioModel {
-    export type PerfilUsuarioEnum = 1 | 2 | 3 | 4;
-    export const PerfilUsuarioEnum = {
-        NUMBER_1: 1 as PerfilUsuarioEnum,
-        NUMBER_2: 2 as PerfilUsuarioEnum,
-        NUMBER_3: 3 as PerfilUsuarioEnum,
-        NUMBER_4: 4 as PerfilUsuarioEnum
-    }
+    permissaoId?: string;
 }

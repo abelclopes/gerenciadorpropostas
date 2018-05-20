@@ -7,8 +7,10 @@ import { AuthService } from './api/auth.service';
 import { CategoriasService } from './api/categorias.service';
 import { FornecedoresService } from './api/fornecedores.service';
 import { PropostasService } from './api/propostas.service';
+import { PropostasStatusService } from './api/propostasStatus.service';
 import { UsuariosService } from './api/usuarios.service';
 import { UsuariosClansService } from './api/usuariosClans.service';
+import { UsuariosPermissoesService } from './api/usuariosPermissoes.service';
 
 @NgModule({
   imports:      [ CommonModule, HttpClientModule ],
@@ -19,8 +21,10 @@ import { UsuariosClansService } from './api/usuariosClans.service';
     CategoriasService,
     FornecedoresService,
     PropostasService,
+    PropostasStatusService,
     UsuariosService,
-    UsuariosClansService ]
+    UsuariosClansService,
+    UsuariosPermissoesService ]
 })
 export class ApiModule {
     public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders {

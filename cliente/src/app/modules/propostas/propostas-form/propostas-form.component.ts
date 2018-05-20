@@ -71,14 +71,19 @@ export class PropostasFormComponent implements OnInit {
 
   } 
   onSubmit() {
-    console.log('enviar....... ');
     if (this.propostaForm.valid) {
-        console.log('is valid');
         this.bodyText = 'This text can be updated in modal 1';
-      console.log('this.prepareSaveUpload() ======>>>' , this.prepareSaveUpload());
-      
-
-        this.propostaService.createUpload(this.prepareSaveUpload()).subscribe((proposta) => this.created.emit(proposta));
+        this.prepareSaveUpload();
+        this.propostaService.createUpload(this.prepareSaveUpload())
+        .subscribe(
+          data => {
+            this.created.emit(data);
+            if(data['ok'] == "true")
+              this.router.navigate(['/propostas']);
+          }, err => {
+            console.log(err);
+          }
+        );
     }
   }
   prepareSaveUpload(): FormData {

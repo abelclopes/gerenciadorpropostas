@@ -38,8 +38,6 @@ namespace DOMAIN
         public string Senha { get; set; }
         public DateTime DataNacimento { get; set; }
         public virtual PermissaoUsuario PermissaoUsuario { get; set; }
-
-        public virtual PropostaHistorico PropostaHistoricos { get; set; }
         public void Atualizar(Usuario model, IContext _context)
         {
             Nome = model.Nome;

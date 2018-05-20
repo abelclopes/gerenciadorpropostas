@@ -17,6 +17,7 @@ namespace Model
         public string FornecedorID { get; set; }
         public string CategoriaID { get; set; }  
         public int Status { get; set; }
+        public string Usuario { get; set; }
         public IFormFile Anexo { get; set; }
     }
 }
