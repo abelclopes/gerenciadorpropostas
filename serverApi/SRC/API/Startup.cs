@@ -71,21 +71,35 @@ namespace API
                     "application/json"
                 };
             });
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+            services.AddAuthorization(options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    ValidAudience = Configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                };
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
+
+            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(opt =>
+                {
+                    // Force all ISO8601 timestamp conversions to use UTC (ie: YYYY-MM-DDTHH:MM:SS.FFFZ)
+                    opt.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    opt.SerializerSettings.DateParseHandling = DateParseHandling.DateTimeOffset;
+                    opt.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                    opt.SerializerSettings.DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'";
+                });
+            // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            // .AddJwtBearer(options =>
+            // {
+            //     options.TokenValidationParameters = new TokenValidationParameters
+            //     {
+            //         ValidateIssuer = true,
+            //         ValidateAudience = true,
+            //         ValidateLifetime = true,
+            //         ValidateIssuerSigningKey = true,
+            //         ValidIssuer = Configuration["Jwt:Issuer"],
+            //         ValidAudience = Configuration["Jwt:Issuer"],
+            //         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+            //     };
+            // });
 
             ResolveDependencies(services);
 
@@ -98,7 +112,6 @@ namespace API
                       .AllowCredentials()
                 .Build());
             });
-            services.AddMvc();
 
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -138,9 +151,9 @@ namespace API
 
 
             // app.UseCorsMiddleware();
-            app.UseMvc();
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
+            app.UseMvc();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
