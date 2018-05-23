@@ -133,8 +133,10 @@ namespace API
             // app.UseStaticFiles();
 
 
-            app.UseAuthentication();
+            app.UseCorsMiddleware();
+            app.UseMvc();
             app.UseCors("CorsPolicy");
+            app.UseAuthentication();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -142,7 +144,6 @@ namespace API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
-            app.UseMvc();
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
