@@ -13,7 +13,8 @@ namespace INFRAESTRUCTURE
         :base(options)
         { }
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<PermissaoUsuario> PermissaoUsuarios { get; set; }
+        public DbSet<Permissao> Permissoes { get; set; }
+        public DbSet<UsuarioPermissao> UsuarioPermissoes { get; set; }
         public DbSet<Fornecedor> Fornecedores { get; set; }
         public DbSet<Proposta> Propostas { get; set; }
         public DbSet<PropostaAnexo> PropostaAnexos { get; set; }
@@ -21,13 +22,8 @@ namespace INFRAESTRUCTURE
         public DbSet<Categoria> Categorias { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        { 
             modelBuilder.Entity<Categoria>(entity =>
-            {
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            });
-
-            modelBuilder.Entity<PermissaoUsuario>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
             });
@@ -68,21 +64,44 @@ namespace INFRAESTRUCTURE
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
-                entity.HasOne(d => d.Proposta)
-                    .WithMany(p => p.PropostaHistorico)
+                entity.HasOne(d => d.Propostas)
+                    .WithMany(p => p.PropostaHistoricos)
                     .HasForeignKey(d => d.PropostaId);                    
             });
 
+
             modelBuilder.Entity<Usuario>(entity =>
             {
-                entity.HasIndex(e => e.Cpf)
-                    .IsUnique()
-                    .HasFilter("([Cpf] IS NOT NULL)");
-
-                entity.HasOne(d => d.PermissaoUsuario);   
-
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Cpf).IsRequired().HasMaxLength(18);
+
+                entity.Property(e => e.Email).IsRequired();
+
+                entity.Property(e => e.Nome).IsRequired();
+
+                entity.Property(e => e.Senha).IsRequired();
             });
+
+            modelBuilder.Entity<UsuarioPermissao>(entity =>
+            {
+                entity.HasKey(e => e.UsuarioId);
+
+                entity.Property(e => e.UsuarioId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.Permissoes)
+                    .WithMany(p => p.UsuarioPermissoes)
+                    .HasForeignKey(d => d.PermissaoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UsuarioPermissoes_Permissoes");
+
+                entity.HasOne(d => d.Usuario)
+                    .WithOne(p => p.UsuarioPermissoes)
+                    .HasForeignKey<UsuarioPermissao>(d => d.UsuarioId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UsuarioPermissoes_Usuarios");
+            });
+
             base.OnModelCreating(modelBuilder);
         }
         public async Task<int> SaveChangesAsync()

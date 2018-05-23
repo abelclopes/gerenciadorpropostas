@@ -79,8 +79,9 @@ namespace API.Controllers
       {
         throw new ArgumentException($"O Email {model.Email} já esta em uso");
       }
-      var permissaoUsuario = Context.PermissaoUsuarios.FirstOrDefault(x => x.Id == model.PermissaoId);
-      Context.Usuarios.Add(new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, permissaoUsuario , model.Senha));
+      var PermissaoId = Context.Permissoes.FirstOrDefault(x => x.Id == model.PermissaoId);
+      var usuario = new Usuario(model.Nome, model.Email, model.Cpf, Convert.ToDateTime(model.DataNacimento), model.Senha);
+      Context.Usuarios.Add(usuario);
       Context.SaveChanges();
 
       MemoryCache.Remove("usuarios");
@@ -88,34 +89,34 @@ namespace API.Controllers
     }
     
     [HttpPut("{id}"), Authorize]
-    [SwaggerResponse(201)]
-    [SwaggerResponse(401)]
-    [SwaggerResponse(403)]
-    public IActionResult Put(string id, [FromBody] NovoUsuarioModel model)
+    public async Task<IActionResult> Update(string id, [FromQuery] UpdateUsuarioModel model)
     {
-      if (model == null ||  string.IsNullOrEmpty(id))
-      {
-          return BadRequest();
-      }
-      
-      var usuario =  ConsultaUsuario(id);
-      if (usuario == null)
+      model.Id = Guid.Parse(id);
+      if (!Context.Usuarios.Include(x => x.UsuarioPermissoes).Any(x => x.Id == Guid.Parse(id)))
       {
           return NotFound();
       }
+      if(string.IsNullOrEmpty(model.Nome) || string.IsNullOrEmpty(model.Email)) return NotFound(new {error ="Nome ou email nao podem ser alterados para nulos"});
+      var usuario =  ConsultaUsuario(id);    
 
-      var permissaoUsuario = Context.PermissaoUsuarios.FirstOrDefault(x => x.Id == model.PermissaoId);      
-      var user = new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, permissaoUsuario);
+      
+      var user = new Usuario();
+      user.Nome = model.Nome;
+      user.Email = model.Email;
+      user.Cpf =  model.Cpf;
+      user.DataNacimento = Convert.ToDateTime(model.DataNacimento);
+
       if(!string.IsNullOrEmpty(model.Senha))
       {
         user.Senha = model.Senha;
       }
       usuario.Atualizar(user, Context);
       Context.Usuarios.Update(usuario);
-      Context.SaveChanges();
+      usuario.UsuarioPermissoes = this.getUsuarioPermissao().FirstOrDefault(x => x.Permissoes.Nivel.Equals(model.perfilUsuario));
+      await Context.SaveChangesAsync();
 
       MemoryCache.Remove("usuarios");
-      return Ok(new {Response = "Usuário salvo com sucesso"});
+      return Ok(new {ok = true, Response = "Usuário salvo com sucesso"});
     }
     
     [HttpDelete("{id}"), Authorize]
@@ -139,23 +140,28 @@ namespace API.Controllers
 
     private List<UsuariosModel>  RestornaUsuariosList(){
       return MemoryCache.GetOrCreate("usuarios", entry =>
-                          {
-                            entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
-                            return Context.Usuarios.Include(x => x.PermissaoUsuario).Include(x => x.PermissaoUsuario).Where(x => !x.Excluido)
-                            .Select(x => new UsuariosModel
-                              {
-                                Id = x.Id,
-                                Nome = x.Nome, 
-                                Email = x.Email, 
-                                Cpf = x.Cpf,
-                                DataNacimento = x.DataNacimento,
-                                PermissaoUsuario = x.PermissaoUsuario,
-                                //PerfilDescricao = EnumHelper.GetDescription(x.PerfilUsuario), 
-                              }).ToList();
+          {
+            entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+            return Context.Usuarios.Include(x => x.UsuarioPermissoes).Where(x => !x.Excluido)
+            .Select(x => new UsuariosModel
+              {
+                Id = x.Id,
+                Nome = x.Nome, 
+                Email = x.Email, 
+                Cpf = x.Cpf,
+                DataNacimento = x.DataNacimento,
+                UsuarioPermissao = x.UsuarioPermissoes,
+                //PerfilDescricao = EnumHelper.GetDescription(x.PerfilUsuario), 
+              }).ToList();
           });
     }
     private Usuario ConsultaUsuario(string id){
-      return Context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
+      return Context.Usuarios.Include(x => x.UsuarioPermissoes).FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
     }
+    private List<UsuarioPermissao> getUsuarioPermissao()
+     => Context.UsuarioPermissoes.Select(x => new UsuarioPermissao{
+                Permissoes = x.Permissoes,
+                Usuario = x.Usuario
+            }).Where(x => !x.Excluido).ToList();
   }
 }

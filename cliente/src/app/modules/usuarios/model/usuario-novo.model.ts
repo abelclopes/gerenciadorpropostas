@@ -1,6 +1,7 @@
 
 export class UsuarioNovoModel {
   constructor(
+  public id?: string,
   public nome?: string,
   public email?: string,
   public cpf?: string,

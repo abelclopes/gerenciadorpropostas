@@ -81,14 +81,13 @@ namespace API.Controllers
         if(string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Password)) return user;
         var encript = Util.GetSHA1HashData(login.Password);
 
-        Usuario usuario =  Context.Usuarios.Include(x => x.PermissaoUsuario).FirstOrDefault(x => x.Email == login.Email && x.Senha == encript);
+        Usuario usuario =  Context.Usuarios.Include(x => x.UsuarioPermissoes).FirstOrDefault(x => x.Email == login.Email && x.Senha == encript);
         if (!string.IsNullOrEmpty(usuario?.Email))
         {
-            usuario.PermissaoUsuario.Id.ToString();
             user = new NovoUsuarioModel(){
                 Email = usuario.Email,
                 Nome = usuario.Nome,
-                PermissaoId = usuario.PermissaoUsuario.Id,
+                PermissaoId = usuario.UsuarioPermissoes.PermissaoId,
                 DataNacimento = usuario.DataNacimento
             };
         }

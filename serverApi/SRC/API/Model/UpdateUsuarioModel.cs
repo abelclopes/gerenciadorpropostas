@@ -4,14 +4,14 @@ using Model;
 
 namespace Model
 {
-    public class NovoUsuarioModel  
+    public class UpdateUsuarioModel : BaseDataModel
     {
         public string Nome { get; set; }
         public string Cpf { get; set; }
         public string Email { get; set; }
         public string Senha { get; set; }
-        public DateTime DataNacimento { get; set; }
-        public int Perfil { get; set; }
+        public string DataNacimento { get; set; }
+        public int perfilUsuario { get; set; }
         public Guid PermissaoId { get; set; }
 
     }

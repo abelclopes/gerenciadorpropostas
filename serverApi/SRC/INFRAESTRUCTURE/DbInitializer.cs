@@ -17,33 +17,41 @@ namespace INFRAESTRUCTURE.Data
             // Look for any students.
             if (!context.Usuarios.Any())
             {
-                var permissoes = new List<PermissaoUsuario>(){
-                   {new PermissaoUsuario{ Id = Guid.NewGuid(), Permissao = "Administrador",Nivel = 1}},
-                   {new PermissaoUsuario{ Id = Guid.NewGuid(), Permissao = "AnalistaDeCompras", Nivel = 2}},
-                   {new PermissaoUsuario{ Id = Guid.NewGuid(), Permissao = "AnalistaFinanceiro", Nivel = 3}},
-                   {new PermissaoUsuario{ Id = Guid.NewGuid(), Permissao = "DiretorFinanceiro", Nivel = 4}},
-                };
                 
                 var users = new Usuario[]
                 {
                     // senha é teste123
                     new Usuario { Id = Guid.NewGuid(), Nome = "Administrador", Cpf = "9336423068", Email = "abellopes@gmail.com" , Senha = "2242461295221015719538209212227614317113501631961762"},
-                    new Usuario { Id = Guid.NewGuid(), Nome = "Analista de comprar", Cpf = "99900299202", Email = "abell@gmail.com", Senha = "2242461295221015719538209212227614317113501631961762"},
+                    new Usuario { Id = Guid.NewGuid(), Nome = "Analista de compras", Cpf = "99900299202", Email = "abell@gmail.com", Senha = "2242461295221015719538209212227614317113501631961762"},
                     new Usuario { Id = Guid.NewGuid(), Nome = "Analista Financeiro", Cpf = "98800299202", Email = "analista.financeiro@gmail.com", Senha = "2242461295221015719538209212227614317113501631961762" },
                     new Usuario { Id = Guid.NewGuid(), Nome = "Diretor Financeiro", Cpf = "99977777722", Email = "Dfinanceiro@gmail.com", Senha = "2242461295221015719538209212227614317113501631961762" }
+                };
+                var permissoes = new Permissao[]
+                {
+                   new Permissao { Id = Guid.NewGuid(), Nome = "Administrador", Nivel = 1},
+                   new Permissao { Id = Guid.NewGuid(), Nome = "AnalistaDeCompras", Nivel = 2},
+                   new Permissao { Id = Guid.NewGuid(), Nome = "AnalistaFinanceiro", Nivel = 3},
+                   new Permissao { Id = Guid.NewGuid(), Nome = "DiretorFinanceiro", Nivel = 4},
                 };
                 int i =1;
                 
                 foreach (Usuario u in users)
                 {
-                    u.PermissaoUsuario = permissoes.FirstOrDefault(x => x.Nivel == i);
                     context.Usuarios.Add(u);
                     i++;
                 }     
                 
-                foreach (PermissaoUsuario p in permissoes)
+                i =1;                
+                foreach (Permissao p in permissoes)
                 {
-                    context.PermissaoUsuarios.Add(p);                    
+                    context.UsuarioPermissoes.Add(new UsuarioPermissao(users[i], p));
+                    i++;
+                }   
+                         
+                foreach (Permissao p in permissoes)
+                {
+                    context.Permissoes.Add(p);
+                    i++;
                 }   
        
             }

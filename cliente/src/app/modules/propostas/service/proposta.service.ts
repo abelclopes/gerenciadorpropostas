@@ -11,7 +11,6 @@ import 'rxjs/add/operator/delay';
 
 import { PropostaPagedListModel, PropostaModel} from '../model';
 import { API_URL } from '../../../app.api';
-import { MyResponse } from '../../../logica-api/model/my-response';
 
 @Injectable()
 export class PropostaService {

@@ -12,8 +12,8 @@ import { GeproMaskUtilService } from '../../../shared/diretivas';
   moduleId: module.id.toString()
 })
 export class FornecedoresEditarComponent implements OnInit {
-  public maskTelefone = GeproMaskUtilService.PHONE_MASK_GENERATOR;
-  public maskCnpj = GeproMaskUtilService.CNPJ_MASK_GENERATOR;
+  public maskTelefone = GeproMaskUtilService.DYNAMIC_PHONE_MASK_GENERATOR;
+  public maskCnpj = GeproMaskUtilService.DYNAMIC_PERSON_MASK_GENERATOR;
   
   fornecedor: FornecedorModel;
   fornecedorForm: FormGroup
@@ -45,7 +45,7 @@ export class FornecedoresEditarComponent implements OnInit {
   onSubmit(model){
     console.info('cadastrar nova fornecedor',model)
     this.fornecedor.nome = model.nome;
-    this.fornecedor.cnpjCpf = model.cnpjCpf;
+    this.fornecedor.cnpjCpf = model.cnpjCpf.replace(/[^\d]+/g,'');
     this.fornecedor.email = model.email;
     this.fornecedor.telefone = model.telefone;
     this.catService.updateFornecedor(this.fornecedor)

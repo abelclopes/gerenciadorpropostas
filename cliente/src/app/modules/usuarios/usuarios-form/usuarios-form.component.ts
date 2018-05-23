@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { UsuarioService } from '../service/usuario.service';
 import { UsuarioNovoModel } from '../model';
+import { GeproMaskUtilService } from '../../../shared/diretivas';
 
 @Component({
   selector: 'app-usuarios-form',
@@ -11,6 +12,8 @@ import { UsuarioNovoModel } from '../model';
   styleUrls: ['./usuarios-form.component.css']
 })
 export class UsuariosFormComponent implements OnInit {
+  public dataFormatBr = GeproMaskUtilService.DATE_BR_GENERATOR;
+  public maskCpf = GeproMaskUtilService.CPF_MASK_GENERATOR;
   usuarioModel: UsuarioNovoModel;
   nome: string;
   descricao: string;
@@ -33,13 +36,11 @@ export class UsuariosFormComponent implements OnInit {
     });
   }
   onSubmit(model){
-
-    let novaUsuario: UsuarioNovoModel;
-    this.userService.novoUsuario(novaUsuario)
+    this.userService.novoUsuario(model)
       .subscribe(
         data => {
           if(data['ok'] == true)
-            this.router.navigate(['/categorias']);
+            this.router.navigate(['/usuario']);
         }, err => {
           console.log(err);
         }

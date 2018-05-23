@@ -5,55 +5,65 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map'
 import { API_URL } from '../../../app.api';
-import { UsuarioPagedListModel } from '../model';
+import { UsuarioPagedListModel, UsuarioNovoModel } from '../model';
 import { UsuariosModel } from '../../../logica-api';
 
 @Injectable()
 export class UsuarioService {
 
-    httpHeaders: HttpHeaders;
+  httpHeaders: HttpHeaders;
 
-    constructor(protected httpClient: HttpClient, private http: Http) {
+  constructor(protected httpClient: HttpClient, private http: Http) {
 
-      var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
-       this.httpHeaders = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('No-Auth', 'true')
-      .set('Authorization', `Bearer ${currentUser.token}`)
-      .set('x-access-token', `${currentUser.token}`);
-    }
+    var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
+      this.httpHeaders = new HttpHeaders()
+    .set('Content-Type', 'application/json')
+    .set('No-Auth', 'true')
+    .set('Authorization', `Bearer ${currentUser.token}`)
+    .set('x-access-token', `${currentUser.token}`);
+  }
 
-    public getUsuarios(pagina, tamanho, buscaTermo?: any): Observable<UsuarioPagedListModel> {
-      if(buscaTermo == undefined){ buscaTermo ='';}
-      return this.httpClient.get<UsuarioPagedListModel>(`${API_URL}/api/usuarios?PageNumber=${pagina}&PageSize=${tamanho}&buscaTermo=${buscaTermo}`,{
-        headers: this.httpHeaders, responseType: 'json'
-      });
-    }
-    public novoUsuario(model: UsuariosModel){
-      let data = JSON.stringify(model);
-      return this.httpClient.post<UsuariosModel>(`${API_URL}/api/usuarios/`,data,{headers: this.httpHeaders, responseType: 'json'});
-    }
-    public getUsuarioById(id: string): Observable<UsuariosModel> {
-      return this.httpClient.get<UsuariosModel>(`${API_URL}/api/usuarios/${id}`,{
-        headers: this.httpHeaders, responseType: 'json'
-      });
-    }
-    public updateUsuario(model: UsuariosModel): Observable<UsuarioPagedListModel> {
-      let data = JSON.stringify(model);
-      let url = `${API_URL}/api/usuarios/${model.id}`;
-      return this.httpClient.put(url,data,
-        {
-          headers: this.httpHeaders
-        }
-      );
-    }
-    public delete(id: string): any {
-      let url = `${API_URL}/api/usuarios/${id}`;
-      return this.httpClient.delete(url, { headers: this.httpHeaders } );
-    }
-    
-    public getPerfis(): any {
-      let url = `${API_URL}/api/usuarios/perfis/`;
-      return this.httpClient.get(url, { headers: this.httpHeaders } );
-    }
+  public getUsuarios(pagina, tamanho, buscaTermo?: any): Observable<UsuarioPagedListModel> {
+    if(buscaTermo == undefined){ buscaTermo ='';}
+    return this.httpClient.get<UsuarioPagedListModel>(`${API_URL}/api/usuarios?PageNumber=${pagina}&PageSize=${tamanho}&buscaTermo=${buscaTermo}`,{
+      headers: this.httpHeaders, responseType: 'json'
+    });
+  }
+  public novoUsuario(model: UsuariosModel){
+    let data = JSON.stringify(model);
+    return this.httpClient.post<UsuariosModel>(`${API_URL}/api/usuarios/`,data,{headers: this.httpHeaders, responseType: 'json'});
+  }
+  public getUsuarioById(id: string): Observable<UsuariosModel> {
+    return this.httpClient.get<UsuariosModel>(`${API_URL}/api/usuarios/${id}`,{
+      headers: this.httpHeaders, responseType: 'json'
+    });
+  }
+  public updateUsuario(model: UsuarioNovoModel, id: string): Observable<UsuarioNovoModel> {
+    model.id = id;
+    let url = `${API_URL}/api/usuarios/${model.id}/?nome=${model.nome}&cpf=${model.cpf}&email=${model.email}&senha${model.senha}&perfilUsuario=
+    ${model.perfil}&dataNacimento=${model.dataNacimento}`;
+    return this.httpClient.put<UsuarioNovoModel>(url, model, {   headers: this.httpHeaders })
+      .map(res => res)
+      .catch(this.handleError);
+  }
+  public delete(id: string): any {
+    let url = `${API_URL}/api/usuarios/${id}/`;
+    return this.httpClient.delete(url, { headers: this.httpHeaders } );
+  }
+  
+  public getPerfis(): any {
+    let url = `${API_URL}/api/Usuarios/Permissoes`;
+    return this.httpClient.get(url, { headers: this.httpHeaders } );
+  }
+  private extractData(res: Response) {
+    let body = res.json();
+    return body || {};
+  }
+
+  private handleError(error: any) {
+      let errMsg = (error.message) ? error.message :
+          error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+      console.error(errMsg);
+      return Observable.throw(errMsg);
+  }
 }

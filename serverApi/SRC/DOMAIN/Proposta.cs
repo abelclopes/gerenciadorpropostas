@@ -12,6 +12,8 @@ namespace DOMAIN
     {
         public Proposta()
         {
+            PropostaAnexos = new HashSet<PropostaAnexo>();
+            PropostaHistoricos = new HashSet<PropostaHistorico>();
         }
         public Proposta(string nomeProposta, string descricao, double valor, Fornecedor fornecedor, Categoria categoria, PropostaStatus status)
         {
@@ -37,8 +39,9 @@ namespace DOMAIN
         [ForeignKey("Fornecedor")]
         public Guid FornecedorId { get; set; }
         public virtual Fornecedor Fornecedor { get; set; }
-        public virtual ICollection<PropostaHistorico> PropostaHistorico { get; set; }
+        public virtual ICollection<PropostaHistorico> PropostaHistoricos { get; set; }
 
+        public ICollection<PropostaAnexo> PropostaAnexos { get; set; }
 
 
 

@@ -16,10 +16,10 @@ namespace BUSINESS
         
         private Proposta Proposta{ get; set; }
 
-        public Boolean validate(Proposta model, int statusAtual)
+        public Boolean validate(Proposta model, int statusAtual, IContext context)
         {
 
-            if(model.PropostaHistorico.Any( x => x.PropostaStatus.Equals(2)))
+            if(context.PropostasHistoricos.Any( x => x.PropostaStatus.Equals(2)))
             {
                 return true;
             }            

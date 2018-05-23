@@ -22,19 +22,20 @@ using Microsoft.Extensions.Caching.Memory;
 namespace API.Controllers
 {
     [Route("api/Usuarios/Permissoes")]
-    public class UsuariosPermissoesController : BaseController
+    public class PermissoesController : BaseController
     {
-        public UsuariosPermissoesController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache)
+        public PermissoesController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache)
         {}
         
         [HttpGet, Authorize]
         [SwaggerResponse(201)]
         [SwaggerResponse(401)]
         [SwaggerResponse(403)]
-        public List<PermissaoUsuario> Get(){
-            return Context.PermissaoUsuarios.Select(x => new PermissaoUsuario{
-                Permissao = x.Permissao,
-                Nivel = x.Nivel
+        public List<Permissao> Get(){
+            return Context.Permissoes.Select(x => new Permissao{
+                Nome = x.Nome,
+                Nivel = x.Nivel,
+                Id = x.Id
             }).Where(x => !x.Excluido).ToList();
         }
     }

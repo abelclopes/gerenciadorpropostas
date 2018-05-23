@@ -31,6 +31,7 @@ import { CustomCurrencyMaskConfig } from './shared/diretivas/custon-currency-mas
 
 import { NgxCurrencyModule } from "ngx-currency";
 import { CURRENCY_MASK_CONFIG } from 'ngx-currency/src/currency-mask.config';
+import { GeproMaskUtilService } from './shared/diretivas';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { CURRENCY_MASK_CONFIG } from 'ngx-currency/src/currency-mask.config';
     AuthGuard,
     NotificationService, HeaderService,
     PaginationFilter, LoadingService,
+    GeproMaskUtilService,
     { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }
   ],
   bootstrap: [AppComponent]

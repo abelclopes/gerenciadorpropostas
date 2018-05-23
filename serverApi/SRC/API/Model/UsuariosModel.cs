@@ -9,7 +9,7 @@ namespace Model
         public string Nome { get; set; }
         public string Email { get; set; }
         public string Cpf { get; set; }
-        public PermissaoUsuario PermissaoUsuario { get; set; }
+        public UsuarioPermissao UsuarioPermissao { get; set; }
         public DateTime DataNacimento { get; set; }
     }
 }

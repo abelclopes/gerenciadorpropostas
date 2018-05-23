@@ -11,7 +11,6 @@ export class PropostaModel {
     public status?: Proposta.StatusEnum,
     public anexo?: string,
     public id?: string,
-    public propostaHistorico?: PropostaHistorico,
     public dataAtualizacao?: Date,
     public dataCriacao?: Date,
     public excluido?: boolean

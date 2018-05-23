@@ -8,6 +8,8 @@ import { UsuariosListComponent } from './usuarios-list/usuarios-list.component';
 import { UsuariosEditComponent } from './usuarios-edit/usuarios-edit.component';
 import { UsuariosFormComponent } from './usuarios-form/usuarios-form.component';
 import { UsuarioService } from './service/usuario.service';
+import { GeproMaskUtilService } from '../../shared/diretivas';
+import { SharedModule } from '../../shared/shared.module';
 
 
 const routes: Routes = [
@@ -22,11 +24,13 @@ const routes: Routes = [
     CommonModule,
     FormsModule, 
     ReactiveFormsModule,   
+    SharedModule,    
     FormsModule
   ],
   declarations: [UsuariosListComponent, UsuariosEditComponent, UsuariosFormComponent],
   providers:[
     UsuarioService
+    ,GeproMaskUtilService
   ]
 })
 export class UsuariosModule { }

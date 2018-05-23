@@ -37,7 +37,7 @@ export class FornecedorService {
         headers: this.httpHeaders, responseType: 'json'
       });
     }
-    public updateFornecedor(model: FornecedorModel): Observable<FornecedorPagedListModel> {
+    public updateFornecedor(model: FornecedorModel): Observable<FornecedorModel> {
       const data = JSON.stringify(model);
       const url = `${API_URL}/api/fornecedores/${model.id}`;
       return this.httpClient.put(url, data,
