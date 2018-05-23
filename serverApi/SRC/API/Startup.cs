@@ -65,6 +65,7 @@ namespace API
           
            // services.AddCors();  
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
+           services.ConfigureJwtAuthentication();
             services.AddResponseCompression(options =>
             {
                 options.MimeTypes = new[]
@@ -74,7 +75,9 @@ namespace API
             });
             services.AddAuthorization(options =>
             {
-                options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(
+                    JwtBearerDefaults.AuthenticationScheme
+                    ).RequireAuthenticatedUser().Build();
             });
 
             services.AddMvc();
