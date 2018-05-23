@@ -43,11 +43,11 @@ namespace API
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = tokenValidationParams;
-#if PROD || UAT
-                options.IncludeErrorDetails = false;
-#elif DEBUG
-                options.RequireHttpsMetadata = false;
-#endif
+                #if PROD || UAT
+                    options.IncludeErrorDetails = false;
+                #elif DEBUG
+                    options.RequireHttpsMetadata = false;
+                #endif
             });
         }
         public static string CreateJsonWebToken(
