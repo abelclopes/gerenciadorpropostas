@@ -28,3 +28,8 @@ Or
 
 ## node generete api do swagger
 java -jar D:\projetos\dotnetcore\swagger-codegen-cli-2.3.1.jar generate -i http://localhost:5000/swagger/v1/swagger.json -l typescript-angular
+
+
+
+
+https://github.com/justintubbs/NetCore2_JWTExample/tree/master/WebApplication1
