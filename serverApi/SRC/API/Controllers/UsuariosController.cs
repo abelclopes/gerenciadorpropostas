@@ -28,6 +28,7 @@ using API.Model;
 
 namespace API.Controllers
 {
+  [Authorize]
   [Produces("application/json")]
   [Route("api/[controller]")]
   public class UsuariosController : BaseController
