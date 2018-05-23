@@ -28,6 +28,7 @@ using API.Model;
 
 namespace API.Controllers
 {
+  [Produces("application/json")]
   [Route("api/[controller]")]
   public class UsuariosController : BaseController
   {
@@ -35,11 +36,12 @@ namespace API.Controllers
     {}
    
     [HttpGet, Authorize]
-    //[HttpGet, Authorize(Policy = "Administrador")]
+    //[HttpGet]
+    [ProducesResponseType(typeof(ListaPaginada<UsuariosModel>), 201)]
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public  ListaPaginada<UsuariosModel> Get(PaginationParams model)
+    public  ListaPaginada<UsuariosModel> Get([FromQuery] PaginationParams model)
     {
       var usuarios = RestornaUsuariosList();
       if(!string.IsNullOrEmpty(model.buscaTermo)){ 
@@ -162,6 +164,6 @@ namespace API.Controllers
      => Context.UsuarioPermissoes.Select(x => new UsuarioPermissao{
                 Permissoes = x.Permissoes,
                 Usuario = x.Usuario
-            }).Where(x => !x.Excluido).ToList();
+            }).ToList();
   }
 }

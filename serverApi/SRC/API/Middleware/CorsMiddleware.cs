@@ -15,7 +15,7 @@ public class CorsMiddleware
     {  
         httpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");  
         httpContext.Response.Headers.Add("Access-Control-Allow-Credentials", "true");  
-        httpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Accept");  
+        httpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Content-Type, Authorization");  
         httpContext.Response.Headers.Add("Access-Control-Allow-Methods", "POST,GET,PUT,PATCH,DELETE,OPTIONS");  
         return _next(httpContext);  
     }  

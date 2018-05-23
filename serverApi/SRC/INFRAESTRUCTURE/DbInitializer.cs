@@ -40,19 +40,21 @@ namespace INFRAESTRUCTURE.Data
                     context.Usuarios.Add(u);
                     i++;
                 }     
-                
-                i =1;                
-                foreach (Permissao p in permissoes)
-                {
-                    context.UsuarioPermissoes.Add(new UsuarioPermissao(users[i], p));
-                    i++;
-                }   
-                         
+                  
                 foreach (Permissao p in permissoes)
                 {
                     context.Permissoes.Add(p);
                     i++;
                 }   
+                
+                i = 0;                
+                foreach (Permissao p in permissoes)
+                {
+                    var up = new UsuarioPermissao(users[i], p);
+                    context.UsuarioPermissoes.Add(up);
+                    i++;
+                }   
+                       
        
             }
             if (!context.Categorias.Any())

@@ -48,6 +48,9 @@ namespace API
             //     x.MultipartHeadersLengthLimit = int.Parse(Configuration["maxAllowedContentLength:MaxValue"]);
             // });
 
+            // services.AddDbContext<ApplicationDbContext>(
+            //     options =>options.UseSqlite("Data Source=MvcEmployee.db")
+            // );  
            services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                 //options.UseMySql(                    
@@ -59,6 +62,7 @@ namespace API
           
             ResolveDependencies(services);
           
+           // services.AddCors();  
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
             services.AddResponseCompression(options =>
             {
@@ -133,7 +137,7 @@ namespace API
             // app.UseStaticFiles();
 
 
-            app.UseCorsMiddleware();
+            // app.UseCorsMiddleware();
             app.UseMvc();
             app.UseCors("CorsPolicy");
             app.UseAuthentication();

@@ -20,7 +20,8 @@ export class UsuarioService {
     .set('Content-Type', 'application/json')
     .set('No-Auth', 'true')
     .set('Authorization', `Bearer ${currentUser.token}`)
-    .set('x-access-token', `${currentUser.token}`);
+    //.set('x-access-token', `${currentUser.token}`)
+    .set('www-authenticate', `${currentUser.token}`);
   }
 
   public getUsuarios(pagina, tamanho, buscaTermo?: any): Observable<UsuarioPagedListModel> {

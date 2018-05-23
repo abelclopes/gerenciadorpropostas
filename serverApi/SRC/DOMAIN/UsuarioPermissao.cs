@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DOMAIN
 {
-    public partial class UsuarioPermissao: EntidadeBase
+    public partial class UsuarioPermissao
     {
         public UsuarioPermissao()
         {
@@ -13,6 +13,8 @@ namespace DOMAIN
         {
             UsuarioId = usuario.Id;
             PermissaoId = permissoes.Id;
+            Usuario = usuario;
+            Permissoes = permissoes;
             
         }
         public Guid UsuarioId { get; set; }
