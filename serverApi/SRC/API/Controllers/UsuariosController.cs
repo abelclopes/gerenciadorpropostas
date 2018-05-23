@@ -111,8 +111,8 @@ namespace API.Controllers
         user.Senha = model.Senha;
       }
       usuario.Atualizar(user, Context);
-      Context.Usuarios.Update(usuario);
       usuario.UsuarioPermissoes = this.getUsuarioPermissao().FirstOrDefault(x => x.Permissoes.Nivel.Equals(model.perfilUsuario));
+      Context.Usuarios.Update(usuario);
       await Context.SaveChangesAsync();
 
       MemoryCache.Remove("usuarios");
