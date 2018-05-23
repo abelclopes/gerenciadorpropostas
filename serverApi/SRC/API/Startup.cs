@@ -80,7 +80,7 @@ namespace API
                     ).RequireAuthenticatedUser().Build();
             });
 
-            services.AddMvc();
+            //services.AddMvc();
             services.AddMvc()
                 .AddJsonOptions(opt =>
                 {
@@ -155,8 +155,8 @@ namespace API
 
 
             // app.UseCorsMiddleware();
-            app.UseCors("CorsPolicy");
             app.UseAuthentication();
+            app.UseCors("CorsPolicy");
             app.UseMvc();
 
             app.UseSwagger();
