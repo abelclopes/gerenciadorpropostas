@@ -136,5 +136,12 @@ namespace API.Controllers
             }
             return Ok();
         }
+        [HttpPost]
+        [Route("gerartokens")]
+        public IActionResult Post()
+        {
+            var model = TokenBuilder.CreateJsonWebToken("gerp.prod", new List<string>() { "Administrator" } , "http://audience.com", "http://issuer.com", Guid.NewGuid(), DateTime.UtcNow.AddMinutes(20));
+            return Ok(model);
+        }
     }
 }
