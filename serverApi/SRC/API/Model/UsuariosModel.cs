@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using DOMAIN;
 using Model;
 
@@ -13,5 +14,14 @@ namespace Model
         public string Permissao { get; set; }
         public int PermissaoNivel { get; set; }
         public DateTime DataNacimento { get; set; }
+
+       	private static DateTime convertDateTiem(string date){
+            string input = date;   
+            string pattern = @"(-)|(/)";
+            var datan = Regex.Split(input, pattern);
+            
+            return new DateTime(int.Parse(datan[4]), int.Parse(datan[2]),int.Parse(datan[0]));
+            
+        }
     }
 }
