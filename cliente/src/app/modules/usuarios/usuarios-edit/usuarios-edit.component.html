@@ -49,8 +49,8 @@
                               </div>
                               <div class="form-group">
                                   <label>Nivel Permissão</label>
-                                  <select class="form-control" formControlName="perfilUsuario" required [(ngModel)]="usuarioNivel">
-                                  <option *ngFor="let op of options" [value]="op.nivel">{{op.permissao}}</option>
+                                  <select class="form-control" formControlName="perfilUsuario" required [(ngModel)]="permissaoNivel">
+                                  <option *ngFor="let op of options" [value]="op.nivel">{{op.nome}}</option>
                                   </select>
                               </div>
                               <button [disabled]="!usuarioForm.valid" class="btn btn-lg btn-success"

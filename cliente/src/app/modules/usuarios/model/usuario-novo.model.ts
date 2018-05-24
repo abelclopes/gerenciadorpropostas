@@ -5,7 +5,7 @@ export class UsuarioNovoModel {
   public nome?: string,
   public email?: string,
   public cpf?: string,
-  public perfil?: UsuarioNovoModel.PerfilEnum,
+  public permissaoNivel?: UsuarioNovoModel.PerfilEnum,
   public dataNacimento?: Date,
   public senha?: string
 ){}

@@ -38,7 +38,7 @@
                       <tr class="odd gradeX" *ngFor="let user of usuarios | paginate: { itemsPerPage: tamanhoPagina, currentPage: paginaAtual, totalItems: totalItens }">
                         <td>{{user.cpf}}</td>
                           <td>{{user.nome}}</td>
-                          <td>{{user.permissaoUsuario.permissao}}</td>
+                          <td>{{user.permissao}}</td>
                           <td>{{user.dataCriacao | date:'dd/MM/y'}}</td>
                           <td class="center"><a routerLink='editar/{{user.id}}'><i class="fa fa-edit"></i></a></td>
                           <td class="center"><a (click)='delete(user.id)'><i class="fa fa-trash"></i></a></td>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, HttpModule, Response, RequestMethod, RequestOptionsArgs, RequestOptions } from '@angular/http';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map'
@@ -41,9 +41,15 @@ export class UsuarioService {
   }
   public updateUsuario(model: UsuarioNovoModel, id: string): Observable<UsuarioNovoModel> {
     model.id = id;
-    let url = `${API_URL}/api/usuarios/${model.id}/?nome=${model.nome}&cpf=${model.cpf}&email=${model.email}&senha${model.senha}&perfilUsuario=
-    ${model.perfil}&dataNacimento=${model.dataNacimento}`;
-    return this.httpClient.put<UsuarioNovoModel>(url, model, {   headers: this.httpHeaders })
+    let url = `${API_URL}/api/usuarios/${model.id}/`;
+    const params = new HttpParams().set('id', model.id);  
+    let newDate = model.dataNacimento;
+    console.log(newDate);
+    var body = {  
+                nome:model.nome,cpf:model.cpf,Email:model.email,ID:model.id,dataNacimento:model.dataNacimento,perfilUsuario:model.perfilUsuario
+             };  
+    
+    return this.httpClient.put<UsuarioNovoModel>(url, body, { headers: this.httpHeaders})
       .map(res => res)
       .catch(this.handleError);
   }

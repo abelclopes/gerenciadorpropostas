@@ -25,6 +25,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using DOMAIN.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using API.Model;
+using System.Globalization;
 
 namespace API.Controllers
 {
@@ -68,11 +69,12 @@ namespace API.Controllers
       }
       return usuarios;
     }
-    [HttpPost, Authorize]
+    
+    [HttpPost("{id}"), Authorize]
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public IActionResult Post([FromBody] NovoUsuarioModel model)
+    public async Task<IActionResult> Post(string id, [FromBody] UpdateUsuarioModel model)
     {
        if (model == null)
       {
@@ -85,17 +87,20 @@ namespace API.Controllers
       var PermissaoId = Context.Permissoes.FirstOrDefault(x => x.Id == model.PermissaoId);
       var usuario = new Usuario(model.Nome, model.Email, model.Cpf, Convert.ToDateTime(model.DataNacimento), model.Senha);
       Context.Usuarios.Add(usuario);
-      Context.SaveChanges();
+      await Context.SaveChangesAsync();
 
       MemoryCache.Remove("usuarios");
       return Ok(new {Response = "Usuário salvo com sucesso"});
     }
     
     [HttpPut("{id}"), Authorize]
-    public async Task<IActionResult> Update(string id, [FromQuery] UpdateUsuarioModel model)
+    [SwaggerResponse(201)]
+    [SwaggerResponse(401)]
+    [SwaggerResponse(403)]
+    public async Task<IActionResult> Put(string id, [FromBody] UpdateUsuarioModel model)
     {
       model.Id = Guid.Parse(id);
-      if (!Context.Usuarios.Include(x => x.UsuarioPermissoes).Any(x => x.Id == Guid.Parse(id)))
+      if (!Context.Usuarios.Any(x => x.Id == Guid.Parse(id)))
       {
           return NotFound();
       }
@@ -106,15 +111,32 @@ namespace API.Controllers
       var user = new Usuario();
       user.Nome = model.Nome;
       user.Email = model.Email;
-      user.Cpf =  model.Cpf;
-      user.DataNacimento = Convert.ToDateTime(model.DataNacimento);
+      user.Cpf =  model.Cpf.Replace(".","").Replace("-","");
+      DateTime dateTime2;
+      string mdata = model.DataNacimento.Replace("/","-");
+      mdata = string.Concat(mdata.ToDate()," 00:00:00");
+      //user.DataNacimento = DateTime.ToDateTime(mdata);// (DateTime.TryParse(mdata, out dateTime2))? dateTime2: dateTime2;
+      string dateInput = model.DataNacimento;
+      //DateTime parsedDate = DateTime.Parse(mdata);
+      DateTime dt;
+      DateTime.TryParseExact(mdata, 
+                       "YYYY-MM-DDTHH:MM:SS.FFFZ", 
+                       CultureInfo.InvariantCulture, 
+                       DateTimeStyles.None, 
+                       out dt);
+
 
       if(!string.IsNullOrEmpty(model.Senha))
       {
         user.Senha = model.Senha;
       }
+      var permissao = getPermissao().FirstOrDefault(x => x.Nivel.Equals(model.perfilUsuario));
       usuario.Atualizar(user, Context);
-      usuario.UsuarioPermissoes = this.getUsuarioPermissao().FirstOrDefault(x => x.Permissoes.Nivel.Equals(model.perfilUsuario));
+      if(!Context.UsuarioPermissoes.Any(x => x.UsuarioId == model.Id && x.PermissaoId == permissao.Id )){
+        var up = Context.UsuarioPermissoes.FirstOrDefault(x => x.UsuarioId == model.Id && x.PermissaoId == permissao.Id );
+        Context.UsuarioPermissoes.Remove(up);
+        usuario.UsuarioPermissoes = new UsuarioPermissao(usuario, permissao);
+      }
       Context.Usuarios.Update(usuario);
       await Context.SaveChangesAsync();
 
@@ -145,7 +167,7 @@ namespace API.Controllers
       return MemoryCache.GetOrCreate("usuarios", entry =>
           {
             entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
-            return Context.Usuarios.Include(x => x.UsuarioPermissoes).Where(x => !x.Excluido)
+            return Context.Usuarios.Where(x => !x.Excluido)
             .Select(x => new UsuariosModel
               {
                 Id = x.Id,
@@ -153,18 +175,24 @@ namespace API.Controllers
                 Email = x.Email, 
                 Cpf = x.Cpf,
                 DataNacimento = x.DataNacimento,
-                UsuarioPermissao = x.UsuarioPermissoes,
-                //PerfilDescricao = EnumHelper.GetDescription(x.PerfilUsuario), 
+                Permissao = x.UsuarioPermissoes.Permissoes.Nome,
+                PermissaoNivel = x.UsuarioPermissoes.Permissoes.Nivel
               }).ToList();
           });
     }
     private Usuario ConsultaUsuario(string id){
-      return Context.Usuarios.Include(x => x.UsuarioPermissoes).FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
+      return Context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
     }
-    private List<UsuarioPermissao> getUsuarioPermissao()
-     => Context.UsuarioPermissoes.Select(x => new UsuarioPermissao{
-                Permissoes = x.Permissoes,
-                Usuario = x.Usuario
-            }).ToList();
+    private List<Permissao> getPermissao() => Context.Permissoes.ToList();
+    private DateTime? convertData(string value){
+      
+      DateTime convertedDate = Convert.ToDateTime(value);
+      string date = convertedDate.ToShortDateString();
+      return  DateTime.ParseExact(date, "dd/MM/yyyy", null);
+    }
+
+
+
   }
+    
 }

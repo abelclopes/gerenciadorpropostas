@@ -10,6 +10,8 @@ namespace Model
         public string Email { get; set; }
         public string Cpf { get; set; }
         public UsuarioPermissao UsuarioPermissao { get; set; }
+        public string Permissao { get; set; }
+        public int PermissaoNivel { get; set; }
         public DateTime DataNacimento { get; set; }
     }
 }

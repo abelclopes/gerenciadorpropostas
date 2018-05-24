@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Data;
 using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 using Microsoft.IdentityModel.Tokens;
@@ -17,7 +16,6 @@ using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 using Model;
 using INFRAESTRUCTURE;
@@ -81,7 +79,7 @@ namespace API.Controllers
                 "http://audience.com", 
                 "http://issuer.com", 
                 Guid.NewGuid(), 
-                DateTime.UtcNow.AddMinutes(20)
+                DateTime.UtcNow.AddDays(1)
             );
     
             return model;

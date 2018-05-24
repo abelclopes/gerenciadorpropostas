@@ -16,7 +16,7 @@ export class UsuariosEditComponent implements OnInit {
   public dataFormatBr = GeproMaskUtilService.DATE_BR_GENERATOR;
   public maskCpf = GeproMaskUtilService.CPF_MASK_GENERATOR;
   usuarioModel: UsuarioNovoModel;
-  usuarioNivel: number;
+  permissaoNivel: number;
 
   nome: string;
   descricao: string;
@@ -31,7 +31,8 @@ export class UsuariosEditComponent implements OnInit {
     .subscribe(
       data => {
         this.usuarioModel = data;
-        this.usuarioNivel = data.permissaoUsuario.nivel;
+        this.usuarioModel.dataNacimento =  new Date(data.dataNacimento); 
+        this.permissaoNivel = data.permissaoNivel;
         console.log(this.usuarioModel)
       }, err => {
         console.log(err);
@@ -51,14 +52,14 @@ export class UsuariosEditComponent implements OnInit {
   onSubmit(model){
     console.info('cadastrar editar Usuario',model)
     this.usuarioModel.nome = model.nome;
-    this.usuarioModel.cpf = model.cpf.replace(/[^\d]+/g,'');
+    this.usuarioModel.cpf = model.cpf.replace('.','').replace('-','');
     this.usuarioModel.email = model.email;
-    this.usuarioModel.dataNacimento = model.dataNacimento.replace(/[^\d]+/g,'');
-    this.usuarioModel.perfil = 1;
+    this.usuarioModel.dataNacimento = model.dataNacimento.replace('/','-');
+    this.usuarioModel.permissaoNivel = model.permissaoNivel;
 
     let usuario: UsuariosModel;
     let usuarioId: string = this.route.snapshot.paramMap.get('id');
-    this.userService.updateUsuario(model,usuarioId)
+    this.userService.updateUsuario(model, usuarioId)
       .subscribe(
         data => {
           if(data['ok'] == true)
