@@ -15,7 +15,7 @@ namespace Model
         public int PermissaoNivel { get; set; }
         public DateTime DataNacimento { get; set; }
 
-       	private static DateTime convertDateTiem(string date){
+       	private static DateTime convertDateTime(string date){
             string input = date;   
             string pattern = @"(-)|(/)";
             var datan = Regex.Split(input, pattern);
