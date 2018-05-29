@@ -41,14 +41,6 @@ namespace API
 
         public void ConfigureServices(IServiceCollection services)
         {           
-            
-            // services.Configure<FormOptions>(x =>
-            // {
-            //     x.ValueLengthLimit = int.Parse(Configuration["maxAllowedContentLength:MaxValue"]);
-            //     x.MultipartBodyLengthLimit = int.Parse(Configuration["maxAllowedContentLength:MaxValue"]);
-            //     x.MultipartHeadersLengthLimit = int.Parse(Configuration["maxAllowedContentLength:MaxValue"]);
-            // });
-
             // services.AddDbContext<ApplicationDbContext>(
             //     options =>options.UseSqlite("Data Source=MvcEmployee.db")
             // );  
@@ -65,7 +57,7 @@ namespace API
           
            // services.AddCors();  
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
-           services.ConfigureJwtAuthentication();
+            services.ConfigureJwtAuthentication();
             services.AddResponseCompression(options =>
             {
                 options.MimeTypes = new[]
@@ -90,20 +82,6 @@ namespace API
                     opt.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
                     opt.SerializerSettings.DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'";
                 });
-            // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            // .AddJwtBearer(options =>
-            // {
-            //     options.TokenValidationParameters = new TokenValidationParameters
-            //     {
-            //         ValidateIssuer = true,
-            //         ValidateAudience = true,
-            //         ValidateLifetime = true,
-            //         ValidateIssuerSigningKey = true,
-            //         ValidIssuer = Configuration["Jwt:Issuer"],
-            //         ValidAudience = Configuration["Jwt:Issuer"],
-            //         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-            //     };
-            // });
 
             ResolveDependencies(services);
 
@@ -162,7 +140,7 @@ namespace API
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "GERPRO API V1");
             });
 
 

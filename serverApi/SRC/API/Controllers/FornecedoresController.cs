@@ -151,6 +151,7 @@ namespace API.Controllers
                                 Nome = x.Nome,
                                 CnpjCpf = x.CnpjCpf,
                                 Email = x.Email,
+                                DataCriacao = x.DataCriacao,
                                 Telefone = x.Telefone
                               }).ToList();
                           });
