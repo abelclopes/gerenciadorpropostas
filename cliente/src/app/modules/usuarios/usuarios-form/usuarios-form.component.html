@@ -42,9 +42,9 @@
                                    formControlName="dataNacimento" required>
                               </div>
                               <div class="form-group">
-                                  <label>Data de nascimento</label>
+                                  <label>Permissão</label>
                                   <select class="form-control" formControlName="perfilUsuario" required>
-                                  <option *ngFor="let op of options" [value]="op.nivel">{{op.permissao}}</option>
+                                  <option *ngFor="let op of options" [value]="op.nivel">{{op.nome}}</option>
                                   </select>
                               </div>
                               <button [disabled]="!usuarioForm.valid" class="btn btn-lg btn-success"

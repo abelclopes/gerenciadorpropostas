@@ -62,7 +62,7 @@ export class UsuariosListComponent implements OnInit {
     );;
   }
   getUserPerfi(usuario: UsuariosModel){    
-    let permissao = this.perfis.find(x=>x.id == usuario.perfil);
+    let permissao = this.perfis.find(x=>x.id == usuario.perfilUsuario);
     return permissao.descricao;
   }
 

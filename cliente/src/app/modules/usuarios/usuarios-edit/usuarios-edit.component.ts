@@ -20,7 +20,7 @@ export class UsuariosEditComponent implements OnInit {
 
   nome: string;
   descricao: string;
-  options: {id:number, nome:string}[];
+  options: {nivel:number, nome:string}[];
 
   usuarioForm: FormGroup;
 
@@ -31,7 +31,7 @@ export class UsuariosEditComponent implements OnInit {
     .subscribe(
       data => {
         this.usuarioModel = data;
-        this.usuarioModel.dataNacimento =  new Date(data.dataNacimento); 
+        this.usuarioModel.dataNacimento =  this.formatData(data); 
         this.permissaoNivel = data.permissaoNivel;
         console.log(this.usuarioModel)
       }, err => {
@@ -76,8 +76,15 @@ export class UsuariosEditComponent implements OnInit {
       senha: this.usuarioModel.senha,
       cpf: this.usuarioModel.cpf,
       dataNacimento: this.usuarioModel.dataNacimento,
-      perfilUsuario: this.usuarioModel.perfil
+      perfilUsuario: this.usuarioModel.permissaoNivel
     });
   }
 
+  formatData(data): string {
+    let mes = new Date(data.dataNacimento).getMonth()+1;
+    let Month = ("00" + mes).slice(-2);
+    let dia = new Date(data.dataNacimento).getUTCDate();
+    let day = ("00" + dia).slice(-2);    
+    return `${day}/${Month}/${new Date(data.dataNacimento).getUTCFullYear()}`;
+  }
 }

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map'
 import { API_URL } from '../../../app.api';
 import { UsuarioPagedListModel, UsuarioNovoModel } from '../model';
-import { UsuariosModel } from '../../../logica-api';
+import { UsuariosModel } from './../model';
 
 @Injectable()
 export class UsuarioService {
@@ -32,23 +32,23 @@ export class UsuarioService {
   }
   public novoUsuario(model: UsuariosModel){
     let data = JSON.stringify(model);
-    return this.httpClient.post<UsuariosModel>(`${API_URL}/api/usuarios/`,data,{headers: this.httpHeaders, responseType: 'json'});
+    return this.httpClient.post<UsuariosModel>(`${API_URL}/api/usuarios/`,data,{headers: this.httpHeaders})
+    .map(res => res)
+    .catch(this.handleError);
   }
   public getUsuarioById(id: string): Observable<UsuariosModel> {
     return this.httpClient.get<UsuariosModel>(`${API_URL}/api/usuarios/${id}`,{
-      headers: this.httpHeaders, responseType: 'json'
-    });
+      headers: this.httpHeaders
+    })
   }
   public updateUsuario(model: UsuarioNovoModel, id: string): Observable<UsuarioNovoModel> {
     model.id = id;
     let url = `${API_URL}/api/usuarios/${model.id}/`;
     const params = new HttpParams().set('id', model.id);  
     let newDate = model.dataNacimento;
-    console.log(newDate);
     var body = {  
-                nome:model.nome,cpf:model.cpf,Email:model.email,ID:model.id,dataNacimento:model.dataNacimento,perfilUsuario:model.perfilUsuario
-             };  
-    
+      nome:model.nome,cpf:model.cpf,Email:model.email,ID:model.id,dataNacimento:model.dataNacimento,perfilUsuario:model.perfilUsuario
+    };    
     return this.httpClient.put<UsuarioNovoModel>(url, body, { headers: this.httpHeaders})
       .map(res => res)
       .catch(this.handleError);

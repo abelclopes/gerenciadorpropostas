@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DOMAIN
 {
@@ -40,6 +41,14 @@ namespace DOMAIN
             {
                 return false;
             }
+        }
+        public static DateTime convertDateTime(string date){
+            string input = date;   
+            string pattern = @"(-)|(/)";
+            var datan = Regex.Split(input, pattern);
+            
+            return new DateTime(int.Parse(datan[4]), int.Parse(datan[2]),int.Parse(datan[0]));
+            
         }
     }
 }

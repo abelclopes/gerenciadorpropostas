@@ -7,5 +7,8 @@ export class PermissaoUsuario {
         public dataCriacao?: Date,
         public dataAtualizacao?: Date,
         public excluido?: boolean,
+        public perfilUsuario?: any,
+        public permissaoUsuario?: PermissaoUsuario,
+        public permissaoNivel?: any,
     ){}
 }

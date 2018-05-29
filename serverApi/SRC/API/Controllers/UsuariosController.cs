@@ -70,11 +70,11 @@ namespace API.Controllers
       return usuarios;
     }
     
-    [HttpPost("{id}"), Authorize]
+    [HttpPost, Authorize]
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public async Task<IActionResult> Post(string id, [FromBody] UpdateUsuarioModel model)
+    public async Task<IActionResult> Post([FromBody] UpdateUsuarioModel model)
     {
        if (model == null)
       {
@@ -84,13 +84,17 @@ namespace API.Controllers
       {
         throw new ArgumentException($"O Email {model.Email} já esta em uso");
       }
-      var PermissaoId = Context.Permissoes.FirstOrDefault(x => x.Id == model.PermissaoId);
-      var usuario = new Usuario(model.Nome, model.Email, model.Cpf, Convert.ToDateTime(model.DataNacimento), model.Senha);
+      var Permissao = Context.Permissoes.FirstOrDefault(x => x.Nivel == model.perfilUsuario);
+      var usuario = new Usuario(model.Nome, model.Email, model.Cpf, Util.convertDateTime(model.DataNacimento), model.Senha);
+      var usuarioPermissoes = new UsuarioPermissao(usuario, Permissao);
+
       Context.Usuarios.Add(usuario);
+      
+      Context.UsuarioPermissoes.Add(usuarioPermissoes);
       await Context.SaveChangesAsync();
 
       MemoryCache.Remove("usuarios");
-      return Ok(new {Response = "Usuário salvo com sucesso"});
+      return Ok(new {ok=true,Response = "Usuário salvo com sucesso"});
     }
     
     [HttpPut("{id}"), Authorize]
@@ -112,20 +116,9 @@ namespace API.Controllers
       user.Nome = model.Nome;
       user.Email = model.Email;
       user.Cpf =  model.Cpf.Replace(".","").Replace("-","");
-      DateTime dateTime2;
-      string mdata = model.DataNacimento.Replace("/","-");
-      mdata = string.Concat(mdata.ToDate()," 00:00:00");
-      //user.DataNacimento = DateTime.ToDateTime(mdata);// (DateTime.TryParse(mdata, out dateTime2))? dateTime2: dateTime2;
+      user.DataNacimento = Util.convertDateTime(model.DataNacimento);
       string dateInput = model.DataNacimento;
-      //DateTime parsedDate = DateTime.Parse(mdata);
-      DateTime dt;
-      DateTime.TryParseExact(mdata, 
-                       "YYYY-MM-DDTHH:MM:SS.FFFZ", 
-                       CultureInfo.InvariantCulture, 
-                       DateTimeStyles.None, 
-                       out dt);
-
-
+      
       if(!string.IsNullOrEmpty(model.Senha))
       {
         user.Senha = model.Senha;
@@ -160,7 +153,7 @@ namespace API.Controllers
       Context.SaveChanges();
 
       MemoryCache.Remove("usuarios");
-      return Ok(new {Response = "Usuário deletado com sucesso"});
+      return Ok(new {ok= true, Response = "Usuário deletado com sucesso"});
     }
 
     private List<UsuariosModel>  RestornaUsuariosList(){
@@ -175,6 +168,7 @@ namespace API.Controllers
                 Email = x.Email, 
                 Cpf = x.Cpf,
                 DataNacimento = x.DataNacimento,
+                DataCriacao = x.DataCriacao,
                 Permissao = x.UsuarioPermissoes.Permissoes.Nome,
                 PermissaoNivel = x.UsuarioPermissoes.Permissoes.Nivel
               }).ToList();

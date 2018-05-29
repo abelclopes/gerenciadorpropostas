@@ -6,7 +6,8 @@ export class UsuarioNovoModel {
   public email?: string,
   public cpf?: string,
   public permissaoNivel?: UsuarioNovoModel.PerfilEnum,
-  public dataNacimento?: Date,
+  public perfilUsuario?: any,
+  public dataNacimento?: any,
   public senha?: string
 ){}
 }

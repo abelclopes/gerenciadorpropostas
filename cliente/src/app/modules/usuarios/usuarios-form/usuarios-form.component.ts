@@ -17,7 +17,7 @@ export class UsuariosFormComponent implements OnInit {
   usuarioModel: UsuarioNovoModel;
   nome: string;
   descricao: string;
-  options: {id:number, nome:string}[];
+  options: {nivel:number, nome:string}[];
 
   usuarioForm: FormGroup;
 
@@ -35,12 +35,14 @@ export class UsuariosFormComponent implements OnInit {
       dataNacimento: ['', Validators.required ],
     });
   }
-  onSubmit(model){
+  onSubmit(model){    
+    model.cpf = model.cpf.replace('.','').replace('-','');
+    model.dataNacimento = model.dataNacimento.replace('/','-');
     this.userService.novoUsuario(model)
       .subscribe(
         data => {
           if(data['ok'] == true)
-            this.router.navigate(['/usuario']);
+            this.router.navigate(['/usuarios']);
         }, err => {
           console.log(err);
         }
@@ -53,7 +55,7 @@ export class UsuariosFormComponent implements OnInit {
       senha: this.usuarioModel.senha,
       cpf: this.usuarioModel.cpf,
       dataNacimento: this.usuarioModel.dataNacimento,
-      perfilUsuario: this.usuarioModel.perfil
+      perfilUsuario: this.usuarioModel.permissaoNivel
     });
   }
 
