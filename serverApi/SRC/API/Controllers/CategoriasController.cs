@@ -83,7 +83,7 @@ namespace API.Controllers
       {
           return BadRequest();
       }
-      if(Context.Categorias.Any(x => x.Descricao == model.Descricao))
+      if(Context.Categorias.Any(x => x.Descricao == model.Descricao && !x.Excluido))
       {
         throw new ArgumentException($"O Descricao {model.Descricao} já esta em uso");
       }
@@ -148,7 +148,8 @@ namespace API.Controllers
                                 { 
                                   Id = x.Id,
                                   Nome = x.Nome,
-                                  Descricao = x.Descricao
+                                  Descricao = x.Descricao,
+                                  DataCriacao = x.DataCriacao
                                 }).ToList();
                             });
     }
