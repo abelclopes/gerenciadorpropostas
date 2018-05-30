@@ -42,7 +42,7 @@ namespace API.Controllers
     
 
     private UsuarioAuthModel ConsultaUsuario(string Email){
-       return Context.Usuarios.Include(x => x.UsuarioPermissoes).Select(x => new UsuarioAuthModel{
+       return Context.Usuarios.Select(x => new UsuarioAuthModel{
           Id = x.Id,
           Nome = x.Nome,
           Email = x.Email,

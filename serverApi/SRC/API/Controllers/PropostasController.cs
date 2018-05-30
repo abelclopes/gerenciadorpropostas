@@ -181,6 +181,7 @@ namespace API.Controllers
                   Descricao = x.Descricao,
                   Fornecedor = x.Fornecedor,
                   Categoria = x.Categoria,
+                  Valor = x.Valor,
                   //PropostaHistorico = (x.PropostaHistorico.Any())? x.PropostaHistorico: null,
                   DataCriacao = x.DataCriacao,
                   Status = x.Status
