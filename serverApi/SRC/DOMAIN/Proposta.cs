@@ -45,7 +45,7 @@ namespace DOMAIN
 
 
 
-        public void Atualizar(Proposta model, IContext context)
+        public void Atualizar(Proposta model)
         {
             NomeProposta = model.NomeProposta;
             Descricao = model.Descricao;

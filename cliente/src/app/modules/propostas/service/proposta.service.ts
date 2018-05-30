@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, HttpModule, Response, RequestMethod, RequestOptionsArgs, RequestOptions } from '@angular/http';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map'
@@ -9,7 +9,7 @@ import 'rxjs/add/operator/catch';
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/delay';
 
-import { PropostaPagedListModel, PropostaModel} from '../model';
+import { PropostaPagedListModel, PropostaModel, PropostaNovaModel} from '../model';
 import { API_URL } from '../../../app.api';
 
 @Injectable()
@@ -21,12 +21,10 @@ export class PropostaService {
 
       var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
       this.httpHeaders = new HttpHeaders()
-      .set('Accept', 'Application/json')
-      .set('Content-Type', 'Application/json')
-      //.set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('Content-Type', 'application/json')
       .set('No-Auth', 'true')
       .set('Authorization', `Bearer ${currentUser.token}`)
-      .set('x-access-token', `${currentUser.token}`);
+      .set('www-authenticate', `${currentUser.token}`);
     }
 
     public getPropostas(pagina, tamanho, buscaTermo?: any): Observable<PropostaPagedListModel> {
@@ -43,15 +41,26 @@ export class PropostaService {
       return this.httpClient.get<PropostaModel>(`${API_URL}/api/propostas/${id}`,{
         headers: this.httpHeaders, responseType: 'json'
       });
-    }
-    public updateProposta(model: PropostaModel): Observable<PropostaPagedListModel> {
+    }    
+    public getPropostaArquivo(id: string): Observable<PropostaModel> {
+      return this.httpClient.get<PropostaModel>(`${API_URL}/api/Propostas/Anexos/${id}`,{
+        headers: this.httpHeaders, responseType: 'json'
+      });
+    }    
+    public updateProposta(id:string, model: PropostaNovaModel): Observable<PropostaNovaModel> {
       let data = JSON.stringify(model);
-      let url = `${API_URL}/api/propostas/${model.id}`;
-      return this.httpClient.put(url,data,
-        {
-          headers: this.httpHeaders
-        }
-      );
+      this.httpHeaders
+      .append('Content-Type', 'multipart/form-data');
+      const params = new HttpParams().set('id', id);  
+      model.usuario = JSON.parse(localStorage.getItem("userDetails")).id;
+      var body = {
+        NomeProposta:model.nomeProposta,Descricao:model.descricao,Valor:model.valor,FornecedorID:model
+        .fornecedorID,CategoriaID:model.categoriaID,Status:model.status,Usuario:model.usuario
+      };
+      let url = `${API_URL}/api/propostas/${id}`;
+      return this.httpClient.put(url,body, { headers: this.httpHeaders})
+      .map(res => res)
+      .catch(this.handleError);
     }
     public delete(id: string): any {
       let url = `${API_URL}/api/propostas/${id}`;
@@ -91,4 +100,12 @@ export class PropostaService {
       const data: any = res.json();
       return data || {};
     }
+
+    
+  private handleError(error: any) {
+    let errMsg = (error.message) ? error.message :
+        error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+    console.error(errMsg);
+    return Observable.throw(errMsg);
+  }
 }

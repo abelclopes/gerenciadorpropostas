@@ -26,6 +26,7 @@ using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
+  [Produces("application/json")]
   [Route("api/[controller]")]
   public class PropostasController : BaseController
   {
@@ -135,13 +136,13 @@ namespace API.Controllers
       {
           return NotFound();
       }
-
+    
       var propost = new Proposta(model.NomeProposta, model.Descricao, model.Valor, 
                                 ConsultaFornecedor(model.FornecedorID), 
                                 ConsultaCategoria(model.CategoriaID), 
                                 (PropostaStatus)Enum.ToObject(typeof(PropostaStatus) , model.Status)
                     );
-      proposta.Atualizar(propost, Context);
+      proposta.Atualizar(propost);
       Context.Propostas.Update(proposta);
       await Context.SaveChangesAsync();
 

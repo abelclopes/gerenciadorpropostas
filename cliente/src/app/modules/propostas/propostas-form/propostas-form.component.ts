@@ -9,6 +9,7 @@ import { LoadingService } from '../../../LoadingService';
 import { FornecedorModel } from '../../fornecedores/model';
 import { FornecedorService } from '../../fornecedores/service/fornecedor.service';
 import { Observable, Subject } from 'rxjs';  
+import { NotificationService } from '../../../shared/messages/notification.service';
 
 @Component({
   moduleId: module.id.toString(),
@@ -35,6 +36,7 @@ export class PropostasFormComponent implements OnInit {
 
   public loading = false;
  
+  propostaModel: PropostaModel;
   propostaForm: FormGroup;
   private bodyText: string;
 
@@ -49,7 +51,8 @@ export class PropostasFormComponent implements OnInit {
   constructor(private propostaService: PropostaService, 
     private router : Router, 
     private fb: FormBuilder,
-    private fornecedorService: FornecedorService
+    private fornecedorService: FornecedorService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(){
@@ -79,6 +82,7 @@ export class PropostasFormComponent implements OnInit {
           data => {
             this.created.emit(data);
             if(data['ok'] == "true")
+              this.notificationService.notify(data.response)
               this.router.navigate(['/propostas']);
           }, err => {
             console.log(err);
@@ -133,5 +137,14 @@ onSelect(fornecedor) {
     else {  
       return false;  
     }  
-  } 
+  }   
+  resetForm(){
+    this.propostaForm.reset({
+      nomeProposta: this.propostaModel.nomeProposta,
+      descricao: this.propostaModel.descricao,
+      categoria: this.propostaModel.categoria,
+      fornecedor: this.propostaModel.fornecedor,
+      valor: this.propostaModel.valor
+    });
+  }
 }

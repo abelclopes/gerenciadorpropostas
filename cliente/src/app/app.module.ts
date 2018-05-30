@@ -25,6 +25,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { LoadingService } from './LoadingService';
 import { MaskDirective } from './shared/diretivas/mask.directive';
 import { ModalModule } from 'ngx-bootstrap';
+import { LoadingModule, ANIMATION_TYPES } from 'ngx-loading';
 
 import { CustomCurrencyMaskConfig } from './shared/diretivas/custon-currency-masck-config';
 
@@ -57,6 +58,14 @@ registerLocaleData(localePt, 'pt', localeptExtra);
     NgbModule.forRoot(),
     SharedModule.forRoot(),
     ModalModule.forRoot(),
+    LoadingModule.forRoot({
+      animationType: ANIMATION_TYPES.wanderingCubes,
+      backdropBackgroundColour: 'rgba(0,0,0,0.1)', 
+      backdropBorderRadius: '4px',
+      primaryColour: '#ffffff', 
+      secondaryColour: '#ffffff', 
+      tertiaryColour: '#ffffff'
+  }),
     NgxCurrencyModule
   ],
   providers: [
