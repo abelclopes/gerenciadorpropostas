@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -33,6 +33,12 @@ import { NgxCurrencyModule } from "ngx-currency";
 import { CURRENCY_MASK_CONFIG } from 'ngx-currency/src/currency-mask.config';
 import { GeproMaskUtilService } from './shared/diretivas';
 
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
+
+import localeptExtra from '@angular/common/locales/extra/pt';
+registerLocaleData(localePt, 'pt', localeptExtra);
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,7 +65,8 @@ import { GeproMaskUtilService } from './shared/diretivas';
     NotificationService, HeaderService,
     PaginationFilter, LoadingService,
     GeproMaskUtilService,
-    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }
+    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig },
+    { provide: LOCALE_ID, useValue: 'pt' } ,
   ],
   bootstrap: [AppComponent]
 })
