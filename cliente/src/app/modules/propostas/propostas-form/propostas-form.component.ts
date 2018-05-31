@@ -106,6 +106,7 @@ export class PropostasFormComponent implements OnInit {
     
     return formData;
   }
+  
   fileChange(files: FileList) {
       if (files && files[0].size > 0) {
           this.propostaForm.patchValue({
