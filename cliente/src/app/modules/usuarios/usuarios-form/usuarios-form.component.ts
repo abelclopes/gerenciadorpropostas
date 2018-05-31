@@ -36,7 +36,7 @@ export class UsuariosFormComponent implements OnInit {
     });
   }
   onSubmit(model){    
-    model.cpf = model.cpf.replace('.','').replace('-','');
+    model.cpf = model.cpf.replace(/[^0-9]+/g,'');
     model.dataNacimento = model.dataNacimento.replace('/','-');
     this.userService.novoUsuario(model)
       .subscribe(

@@ -52,7 +52,7 @@ export class UsuariosEditComponent implements OnInit {
   onSubmit(model){
     console.info('cadastrar editar Usuario',model)
     this.usuarioModel.nome = model.nome;
-    this.usuarioModel.cpf = model.cpf.replace('.','').replace('-','');
+    this.usuarioModel.cpf = model.cpf.replace(/[^0-9]+/g,'');
     this.usuarioModel.email = model.email;
     this.usuarioModel.dataNacimento = model.dataNacimento.replace('/','-');
     this.usuarioModel.permissaoNivel = model.permissaoNivel;

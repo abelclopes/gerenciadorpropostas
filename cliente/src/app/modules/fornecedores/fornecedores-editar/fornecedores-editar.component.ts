@@ -45,8 +45,9 @@ export class FornecedoresEditarComponent implements OnInit {
   onSubmit(model){
     console.info('cadastrar nova fornecedor',model)
     this.fornecedor.nome = model.nome;
-    this.fornecedor.cnpjCpf = model.cnpjCpf.replace(/[^\d]+/g,'');
+    this.fornecedor.cnpjCpf = model.cnpjCpf.replace(/[^0-9]+/g,'');
     this.fornecedor.email = model.email;
+    model.telefone = model.telefone.replace(/[^0-9]+/g,'');
     this.fornecedor.telefone = model.telefone;
     this.catService.updateFornecedor(this.fornecedor)
       .subscribe(
