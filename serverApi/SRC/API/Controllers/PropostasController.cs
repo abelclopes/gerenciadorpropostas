@@ -23,6 +23,7 @@ using API.Model;
 using DOMAIN.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using BUSINESS;
 
 namespace API.Controllers
 {
@@ -43,6 +44,7 @@ namespace API.Controllers
     [SwaggerResponse(403)]
     public  ListaPaginada<PropostaModel> Get([FromQuery]PaginationParamsProposta model)
     {
+      this.checaExistenciaDePropostasExpiradas();
       var listaPaginada = new ListaPaginada<PropostaModel>(model.PageNumber, model.PageSize);
       var propostas = new List<PropostaModel>();
       if(RestornaPropostaList().Any()){
@@ -85,6 +87,7 @@ namespace API.Controllers
       {
           return BadRequest(new {Erro = "aconteceu algo errado, tenta novamente!"});
       }
+      model.Status = 1;
       var proposta = new Proposta(model.NomeProposta,
                                 model.Descricao, model.Valor, 
                               ConsultaFornecedor(model.FornecedorID), 
@@ -137,8 +140,12 @@ namespace API.Controllers
       var propost = new Proposta(model.NomeProposta, model.Descricao, model.Valor, 
                                 ConsultaFornecedor(model.FornecedorID), 
                                 ConsultaCategoria(model.CategoriaID), 
-                                (PropostaStatus)Enum.ToObject(typeof(PropostaStatus) , model.Status)
-                    );
+                                 (PropostaStatus)Enum.ToObject(typeof(PropostaStatus),
+                                model.Status));
+      
+      var usuario = Context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(model.Usuario));
+      var propostaHistorico = new PropostaHistorico(proposta, usuario );
+      await Context.PropostasHistoricos.AddAsync(propostaHistorico);
       proposta.Atualizar(propost);
       Context.Propostas.Update(proposta);
       await Context.SaveChangesAsync();
@@ -164,9 +171,6 @@ namespace API.Controllers
       MemoryCache.Remove("propostas");
       return Ok(new {Response = "Proposta deletado com sucesso"});
     }
-    // private List<Proposta> RestornaPropostaList(){
-    //   return Context.Propostas.Where(x => !x.Excluido).ToList();
-    // }
     private List<PropostaModel>  RestornaPropostaList(){
       return MemoryCache.GetOrCreate("propostas", entry =>
             {
@@ -196,6 +200,27 @@ namespace API.Controllers
     private Categoria ConsultaCategoria(string categoriaID)
     {   
         return Context.Categorias.FirstOrDefault(x => x.Id == Guid.Parse(categoriaID));
+    }
+
+    
+    private void checaExistenciaDePropostasExpiradas()
+    {
+      var pb = new PropostaBusiness();
+      var propostas = Context.Propostas.Where(x => x.Status != (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), 3) && !x.Excluido);
+
+      foreach(var proposta in propostas)
+      {
+        var usuario = Context.Usuarios.FirstOrDefault(x => x.UsuarioPermissoes.Permissoes.Nivel.Equals(1));
+        if(pb.validaSePropsotaExpirou(proposta, Context)){          
+            proposta.Status = (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), 3);
+            Context.Propostas.Update(proposta);
+            var propostaHistorico = new PropostaHistorico(proposta, usuario );
+            Context.PropostasHistoricos.Add(propostaHistorico);
+        }
+      }
+               
+      Context.SaveChanges();
+      
     }
   }
 }

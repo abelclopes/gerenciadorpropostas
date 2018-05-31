@@ -17,6 +17,8 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using StructureMap.Diagnostics;
 using DOMAIN.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using BUSINESS;
+using BUSINESS.Model;
 
 namespace API.Controllers
 {
@@ -35,6 +37,21 @@ namespace API.Controllers
                 new PropostaStatusModel(){Id = 2, Status ="Aprovado"},
                 new PropostaStatusModel(){Id = 3, Status = "Expirado"}
             };
+        }
+        
+        [Route("{id}")]
+        [HttpGet, Authorize]
+        [SwaggerResponse(201)]
+        [SwaggerResponse(401)]
+        [SwaggerResponse(403)]
+        public async Task<PropostaSituacao> GetPropostaStatus(string id){
+            var proposta = new Proposta();
+            proposta = await Context.Propostas.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
+            var pb = new PropostaBusiness();
+            var propSituacao = new PropostaSituacao();
+            var status = (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), proposta.Status);
+            propSituacao = pb.validate(proposta, (int)status);
+            return propSituacao;
         }
     }
 }
