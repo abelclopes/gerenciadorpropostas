@@ -11,15 +11,17 @@ import 'rxjs/add/operator/delay';
 
 import { PropostaPagedListModel, PropostaModel, PropostaNovaModel} from '../model';
 import { API_URL } from '../../../app.api';
+import { UsuariosClans } from '../../usuarios/model/usuario-clans.model';
+import { Usuario, UsuarioBuilder } from '../../usuarios/model/build';
 
 @Injectable()
 export class PropostaService {
 
   httpHeaders: HttpHeaders;
-
+  usuarioAtual: UsuariosClans;
   constructor(protected httpClient: HttpClient, private http: Http) {
 
-    var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
+    let currentUser = this.usuarioAtual = JSON.parse(localStorage.getItem('usuarioCorrente'));
     this.httpHeaders = new HttpHeaders()
     .set('Content-Type', 'application/json')
     .set('No-Auth', 'true')
@@ -28,7 +30,7 @@ export class PropostaService {
   }
 
   private headersPut(){  
-    var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
+    let currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
     let httpHeaders = new HttpHeaders()
     .set('Content-Type', 'application/json')
     .set('No-Auth', 'true')
@@ -69,17 +71,17 @@ export class PropostaService {
     return this.httpClient.delete(url, { headers: this.httpHeaders } );
   }
   
-  public getStatus(): any {
-    let url = `${API_URL}/api/propostas/status`;
+  public getStatus(id:string): any {
+    let url = `${API_URL}/api/propostas/status/${id}`;
     return this.httpClient.get(url, { headers: this.httpHeaders } );
 
   }
 
   public createUpload(model: FormData): Observable<any> {
     // debugger;
-    var currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
-    var currentUserDetails = JSON.parse(localStorage.getItem('userDetails'));
-    model.append("usuario", currentUserDetails.id);
+    let currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
+    let currentusuarioClans: UsuariosClans = JSON.parse(localStorage.getItem('usuarioClans'));
+    model.append("usuario", currentusuarioClans.Id);
     console.log(model);
     
     let httpHeaders = new HttpHeaders()
@@ -114,7 +116,12 @@ export class PropostaService {
     .catch(this.handleError);
   }
 
-    
+  getPropostaPermissaoAprovar(model: any): Observable<any> {
+    model.usuario = this.usuarioAtual;
+    return this.httpClient.post<any>(`${API_URL}/api/Propostas/Aprovar`,model,{headers: this.httpHeaders})    
+    .map(res => res)
+    .catch(this.handleError);
+  }
   private handleError(error: any) {
     let errMsg = (error.message) ? error.message :
         error.status ? `${error.status} - ${error.statusText}` : 'Server error';
@@ -122,5 +129,12 @@ export class PropostaService {
     return Observable.throw(errMsg);
   }
 
-
+  // usuarioBuilder(model: usuario){
+  //   let u: Usuario = new UsuarioBuilder()
+  //           .Id(model.Id)
+  //           .setNome(nome)
+  //           .Cpf(this.usuarioAtual.Cpf)
+  //           .build();
+  //             console.log(u);
+  // }
 }

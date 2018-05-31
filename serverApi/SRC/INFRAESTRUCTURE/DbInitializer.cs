@@ -29,9 +29,9 @@ namespace INFRAESTRUCTURE.Data
                 var permissoes = new Permissao[]
                 {
                    new Permissao { Id = Guid.NewGuid(), Nome = "Administrador", Nivel = 1},
-                   new Permissao { Id = Guid.NewGuid(), Nome = "AnalistaDeCompras", Nivel = 2},
-                   new Permissao { Id = Guid.NewGuid(), Nome = "AnalistaFinanceiro", Nivel = 3},
-                   new Permissao { Id = Guid.NewGuid(), Nome = "DiretorFinanceiro", Nivel = 4},
+                   new Permissao { Id = Guid.NewGuid(), Nome = "Analista De Compras", Nivel = 2},
+                   new Permissao { Id = Guid.NewGuid(), Nome = "Analista Financeiro", Nivel = 3},
+                   new Permissao { Id = Guid.NewGuid(), Nome = "Diretor Financeiro", Nivel = 4},
                 };
                 int i =1;
                 

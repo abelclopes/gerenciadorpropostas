@@ -15,8 +15,11 @@
                 </div>
                 <div class="col-lg-12">
                     <ul class="nav navbar-nav navbar-right">
-                      <li><a routerLink="/propostas"  class="btn btn-info btn-sm">Voltar</a></li>
-                      <li><a (click)="editar()" class="btn btn-warning  btn-sm">Alterar Proposta</a></li>
+                        <li><button routerLink="/propostas"  class="btn btn-info btn-sm">Voltar</button></li>
+                        <li>                            
+                            <button [disabled]="!abilitarAprovar" (click)="aprovarProposta()"  class="btn btn-success btn-sm">Aprovar</button>
+                        </li>
+                      <li><button (click)="editar()" class="btn btn-warning  btn-sm">Alterar Proposta</button></li>
                     </ul>
                   </div>
                 <div class="panel-body">

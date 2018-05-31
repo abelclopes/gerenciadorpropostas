@@ -16,7 +16,6 @@ import { AuthGuard } from './_guards/auth.guard';
 import { HeaderComponent } from './components/header/header.component';
 import { SharedModule } from './shared/shared.module';
 import { NotificationService } from './shared/messages/notification.service';
-import { HeaderService } from './components/header/header.service';
 import { PaginationFilter } from './shared/pagination-filter.pipe';
 import { LoginModule } from './components/login/login.module';
 
@@ -71,7 +70,7 @@ registerLocaleData(localePt, 'pt', localeptExtra);
   providers: [
     AuthenticationService,
     AuthGuard,
-    NotificationService, HeaderService,
+    NotificationService,
     PaginationFilter, LoadingService,
     GeproMaskUtilService,
     { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig },

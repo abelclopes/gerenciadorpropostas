@@ -7,6 +7,7 @@ import {DomSanitizer,SafeResourceUrl} from '@angular/platform-browser'
 import { LoadingService } from '../../../LoadingService';
 import * as FileSaver from 'file-saver'; 
 import { PDFProgressData } from 'pdfjs-dist';
+import { propostaStaus } from '../model/proposta-status.model';
 
 @Component({
   selector: 'app-proposta-detalhes',
@@ -14,15 +15,19 @@ import { PDFProgressData } from 'pdfjs-dist';
   styleUrls: ['./proposta-detalhes.component.css']
 })
 export class PropostaDetalhesComponent implements OnInit {
+  abilitarAprovar: boolean = false;
   propostaModel: PropostaModel;
   propostaAnexo: PropostaAnexoModel
   arquivo: any;
+  propostaStatus: propostaStaus;
 
   displayPdf: boolean;
   page: number = 1;
   totalPages: number;
   isLoaded: boolean = false;
   dataLocalUrl:any;
+  
+  id = this.route.snapshot.paramMap.get('id');
   constructor(
     private propostaService: PropostaService, 
     private router : Router, 
@@ -35,7 +40,7 @@ export class PropostaDetalhesComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.propostaService.getPropostaById(this.route.snapshot.paramMap.get('id'))
+    this.propostaService.getPropostaById(this.id)
     .subscribe(
       data => {
         this.propostaModel = data;
@@ -43,16 +48,23 @@ export class PropostaDetalhesComponent implements OnInit {
       }, err => {
         console.log(err);
       });
+      this.propostaService.getStatus(this.id).subscribe(
+        data => {
+          this.propostaStatus = data;
+          //console.log(this.propostaModel)
+        }, err => {
+          console.log(err);
+        });
     
   }
   editar(){
-    this.router.navigate([`/propostas/editar/${this.route.snapshot.paramMap.get('id')}`]);
+    this.router.navigate([`/propostas/editar/${this.id}`]);
   }
   loadAnexo(){
     if(this.displayPdf){
       this.displayPdf = false;
     }else{
-      this.propostaService.getPropostaArquivo(this.route.snapshot.paramMap.get('id'))
+      this.propostaService.getPropostaArquivo(this.id)
       .subscribe(
         data => {
           this.propostaAnexo = data
@@ -63,6 +75,20 @@ export class PropostaDetalhesComponent implements OnInit {
           console.log(err);
       });
     }
+  }
+  aprovarProposta(){
+    console.log('teste')
+  }
+  validaAbilitarAprovar(){
+    this.propostaService.getPropostaPermissaoAprovar(this.id)
+    .subscribe(
+      data => {
+        data;
+        this.loadingService.hideLoading()   
+        this.abilitarAprovar = true;
+      }, err => {
+        console.log(err);
+    });
   }
 
   base64ToArrayBuffer(base64) {
