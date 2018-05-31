@@ -74,7 +74,7 @@ namespace API.Controllers
     }
 
     [HttpPost, Authorize]
-    [SwaggerResponse(201)]
+    [SwaggerResponse(201)] 
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
     public async Task<IActionResult>  Post([FromForm] NovaPropostaModel model)
@@ -85,16 +85,12 @@ namespace API.Controllers
       {
           return BadRequest(new {Erro = "aconteceu algo errado, tenta novamente!"});
       }
-      // if(RestornaPropostaList().Any(x => x.NomeProposta == model.NomeProposta))
-      // {
-      //   throw new ArgumentException($"O Nome da Proposta {model.NomeProposta} já esta em uso");
-      // }
-       var proposta = new Proposta(model.NomeProposta,
-                                 model.Descricao, model.Valor, 
-                                ConsultaFornecedor(model.FornecedorID), 
-                                ConsultaCategoria(model.CategoriaID), 
-                                (PropostaStatus)Enum.ToObject(typeof(PropostaStatus),
-                                 model.Status));
+      var proposta = new Proposta(model.NomeProposta,
+                                model.Descricao, model.Valor, 
+                              ConsultaFornecedor(model.FornecedorID), 
+                              ConsultaCategoria(model.CategoriaID), 
+                              (PropostaStatus)Enum.ToObject(typeof(PropostaStatus),
+                                model.Status));
 
       await Context.Propostas.AddAsync(proposta);
 
@@ -124,8 +120,9 @@ namespace API.Controllers
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public async Task<IActionResult> Put(string id, [FromBody] NovaPropostaModel model)
+    public async Task<IActionResult> Put(string id, [FromForm] NovaPropostaModel model)
     {
+      this._logger.LogInformation("Log.NovaPropostaModel", "update item {ID}", id);
       if (model == null ||  string.IsNullOrEmpty(id))
       {
           return BadRequest();

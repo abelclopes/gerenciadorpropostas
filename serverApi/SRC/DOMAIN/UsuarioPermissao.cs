@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DOMAIN
 {
-    public partial class UsuarioPermissao
+    public partial class UsuarioPermissao 
     {
         public UsuarioPermissao()
         {

@@ -50,5 +50,38 @@ namespace API.Controllers
       }
       return Ok(new { Response = "Nenhum Resultado Encontrado" });
     }
+
+    [HttpPost, Authorize]
+    [SwaggerResponse(201)]
+    [SwaggerResponse(401)]
+    [SwaggerResponse(403)]
+    public async Task<IActionResult>  Post([FromForm] PropostaAnexoModel model)
+    {
+      this._logger.LogInformation("Log.NovaPropostaModel", "Getting item {ID}", model);
+
+      if (model.Id == null)
+      {
+        return BadRequest(new {Erro = "Aconteceu algo errado, tenta novamente!"});
+      }
+      var anexo = await Context.PropostaAnexos.FirstOrDefaultAsync(x =>x.Proposta.Id == model.Id);
+      Context.PropostaAnexos.Remove(anexo);
+      if(model.Anexo != null)
+      {
+
+        var proposta = await Context.Propostas.FirstOrDefaultAsync(x => x.Id == model.Id);
+        using (Stream stream = model.Anexo.OpenReadStream())
+        {
+            using (var binaryReader = new BinaryReader(stream))
+            {
+                var fileContent = binaryReader.ReadBytes((int)model.Anexo.Length);
+                var propostaAnexo = new PropostaAnexo(fileContent, model.Anexo.FileName, model.Anexo.ContentType, proposta);
+                await Context.PropostaAnexos.AddAsync(propostaAnexo);
+            }
+        }
+      }
+      await Context.PropostaAnexos.AddAsync(anexo);
+      await Context.SaveChangesAsync();
+      return Ok(new {Ok = true, Response="Arquivo alterado com suscesso!"});
+    }
   }
 }
