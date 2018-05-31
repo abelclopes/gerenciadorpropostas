@@ -49,16 +49,20 @@ export class PropostaDetalhesComponent implements OnInit {
     this.router.navigate([`/propostas/editar/${this.route.snapshot.paramMap.get('id')}`]);
   }
   loadAnexo(){
-    this.propostaService.getPropostaArquivo(this.route.snapshot.paramMap.get('id'))
-    .subscribe(
-      data => {
-        this.propostaAnexo = data
-        this.arquivo =  this.base64ToArrayBuffer(this.propostaAnexo.fileContent);     
-        this.loadingService.hideLoading()   
-        this.displayPdf = true;
-      }, err => {
-        console.log(err);
+    if(this.displayPdf){
+      this.displayPdf = false;
+    }else{
+      this.propostaService.getPropostaArquivo(this.route.snapshot.paramMap.get('id'))
+      .subscribe(
+        data => {
+          this.propostaAnexo = data
+          this.arquivo =  this.base64ToArrayBuffer(this.propostaAnexo.fileContent);     
+          this.loadingService.hideLoading()   
+          this.displayPdf = true;
+        }, err => {
+          console.log(err);
       });
+    }
   }
 
   base64ToArrayBuffer(base64) {

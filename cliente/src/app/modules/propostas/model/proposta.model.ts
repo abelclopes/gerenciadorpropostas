@@ -13,7 +13,8 @@ export class PropostaModel {
     public id?: string,
     public dataAtualizacao?: Date,
     public dataCriacao?: Date,
-    public excluido?: boolean
+    public excluido?: boolean,
+    public file?: File
   ){}
 }
 export namespace Proposta {

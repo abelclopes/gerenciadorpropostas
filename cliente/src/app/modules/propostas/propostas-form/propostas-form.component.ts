@@ -48,7 +48,8 @@ export class PropostasFormComponent implements OnInit {
   get valor() { return this.propostaForm.get('valor'); }
 
   closeResult: string;
-  constructor(private propostaService: PropostaService, 
+  constructor(
+    private propostaService: PropostaService, 
     private router : Router, 
     private fb: FormBuilder,
     private fornecedorService: FornecedorService,

@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, ElementRef, OnInit, EventEmitter, Output, ViewChild, ViewEncapsulation  } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, EventEmitter, Output, ViewChild, ViewEncapsulation  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { PropostaModel, PropostaAnexoModel, PropostaNovaModel } from '../model';
+import { PropostaModel } from '../model';
 import { PropostaService } from '../service/proposta.service';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { LoadingService } from '../../../LoadingService';
@@ -25,23 +25,22 @@ export class PropostasEditComponent implements OnInit {
   @Input() proposta: PropostaModel;
   @Output() created: EventEmitter<PropostaModel> = new EventEmitter<PropostaModel>();
   @Output() updated: EventEmitter<PropostaModel> = new EventEmitter<PropostaModel>();
-  //@ViewChild("uploader") uploader: ElementRef;
-  @ViewChild('uploader') uploader;
+  @ViewChild("uploader") uploader: any;
 
   CategoriaOptions: {id:number, nome:string}[];
 
   public fornecedores: any[] = [];
-  private termoFiltro = new Subject<string>();  
-  public forncedorNome = '';  
-  public flag: boolean = true;  
-
-  fileTmp: File;
+  private termoFiltro = new Subject<string>();
+  public forncedorNome = '';
+  public flag: boolean = true;
 
   public loading = false;
 
   propostaModel: PropostaModel;
-  propostaAnexo: PropostaAnexoModel;
-  propostaForm: FormGroup;
+  propostaForm: FormGroup;  
+  private bodyText: string;
+
+  fileTmp: File;
 
   get nomeProposta() { return this.propostaForm.get('nomeProposta'); }
   get descricao() { return this.propostaForm.get('descricao'); }
@@ -55,9 +54,10 @@ export class PropostasEditComponent implements OnInit {
     private propostaService: PropostaService, 
     private router : Router, 
     private route: ActivatedRoute,
-    private notificationService: NotificationService,
-    private fornecedorService: FornecedorService,    
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private fornecedorService: FornecedorService,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit() {
     this.propostaForm =  this.fb.group({
@@ -68,114 +68,87 @@ export class PropostasEditComponent implements OnInit {
       categoria: new FormControl(null),
       anexo: new FormControl(null),
       valor: new FormControl(null)
-  }, { updateOn: 'submit' });
-  
-  //this.uploader.nativeElement.value = "";
+    }, { updateOn: 'submit' });
+    this.uploader.nativeElement.value = "";
+      
+    this.propostaService.getCategorias()
+    .subscribe(data =>{
+        this.CategoriaOptions = data.response;
+    });
 
     this.propostaService.getPropostaById(this.route.snapshot.paramMap.get('id'))
-    .subscribe(
-      data => {
+    .subscribe(data => {
         this.propostaModel = data;
         console.log(this.propostaModel)
       }, err => {
         console.log(err);
       });
-      
-    this.propostaService.getCategorias()
-    .subscribe(data =>{
-        this.CategoriaOptions = data.response;
-    })
-
   }
-  // ngAfterViewInit(){
 
-  //  console.log("afterinit");
-  //  console.log(this.uploader.nativeElement.value);
-
-  // }
-  
   onSubmit() {
-    //if (this.propostaForm.valid) {
-        this.propostaService.updateProposta(this.route.snapshot.paramMap.get('id'),this.prepareSaveUpload())
+    if (this.propostaForm.valid) {
+        this.bodyText = 'This text can be updated in modal 1';
+        this.prepareSaveUpload();
+        this.propostaService.updateProposta(this.route.snapshot.paramMap.get('id'), this.prepareSaveUpload())
         .subscribe(
           data => {
             this.created.emit(data);
             if(data['ok'] == "true")
               this.notificationService.notify(data['response'])
-              this.router.navigate(['/propostas']);
+              this.router.navigate([`/propostas/detalhes/${this.route.snapshot.paramMap.get('id')}`]);
           }, err => {
             console.log(err);
           }
         );
-    // }else{
-    //   console.log('invalido')
-    // }
-  }
-  prepareSaveUpload(): PropostaNovaModel {
-    const formModel = this.propostaForm.value;
-    let p = new PropostaNovaModel();
-
-    console.log('=====================const ', this.propostaModel);
-    p.nomeProposta = formModel.nomeProposta;
-    p.fornecedorID = formModel.fornecedorID;
-    p.categoriaID = formModel.categoria;
-    p.fornecedorID = formModel.fornecedorID;
-    p.valor = formModel.valor;
-    if(this.fileTmp.size > 0){
-      p.files = this.fileTmp;
-      p.anexo = this.fileTmp.name
     }
-    if(this.propostaModel)
-      p.id = this.propostaModel.id;
-    console.log('=====================const2 ', p);
-    
+  }  
+  prepareSaveUpload(): FormData {
+    const formModel = this.propostaForm.value;
+
+    console.log('formModel', formModel);
     let formData = new FormData();
     
     formData.append("nomeProposta", formModel.nomeProposta);
+    formData.append("anexo", formModel.anexo);
     formData.append("descricao", formModel.descricao);
     formData.append("fornecedorID", formModel.fornecedorID);
     formData.append("categoriaID", formModel.categoria);
     formData.append("valor", formModel.valor);
-    if(this.fileTmp.size > 0){
-      p.files = this.fileTmp;
-      formData.append("anexo", this.fileTmp);
-    }
+    
+    return formData;
+  }
 
-    return p;
+  fileChange(files: FileList) {
+      if (files && files[0].size > 0) {
+          this.propostaForm.patchValue({
+            anexo: files[0]
+          });
+      }
   }
   
-  fileChange() {
-    const fileBrowser = this.uploader.nativeElement;
-    
-    if (fileBrowser.files && fileBrowser.files[0]) {
-      let files: File = fileBrowser.files[0];
-        this.fileTmp = fileBrowser.files[0];
-    }
-  }
-
- search(term: string): void {  
-  this.termoFiltro
-      .debounceTime(200)
-      .switchMap(termo => this.fornecedorService.search(term))
-      .subscribe(x => {
-        let names = []
-          for(let i: number = 0; x['total'] > i; i++){
-          names.push({id: x['response'][i].id, nome: x['response'][i].nome});
-         } 
-         this.fornecedores = names;
-      })
-      this.termoFiltro.next('');
-  this.flag = true;  
-  this.termoFiltro.next(term);  
-}  
-onSelect(fornecedor) {     
-    if (fornecedor.id != undefined) {  
-      this.propostaForm.patchValue({fornecedor: fornecedor.nome});
-      this.propostaForm.patchValue({fornecedorID: fornecedor.id});
-      this.flag = false;  
-    }  
-    else {  
-      return false;  
+  search(term: string): void {  
+    this.termoFiltro
+        .debounceTime(200)
+        .switchMap(termo => this.fornecedorService.search(term))
+        .subscribe(x => {
+          let names = []
+            for(let i: number = 0; x['total'] > i; i++){
+            names.push({id: x['response'][i].id, nome: x['response'][i].nome});
+          } 
+          this.fornecedores = names;
+        })
+        this.termoFiltro.next('');
+    this.flag = true;  
+    this.termoFiltro.next(term);  
+  }  
+  onSelect(fornecedor) {     
+      if (fornecedor.id != undefined) {  
+        this.propostaForm.patchValue({fornecedor: fornecedor.nome});
+        this.propostaForm.patchValue({fornecedorID: fornecedor.id});
+        this.flag = false;  
+      }  
+      else {  
+        return false;  
     }  
   }
   resetForm(){
