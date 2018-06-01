@@ -22,14 +22,14 @@ namespace DOMAIN
 
         public Fornecedor()
         {
-            Propostas = new HashSet<Proposta>();
+           // Propostas = new HashSet<Proposta>();
         }
         public string CnpjCpf { get; set; }
         public string Email { get; set; }
         public string Nome { get; set; }
         public string Telefone { get; set; }
 
-        public ICollection<Proposta> Propostas { get; set; }
+        //public ICollection<Proposta> Propostas { get; set; }
 
         public void Atualizar(Fornecedor model, IContext _context)
         {

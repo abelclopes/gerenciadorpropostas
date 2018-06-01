@@ -187,7 +187,7 @@ namespace API.Controllers
                   //PropostaHistorico = (x.PropostaHistorico.Any())? x.PropostaHistorico: null,
                   DataCriacao = x.DataCriacao,
                   Status = x.Status
-                }).ToList();
+                }).OrderByDescending(x =>x.DataCriacao).ToList();
             });
   }
     private Proposta ConsultaProposta(string id){
@@ -206,21 +206,27 @@ namespace API.Controllers
     private void checaExistenciaDePropostasExpiradas()
     {
       var pb = new PropostaBusiness();
-      var propostas = Context.Propostas.Where(x => x.Status != (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), 3) && !x.Excluido);
-
+      var propostas = Context.Propostas.Where(x => x.Status != (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), 3) || x.Status != (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), 1) && !x.Excluido);
+      bool salvar = false;
       foreach(var proposta in propostas)
       {
         var usuario = Context.Usuarios.FirstOrDefault(x => x.UsuarioPermissoes.Permissoes.Nivel.Equals(1));
-        if(pb.validaSePropsotaExpirou(proposta, Context)){          
-            proposta.Status = (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), 3);
-            Context.Propostas.Update(proposta);
-            var propostaHistorico = new PropostaHistorico(proposta, usuario );
-            Context.PropostasHistoricos.Add(propostaHistorico);
+        bool valida = (!Context.PropostasHistoricos.Any(x => proposta.Id == x.PropostaId && x.PropostaStatus == (PropostaStatus)3 || x.PropostaStatus == (PropostaStatus)2));
+        if(valida && pb.validaSePropsotaExpirou(proposta))
+        {          
+          salvar = true;
+          proposta.Status =  (PropostaStatus)3;
+          var propostaHistorico = new PropostaHistorico(proposta, usuario );
+          Context.PropostasHistoricos.Add(propostaHistorico);
+          Context.Propostas.Update(proposta);
+          
         }
       }
-               
-      Context.SaveChanges();
-      
+      if(salvar)
+      {
+        MemoryCache.Remove("propostas");
+        Context.SaveChanges();
+      }
     }
   }
 }

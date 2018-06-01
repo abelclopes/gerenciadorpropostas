@@ -15,6 +15,7 @@ namespace DOMAIN
         {
             PropostaId = proposta.Id;
             UsuarioId = usuario.Id;
+            PropostaStatus = proposta.Status;
         }
         public Guid PropostaId { get; set; }
 

@@ -11,6 +11,8 @@ namespace DOMAIN
         [Description("Aprovado")]
         aprovado = 2,
         [Description("Expirado")]
-        expirado = 3
+        expirado = 3,
+        [Description("Aguardando Avaliação do Analista Financeiro")]
+        AguardandoAvaliacaoAnalistaFinanceiro = 4
     }
 }

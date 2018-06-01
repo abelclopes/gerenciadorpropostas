@@ -19,7 +19,6 @@ namespace DOMAIN
 
         public string Nome { get; set; }
         public string Descricao { get; set; }
-        public ICollection<Proposta> Propostas { get; set; }
         public void Atualizar(Categoria model, IContext _context)
         {
             Nome = model.Nome;

@@ -7,14 +7,10 @@ using Model;
 namespace Model
 {
     public class PropostaSituacaoModel
-    {
-        public virtual ICollection<PropostaHistorico> PropostaHistorico { get; set; }
+    { 
+        public string Id { get; set; }
+        public string UsuarioId { get; set; }
         public PropostaStatus Status { get; set; }
-        public Boolean Aprovar { get; set; }
-        public Boolean ValorPropostaAcimaDoLimiteDesMill { get; set; }
-        public Boolean NecessitaAprovavaoDiretorFinanceiro { get; set; }
-        public Boolean AprovavaoDiretorFinanceiro { get; set; }
-        public Boolean AprovadaAnalistaFinanceiro { get; set; }
      
     }
 }

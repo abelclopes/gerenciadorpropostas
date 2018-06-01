@@ -39,19 +39,59 @@ namespace API.Controllers
             };
         }
         
-        [Route("{id}")]
-        [HttpGet, Authorize]
+        [HttpPost, Authorize]
         [SwaggerResponse(201)]
         [SwaggerResponse(401)]
         [SwaggerResponse(403)]
-        public async Task<PropostaSituacao> GetPropostaStatus(string id){
+        public async Task<IActionResult> Post([FromBody]PropostaSituacaoModel model){
+
+            var id = model.Id;
+            var UsuarioId = Guid.Parse(model.UsuarioId);
+            var usuarioLogado = Context.Usuarios.FirstOrDefault(x => x.Id == UsuarioId);
             var proposta = new Proposta();
             proposta = await Context.Propostas.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
-            var pb = new PropostaBusiness();
-            var propSituacao = new PropostaSituacao();
+            var pb = new PropostaBusiness(Context);
             var status = (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), proposta.Status);
-            propSituacao = pb.validate(proposta, (int)status);
-            return propSituacao;
+            var propSituacao = pb.validate(proposta, usuarioLogado, status);
+            var PermissaoId = Context.UsuarioPermissoes.FirstOrDefault(x => x.UsuarioId == UsuarioId).PermissaoId;
+            var usuario = new NovoUsuarioModel(){
+                    Email = usuarioLogado.Email,
+                    Nome = usuarioLogado.Nome,
+                    PermissaoId = PermissaoId,
+                    Perfil = Context.Permissoes.FirstOrDefault(x => x.Id == PermissaoId).Nivel,
+                    DataNacimento = usuarioLogado.DataNacimento
+                };
+            return Ok(new {Ok=true, Response =new {propSituacao, usuario}});
+        }
+        [HttpPut("{id}"), Authorize]
+        [SwaggerResponse(201)]
+        [SwaggerResponse(401)]
+        [SwaggerResponse(403)]
+        public async Task<IActionResult> Put(string id, [FromBody]PropostaSituacaoModel model)
+        {
+            if (string.IsNullOrEmpty(model.Status.ToString()))
+            {
+                return BadRequest(new {Response= "Não foi possivel aprovar a proposta"});
+            }
+            if (string.IsNullOrEmpty(model.UsuarioId.ToString()))
+            {
+                return BadRequest(new {Response= "Não foi possivel aprovar a proposta"});
+            }
+
+            var propsotaId = Guid.Parse(id);
+            var proposta = await Context.Propostas.FirstOrDefaultAsync(x => x.Id == propsotaId 
+            && x.Status != (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), 3) 
+            || x.Status != (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), 1) && !x.Excluido);
+            
+            var usuario = await Context.Usuarios.FirstOrDefaultAsync(x => x.Id == Guid.Parse(model.UsuarioId));
+            proposta.Status =  (PropostaStatus)model.Status;
+
+            var propostaHistorico = new PropostaHistorico(proposta, usuario );
+
+            await Context.PropostasHistoricos.AddAsync(propostaHistorico);
+            Context.Propostas.Update(proposta);
+            await Context.SaveChangesAsync();
+            return Ok(new {ok = true,Response= "Proposta Aprovada"});
         }
     }
 }

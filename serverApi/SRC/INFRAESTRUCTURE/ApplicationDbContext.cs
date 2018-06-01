@@ -47,13 +47,13 @@ namespace INFRAESTRUCTURE
 
                 entity.Property(e => e.Descricao).HasMaxLength(500);
 
-                entity.HasOne(d => d.Categoria)
-                    .WithMany(p => p.Propostas)
-                    .HasForeignKey(d => d.CategoriaId);
+                // entity.HasOne(d => d.Categoria)
+                //     .WithMany(p => p.Propostas)
+                //     .HasForeignKey(d => d.CategoriaId);
 
-                entity.HasOne(d => d.Fornecedor)
-                    .WithMany(p => p.Propostas)
-                    .HasForeignKey(d => d.FornecedorId);
+                // entity.HasOne(d => d.Fornecedor)
+                //     .WithMany(p => p.Propostas)
+                //     .HasForeignKey(d => d.FornecedorId);
             });
 
             modelBuilder.Entity<PropostaHistorico>(entity =>

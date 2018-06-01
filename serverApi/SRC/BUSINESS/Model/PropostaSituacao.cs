@@ -18,7 +18,7 @@ namespace BUSINESS.Model
     */
     public class PropostaSituacao
     {
-        public virtual ICollection<PropostaHistorico> PropostaHistorico { get; set; }
+        public ICollection<PropostaHistorico> PropostaHistorico { get; set; }
         
         /// <summary>
         /// Status
@@ -28,33 +28,39 @@ namespace BUSINESS.Model
         /// Sendo assim, à mesma precisará também da aprovação do diretor financeiro para
         /// assumir o status de “Aprovada”.)
         /// </summary>
-        public int Status { get; set; }
-        public Boolean Aprovar { get; set; }
+        public PropostaStatus Status { get; set; }
+        public bool Aprovar { get; set; }
         /// <summary>
         /// ValorPropostaAcimaDoLimiteDesMill
         /// Description A ( RN05.02 - Propostas de alto valor: caso as propostas possuam valores superiores a R$10.000,00, 
         /// a mesma precisa também da aprovação do Diretor Financeiro.)
         /// </summary>
-        public Boolean ValorPropostaAcimaDoLimiteDesMill { get; set; }
+        public bool ValorPropostaAcimaDoLimiteDesMill { get; set; }
         
         /// <summary>
         /// NecessitaAprovavaoDiretorFinanceiro
         /// Description ( Leia a RN05.02.)
         /// </summary>
-        public Boolean NecessitaAprovavaoDiretorFinanceiro { get; set; }
+        public bool NecessitaAprovavaoDiretorFinanceiro { get; set; }
         
         /// <summary>
-        /// NecessitaAprovavaoDiretorFinanceiro
+        /// AprovavaoDiretorFinanceiro
         /// Description A ( Leia a RN05.02.)
         /// </summary>
-        public Boolean AprovavaoDiretorFinanceiro { get; set; }
+        public bool AprovadaDiretorFinanceiro { get; set; }
          
         /// <summary>
-        /// NecessitaAprovavaoDiretorFinanceiro
+        /// AprovadaAnalistaFinanceiro
         /// Description (RN05.01 - Aprovação das propostas: para uma proposta possuir o status de
         /// “Aprovada”, a mesma deve possuir a aprovação, no mínimo, do analista financeiro.)
         /// </summary>
-        public Boolean AprovadaAnalistaFinanceiro { get; set; }
+        public bool AprovadaAnalistaFinanceiro { get; set; }
+        /// <summary>
+        /// AbilitaOpcaoAprovarProposta
+        /// Description (RN05.01 - Aprovação das propostas: para uma proposta possuir o status de
+        /// “Aprovada”, a mesma deve possuir a aprovação, no mínimo, do analista financeiro.)
+        /// </summary>
+        public bool AbilitaOpcaoAprovarProposta { get; set; }
      
     }
 }

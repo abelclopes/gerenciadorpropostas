@@ -23,7 +23,8 @@ namespace BUSINESS.Model
             return new List<PropostaStatusBussness>(){
                 new PropostaStatusBussness{Status = "Aguardando Avaliação", Id = 1},
                 new PropostaStatusBussness{Status = "Aprovado", Id = 2}, 
-                new PropostaStatusBussness{Status = "Expirado", Id = 3}
+                new PropostaStatusBussness{Status = "Expirado", Id = 3}, 
+                new PropostaStatusBussness{Status = "Aguardando Aprovação Analista Financeiro", Id = 4}
             };
         }
     }

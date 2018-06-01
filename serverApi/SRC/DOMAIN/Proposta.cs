@@ -35,11 +35,11 @@ namespace DOMAIN
         public PropostaStatus Status { get; set; }
         [ForeignKey("Categoria")]
         public Guid CategoriaId { get; set; }
-        public virtual Categoria Categoria { get; set; }
+        public Categoria Categoria { get; set; }
         [ForeignKey("Fornecedor")]
         public Guid FornecedorId { get; set; }
-        public virtual Fornecedor Fornecedor { get; set; }
-        public virtual ICollection<PropostaHistorico> PropostaHistoricos { get; set; }
+        public Fornecedor Fornecedor { get; set; }
+        public ICollection<PropostaHistorico> PropostaHistoricos { get; set; }
 
         public ICollection<PropostaAnexo> PropostaAnexos { get; set; }
 
