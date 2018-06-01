@@ -49,7 +49,7 @@ namespace API.Controllers
       var propostas = new List<PropostaModel>();
       if(RestornaPropostaList().Any()){
         propostas = RestornaPropostaList();
-        if(!string.IsNullOrEmpty(model.NomeProposta) || model.Valor > 0 && !string.IsNullOrEmpty(model.Valor.ToString()) || !string.IsNullOrEmpty(model.FornecedorID)){ 
+        if(!string.IsNullOrEmpty(model.NomeProposta) || Convert.ToDouble(model.Valor) > 0 && !string.IsNullOrEmpty(model.Valor.ToString()) || !string.IsNullOrEmpty(model.FornecedorID)){ 
           propostas = propostas.Where(x => x.NomeProposta.Contains(model.NomeProposta) 
                               ||  x.Valor.Equals(model.Valor)
                               ||  x.Fornecedor.Id == Guid.Parse(model.FornecedorID)
@@ -227,6 +227,17 @@ namespace API.Controllers
         MemoryCache.Remove("propostas");
         Context.SaveChanges();
       }
+    }
+    private float convertoToFloat(double input){
+      float result = (float) input;
+      if (float.IsPositiveInfinity(result))
+      {
+          result = float.MaxValue;
+      } else if (float.IsNegativeInfinity(result))
+      {
+          result = float.MinValue;
+      }
+      return result;
     }
   }
 }

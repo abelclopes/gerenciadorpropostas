@@ -12,7 +12,7 @@ using System;
 namespace API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180531011537_initialize")]
+    [Migration("20180601055233_initialize")]
     partial class initialize
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,7 +112,7 @@ namespace API.Migrations
 
                     b.Property<int>("Status");
 
-                    b.Property<double>("Valor");
+                    b.Property<string>("Valor");
 
                     b.HasKey("Id");
 
@@ -223,12 +223,12 @@ namespace API.Migrations
             modelBuilder.Entity("DOMAIN.Proposta", b =>
                 {
                     b.HasOne("DOMAIN.Categoria", "Categoria")
-                        .WithMany("Propostas")
+                        .WithMany()
                         .HasForeignKey("CategoriaId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("DOMAIN.Fornecedor", "Fornecedor")
-                        .WithMany("Propostas")
+                        .WithMany()
                         .HasForeignKey("FornecedorId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

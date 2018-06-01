@@ -13,7 +13,9 @@ namespace BUSINESS
         public IContext Context { get; }
 
         public PropostaSituacao situacao;
-        private double VALOR_MAXIMO = 10000.00;
+        private Proposta Proposta { get; set; }        
+        private Usuario UsuarioAuthenticado { get; set; }
+        private string VALOR_MAXIMO = "10000,00";
 
         public PropostaBusiness(IContext context)
         {   
@@ -23,12 +25,10 @@ namespace BUSINESS
         public PropostaBusiness()
         {   
             this.situacao = new PropostaSituacao();
-        }
-        
-        private Proposta Proposta{ get; set; }
-
+        }        
         public PropostaSituacao validate(Proposta model, Usuario usuarioLogado, PropostaStatus status)
         { 
+            this.UsuarioAuthenticado = usuarioLogado;
             var propostaHistorico = Context.PropostasHistoricos.Where(x => x.PropostaId == model.Id).ToList();            
             var permissao = Context.Permissoes.FirstOrDefault(x => x.Nivel.Equals(4));
             var usuarioPermissoes = Context.UsuarioPermissoes.Where(x => x.PermissaoId == permissao.Id).ToList();
@@ -45,33 +45,56 @@ namespace BUSINESS
             }            
             return this.situacao ;
         }
-
-        private bool propostaValor(double valor)
+        private bool propostaValor(string valor)
         {
-            if((double)valor > VALOR_MAXIMO) return this.situacao.ValorPropostaAcimaDoLimiteDesMill = true;
+            valor = valor.Replace(".", ",");
+            double numero = Convert.ToDouble(valor);
+            if(numero > Convert.ToDouble(VALOR_MAXIMO)) return this.situacao.ValorPropostaAcimaDoLimiteDesMill = true;
             return false;
         }
         private bool validaJaAporvado(
             Proposta model, 
             List<PropostaHistorico> propostaHistorico,
             List<UsuarioPermissao> usuarioPermissoes, 
-            List<Usuario> usuarios, bool diretor = false
+            List<Usuario> usuarios, 
+            bool diretor = false
         ){
             propostaHistorico.Any( x => x.PropostaId == model.Id);
-            var ph = propostaHistorico.Where( x => x.PropostaId == model.Id);
-            foreach(var historico in ph)
+            var ph = propostaHistorico.Where( x => x.PropostaId == model.Id );
+            var decisao = false;
+            PropostaHistorico historico;
+            if(ph.Any(x => x.PropostaStatus == (PropostaStatus)4) && diretor)
             {
-                if(this.situacao.NecessitaAprovavaoDiretorFinanceiro)
-                {
-                    if(usuarioPermissoes.Any(x => x.UsuarioId == historico.UsuarioId))
-                    {
-                        var user = usuarioPermissoes.FirstOrDefault(x => x.UsuarioId == historico.UsuarioId).Permissoes.Nivel.Equals(3);
-                        
-                        return  true;
-                    }
-                }
+                historico = propostaHistorico.FirstOrDefault(x => x.PropostaStatus == (PropostaStatus)4);
             }
-            return false;
+            else
+            {
+                historico = propostaHistorico.FirstOrDefault(x => x.PropostaStatus == (PropostaStatus)1);
+            }
+//@todo
+            switch((int)historico.PropostaStatus){
+                case 4: // Aprovado por Diretor Financeiro
+                    if(this.situacao.NecessitaAprovavaoDiretorFinanceiro  && diretor)
+                    {
+                        return decisao = true;
+                    }
+                break;
+                case 1: // aprovar Analista Financeiro
+                    if(!this.situacao.NecessitaAprovavaoDiretorFinanceiro  && diretor == false)
+                    {
+                        decisao = true;
+                    }
+                break;
+                default:
+                    this.situacao.AbilitaOpcaoAprovarProposta = false;
+                    this.situacao.Aprovar = false;
+                    return false;
+            }
+            if(decisao == true){
+                this.situacao.AbilitaOpcaoAprovarProposta = true;
+                this.situacao.Aprovar = true;
+            }
+            return decisao;
         }
 
         public bool validaSePropsotaExpirou(Proposta model)

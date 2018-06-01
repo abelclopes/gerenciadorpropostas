@@ -13,7 +13,9 @@ namespace Model
         
         [MaxLength(500)]
         public string Descricao { get; set; }
-        public double Valor { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n2}",
+            ApplyFormatInEditMode = true)]
+        public string Valor { get; set; }
         public string FornecedorID { get; set; }
         public string CategoriaID { get; set; }  
         public int Status { get; set; }

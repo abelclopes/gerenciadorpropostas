@@ -11,8 +11,10 @@ namespace Model
         public string NomeProposta { get; set; }
         
         [MaxLength(500)]
-        public string Descricao { get; set; }
-        public double Valor { get; set; }
+        public string Descricao { get; set; } 
+        [DisplayFormat(DataFormatString = "{0:n2}",
+            ApplyFormatInEditMode = true)]
+        public string Valor { get; set; }
         public virtual Fornecedor Fornecedor { get; set; }
         public virtual ICollection<PropostaHistorico> PropostaHistorico { get; set; }
         public virtual Categoria Categoria { get; set; } 

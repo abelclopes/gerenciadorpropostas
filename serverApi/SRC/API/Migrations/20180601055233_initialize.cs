@@ -90,7 +90,7 @@ namespace API.Migrations
                     FornecedorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NomeProposta = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    Valor = table.Column<double>(type: "float", nullable: false)
+                    Valor = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

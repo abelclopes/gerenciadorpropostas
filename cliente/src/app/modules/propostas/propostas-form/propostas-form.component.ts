@@ -108,7 +108,7 @@ export class PropostasFormComponent implements OnInit {
     formData.append("categoriaID", formModel.categoria);
     formData.append("valor", formModel.valor);
     formData.append("usuario", usuarioAtual['id'] );
-    
+    console.log(formModel.valor)
     return formData;
   }
   

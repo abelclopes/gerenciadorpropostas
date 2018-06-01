@@ -64,46 +64,7 @@ export class PropostaDetalhesComponent implements OnInit {
   
   
   tomadaDeDecisaoAbilitarBotao(data: PropSituacaoResponse): boolean {
-    switch(data.response.usuario.perfil)
-    {
-      case 3:
-          if(data.response.propSituacao.status == 1 
-            && data.response.propSituacao.valorPropostaAcimaDoLimiteDesMill 
-            && data.response.propSituacao.aprovadaDiretorFinanceiro == false){
-              console.log("nao pode aprovar, ainda nao aprovado por diretor financeiro");
-            return false;
-          }else if(data.response.propSituacao.status == 1 
-            && data.response.propSituacao.valorPropostaAcimaDoLimiteDesMill 
-            && data.response.propSituacao.aprovadaDiretorFinanceiro){
-              this.propostaModel.status = 2
-            return true;
-          }else if(data.response.propSituacao.status == 1 && data.response.propSituacao.valorPropostaAcimaDoLimiteDesMill == false){
-            this.propostaModel.status = 2
-            return true;
-          }
-      break;
-      case 4:
-          if(data.response.propSituacao.status == 1             
-            && data.response.propSituacao.valorPropostaAcimaDoLimiteDesMill 
-            && data.response.propSituacao.aprovadaAnalistaFinanceiro == false
-            && data.response.propSituacao.aprovadaDiretorFinanceiro == false){              
-            console.log("aprovar por diretor financeiro valorPropostaAcimaDoLimiteDesMill == true");
-            this.propostaModel.status = 4
-            return true;
-          } else if(data.response.propSituacao.status == 1             
-            && data.response.propSituacao.valorPropostaAcimaDoLimiteDesMill == false
-            && data.response.propSituacao.aprovadaDiretorFinanceiro == false
-            && data.response.propSituacao.aprovadaAnalistaFinanceiro == false
-          ){
-            this.propostaModel.status = 4;
-            console.log("aprovar por diretor financeiro valorPropostaAcimaDoLimiteDesMill == false");
-            return true;
-          } 
-      break;
-      default:
-        return false;
-    }
-    return false;
+    return data.response.propSituacao.abilitaOpcaoAprovarProposta;
   }
 
 

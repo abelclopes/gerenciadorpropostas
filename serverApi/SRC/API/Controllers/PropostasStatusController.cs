@@ -43,22 +43,33 @@ namespace API.Controllers
         [SwaggerResponse(201)]
         [SwaggerResponse(401)]
         [SwaggerResponse(403)]
-        public async Task<IActionResult> Post([FromBody]PropostaSituacaoModel model){
-
+        public async Task<IActionResult> Post([FromBody]PropostaSituacaoModel model)
+        {
             var id = model.Id;
             var UsuarioId = Guid.Parse(model.UsuarioId);
-            var usuarioLogado = Context.Usuarios.FirstOrDefault(x => x.Id == UsuarioId);
-            var proposta = new Proposta();
-            proposta = await Context.Propostas.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
+            
+            if (string.IsNullOrEmpty(model.Status.ToString()))
+            {
+                return BadRequest(new {Response= "Não foi possivel cadastar a proposta"});
+            }
+            if (string.IsNullOrEmpty(model.UsuarioId.ToString()))
+            {
+                return BadRequest(new {Response= "Não foi possivel cadastar a proposta"});
+            }
+
             var pb = new PropostaBusiness(Context);
+            var proposta = new Proposta();
             var status = (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), proposta.Status);
+            var usuarioLogado = Context.Usuarios.FirstOrDefault(x => x.Id == UsuarioId);
+            proposta = await Context.Propostas.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
             var propSituacao = pb.validate(proposta, usuarioLogado, status);
-            var PermissaoId = Context.UsuarioPermissoes.FirstOrDefault(x => x.UsuarioId == UsuarioId).PermissaoId;
+            var permissaoId = Context.UsuarioPermissoes.FirstOrDefault(x => x.Usuario.Id == UsuarioId);
+            var permissoes = Context.Permissoes.FirstOrDefault(x => x.Id == permissaoId.PermissaoId);
             var usuario = new NovoUsuarioModel(){
                     Email = usuarioLogado.Email,
                     Nome = usuarioLogado.Nome,
-                    PermissaoId = PermissaoId,
-                    Perfil = Context.Permissoes.FirstOrDefault(x => x.Id == PermissaoId).Nivel,
+                    PermissaoId = permissaoId.PermissaoId,
+                    Perfil = permissoes.Nivel,
                     DataNacimento = usuarioLogado.DataNacimento
                 };
             return Ok(new {Ok=true, Response =new {propSituacao, usuario}});
@@ -87,7 +98,6 @@ namespace API.Controllers
             proposta.Status =  (PropostaStatus)model.Status;
 
             var propostaHistorico = new PropostaHistorico(proposta, usuario );
-
             await Context.PropostasHistoricos.AddAsync(propostaHistorico);
             Context.Propostas.Update(proposta);
             await Context.SaveChangesAsync();

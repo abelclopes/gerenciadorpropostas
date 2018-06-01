@@ -15,7 +15,7 @@ namespace DOMAIN
             PropostaAnexos = new HashSet<PropostaAnexo>();
             PropostaHistoricos = new HashSet<PropostaHistorico>();
         }
-        public Proposta(string nomeProposta, string descricao, double valor, Fornecedor fornecedor, Categoria categoria, PropostaStatus status)
+        public Proposta(string nomeProposta, string descricao, string valor, Fornecedor fornecedor, Categoria categoria, PropostaStatus status)
         {
             NomeProposta = nomeProposta;
             Descricao = descricao;
@@ -31,7 +31,7 @@ namespace DOMAIN
         
         [MaxLength(500)]
         public string Descricao { get; set; }
-        public double Valor { get; set; }
+        public string Valor { get; set; }
         public PropostaStatus Status { get; set; }
         [ForeignKey("Categoria")]
         public Guid CategoriaId { get; set; }
