@@ -54,25 +54,7 @@ namespace API.Controllers
 
         }
         private string BuildToken(NovoUsuarioModel user)
-        {
-            
-            // var claims = new[] {
-            //     new Claim(JwtRegisteredClaimNames.Sub, user.Nome),
-            //     new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            //     new Claim(JwtRegisteredClaimNames.Birthdate, user.DataNacimento.ToString("yyyy-MM-dd")),
-            //     new Claim(JwtRegisteredClaimNames.GivenName, user.PermissaoId.ToString()),
-            //     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            // };
-
-            // var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            // var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            // var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-            // _config["Jwt:Issuer"],
-            // claims,
-            // expires: DateTime.Now.AddMinutes(120),
-            // signingCredentials: creds);
-        
+        {        
             var model = TokenBuilder.CreateJsonWebToken(
                 "gerp.project", 
                 new List<string>() {user.PermissaoId.ToString(), user.Nome,user.Email,user.DataNacimento.ToString("yyyy-MM-dd"), user.PermissaoId.ToString() } ,
@@ -83,7 +65,6 @@ namespace API.Controllers
             );
     
             return model;
-            //return new JwtSecurityTokenHandler().WriteToken(token);
         }
         private NovoUsuarioModel Authenticate(LoginModel login)
         {
