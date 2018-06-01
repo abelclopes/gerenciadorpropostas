@@ -9,7 +9,7 @@ import 'rxjs/add/operator/catch';
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/delay';
 
-import { PropostaPagedListModel, PropostaModel, PropostaNovaModel} from '../model';
+import { PropostaPagedListModel, PropostaModel, PropostaNovaModel, PropSituacaoResponse} from '../model';
 import { API_URL } from '../../../app.api';
 import { UsuariosClans } from '../../usuarios/model/usuario-clans.model';
 import { Usuario, UsuarioBuilder } from '../../usuarios/model/build';
@@ -20,8 +20,8 @@ export class PropostaService {
   httpHeaders: HttpHeaders;
   usuarioAtual: UsuariosClans;
   constructor(protected httpClient: HttpClient, private http: Http) {
-
-    let currentUser = this.usuarioAtual = JSON.parse(localStorage.getItem('usuarioCorrente'));
+    this.usuarioAtual =JSON.parse(localStorage.getItem('usuarioClans'));
+    let currentUser =  JSON.parse(localStorage.getItem('usuarioCorrente'));
     this.httpHeaders = new HttpHeaders()
     .set('Content-Type', 'application/json')
     .set('No-Auth', 'true')
@@ -32,11 +32,9 @@ export class PropostaService {
   private headersPut(){  
     let currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
     let httpHeaders = new HttpHeaders()
-    .set('Content-Type', 'application/json')
     .set('No-Auth', 'true')
     .set('Authorization', `Bearer ${currentUser.token}`)
-    .set('www-authenticate', `${currentUser.token}`)
-    .set('Content-Type', 'multipart/form-data');
+    .set('x-access-token', `${currentUser.token}`);
     return httpHeaders;
   }
 
@@ -71,27 +69,33 @@ export class PropostaService {
     return this.httpClient.delete(url, { headers: this.httpHeaders } );
   }
   
-  public getStatus(id:string): any {
-    let url = `${API_URL}/api/propostas/status/${id}`;
-    return this.httpClient.get(url, { headers: this.httpHeaders } );
+  public getStatus(id:string): Observable<PropSituacaoResponse> {
+    let url = `${API_URL}/api/propostas/status`;
+    let data = {id: id, usuarioid: this.usuarioAtual['id']};
+    return this.httpClient.post<PropSituacaoResponse>(url,data, { headers: this.httpHeaders, responseType: 'json' } )   
+    .map(res => res)
+    .catch(this.handleError);
 
+  }
+  public AprovarProposta(id:string, model: PropostaModel){
+    let url = `${API_URL}/api/propostas/status/${id}`;  
+    
+    let data = {id: id, UsuarioId: this.usuarioAtual['id'], status: model.status};
+    
+    console.log(data); 
+    return this.httpClient.put<any>(url,data,{headers: this.headersPut(), responseType: 'json'});
   }
 
   public createUpload(model: FormData): Observable<any> {
-    // debugger;
+
     let currentUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
-    let currentusuarioClans: UsuariosClans = JSON.parse(localStorage.getItem('usuarioClans'));
-    model.append("usuario", currentusuarioClans.Id);
-    console.log(model);
-    
+
     let httpHeaders = new HttpHeaders()
-    // .set('Content-Type', 'Application/json;')
     .set('No-Auth', 'true')
     .set('Authorization', `Bearer ${currentUser.token}`)
     .set('x-access-token', `${currentUser.token}`);
     let url = `${API_URL}/api/propostas`;
     return this.httpClient.post(url, model,{headers: httpHeaders})
-    //.map(this.extractObject);
   } 
 
   
@@ -128,13 +132,4 @@ export class PropostaService {
     console.error(errMsg);
     return Observable.throw(errMsg);
   }
-
-  // usuarioBuilder(model: usuario){
-  //   let u: Usuario = new UsuarioBuilder()
-  //           .Id(model.Id)
-  //           .setNome(nome)
-  //           .Cpf(this.usuarioAtual.Cpf)
-  //           .build();
-  //             console.log(u);
-  // }
 }

@@ -10,6 +10,7 @@ import { FornecedorModel } from '../../fornecedores/model';
 import { FornecedorService } from '../../fornecedores/service/fornecedor.service';
 import { Observable, Subject } from 'rxjs';  
 import { NotificationService } from '../../../shared/messages/notification.service';
+import { UsuariosClans } from '../../usuarios/model/usuario-clans.model';
 
 @Component({
   moduleId: module.id.toString(),
@@ -46,6 +47,7 @@ export class PropostasFormComponent implements OnInit {
   get categoria() { return this.propostaForm.get('categoria'); }
   get anexo() { return this.propostaForm.get('anexo'); }
   get valor() { return this.propostaForm.get('valor'); }
+  get usuario() { return this.propostaForm.get('usuario'); }
 
   closeResult: string;
   constructor(
@@ -64,7 +66,8 @@ export class PropostasFormComponent implements OnInit {
         fornecedorID: new FormControl(null),
         categoria: new FormControl(null),
         anexo: new FormControl(null),
-        valor: new FormControl(null)
+        valor: new FormControl(null),
+        usuario: new FormControl(null)
     }, { updateOn: 'submit' });
     this.uploader.nativeElement.value = "";
 
@@ -96,13 +99,15 @@ export class PropostasFormComponent implements OnInit {
 
     console.log('formModel', formModel);
     let formData = new FormData();
-    
+    let usuarioAtual: UsuariosClans = JSON.parse(localStorage.getItem('usuarioClans'));
+    console.log("usuarioAtual" ,usuarioAtual);
     formData.append("nomeProposta", formModel.nomeProposta);
     formData.append("anexo", formModel.anexo);
     formData.append("descricao", formModel.descricao);
     formData.append("fornecedorID", formModel.fornecedorID);
     formData.append("categoriaID", formModel.categoria);
     formData.append("valor", formModel.valor);
+    formData.append("usuario", usuarioAtual['id'] );
     
     return formData;
   }
@@ -145,8 +150,8 @@ onSelect(fornecedor) {
       nomeProposta: this.propostaModel.nomeProposta,
       descricao: this.propostaModel.descricao,
       categoria: this.propostaModel.categoria,
-      fornecedor: this.propostaModel.fornecedor,
-      valor: this.propostaModel.valor
+        fornecedor: this.propostaModel.fornecedor,
+        valor: this.propostaModel.valor
     });
   }
 }

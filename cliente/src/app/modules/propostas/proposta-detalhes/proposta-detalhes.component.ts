@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PropostaModel, PropostaAnexoModel } from '../model';
+import { PropostaModel, PropostaAnexoModel, PropSituacao, PropSituacaoResponse } from '../model';
 import { PropostaService } from '../service/proposta.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import {DomSanitizer,SafeResourceUrl} from '@angular/platform-browser'
@@ -15,11 +15,13 @@ import { propostaStaus } from '../model/proposta-status.model';
   styleUrls: ['./proposta-detalhes.component.css']
 })
 export class PropostaDetalhesComponent implements OnInit {
+
   abilitarAprovar: boolean = false;
   propostaModel: PropostaModel;
   propostaAnexo: PropostaAnexoModel
   arquivo: any;
   propostaStatus: propostaStaus;
+  propostaSituacao: PropSituacaoResponse;
 
   displayPdf: boolean;
   page: number = 1;
@@ -48,15 +50,63 @@ export class PropostaDetalhesComponent implements OnInit {
       }, err => {
         console.log(err);
       });
-      this.propostaService.getStatus(this.id).subscribe(
+      this.propostaService.getStatus(this.id)
+      .subscribe(
         data => {
-          this.propostaStatus = data;
-          //console.log(this.propostaModel)
+          this.propostaStatus = data.response.propSituacao;
+          this.abilitarAprovar = this.tomadaDeDecisaoAbilitarBotao(data);
+
         }, err => {
           console.log(err);
         });
     
   }
+  
+  
+  tomadaDeDecisaoAbilitarBotao(data: PropSituacaoResponse): boolean {
+    switch(data.response.usuario.perfil)
+    {
+      case 3:
+          if(data.response.propSituacao.status == 1 
+            && data.response.propSituacao.valorPropostaAcimaDoLimiteDesMill 
+            && data.response.propSituacao.aprovadaDiretorFinanceiro == false){
+              console.log("nao pode aprovar, ainda nao aprovado por diretor financeiro");
+            return false;
+          }else if(data.response.propSituacao.status == 1 
+            && data.response.propSituacao.valorPropostaAcimaDoLimiteDesMill 
+            && data.response.propSituacao.aprovadaDiretorFinanceiro){
+              this.propostaModel.status = 2
+            return true;
+          }else if(data.response.propSituacao.status == 1 && data.response.propSituacao.valorPropostaAcimaDoLimiteDesMill == false){
+            this.propostaModel.status = 2
+            return true;
+          }
+      break;
+      case 4:
+          if(data.response.propSituacao.status == 1             
+            && data.response.propSituacao.valorPropostaAcimaDoLimiteDesMill 
+            && data.response.propSituacao.aprovadaAnalistaFinanceiro == false
+            && data.response.propSituacao.aprovadaDiretorFinanceiro == false){              
+            console.log("aprovar por diretor financeiro valorPropostaAcimaDoLimiteDesMill == true");
+            this.propostaModel.status = 4
+            return true;
+          } else if(data.response.propSituacao.status == 1             
+            && data.response.propSituacao.valorPropostaAcimaDoLimiteDesMill == false
+            && data.response.propSituacao.aprovadaDiretorFinanceiro == false
+            && data.response.propSituacao.aprovadaAnalistaFinanceiro == false
+          ){
+            this.propostaModel.status = 4;
+            console.log("aprovar por diretor financeiro valorPropostaAcimaDoLimiteDesMill == false");
+            return true;
+          } 
+      break;
+      default:
+        return false;
+    }
+    return false;
+  }
+
+
   editar(){
     this.router.navigate([`/propostas/editar/${this.id}`]);
   }
@@ -77,13 +127,22 @@ export class PropostaDetalhesComponent implements OnInit {
     }
   }
   aprovarProposta(){
-    console.log('teste')
+    this.propostaService.AprovarProposta(this.id, this.propostaModel)
+    .subscribe(
+      data => {
+       if(data['ok'] == true){
+         this.abilitarAprovar = false;
+       }
+      }, err => {
+        console.log(err);
+    });
   }
   validaAbilitarAprovar(){
     this.propostaService.getPropostaPermissaoAprovar(this.id)
     .subscribe(
       data => {
         data;
+        console.log(data);
         this.loadingService.hideLoading()   
         this.abilitarAprovar = true;
       }, err => {

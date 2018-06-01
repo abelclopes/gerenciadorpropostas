@@ -18,10 +18,11 @@ export class PropostaModel {
   ){}
 }
 export namespace Proposta {
-    export type StatusEnum = 1 | 2 | 3;
+    export type StatusEnum = 1 | 2 | 3 | 4;
     export const StatusEnum = {
         NUMBER_1: 1 as StatusEnum,
         NUMBER_2: 2 as StatusEnum,
-        NUMBER_3: 3 as StatusEnum
+        NUMBER_3: 3 as StatusEnum,
+        NUMBER_4: 4 as StatusEnum
     }
 }

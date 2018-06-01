@@ -5,7 +5,7 @@ export class UsuariosClans{
         public Nome?: string,
         public Email?: string,
         public Cpf?: string,
-        public Police?: any,
+        public perfil?: any,
         public DataNacimento?: Date,
         public Idade?: number,
         public Excluido ?: boolean

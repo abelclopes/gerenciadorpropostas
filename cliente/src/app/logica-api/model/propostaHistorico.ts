@@ -25,10 +25,11 @@ export interface PropostaHistorico {
     excluido?: boolean;
 }
 export namespace PropostaHistorico {
-    export type PropostaStatusEnum = 1 | 2 | 3;
+    export type PropostaStatusEnum = 1 | 2 | 3 | 4;
     export const PropostaStatusEnum = {
         NUMBER_1: 1 as PropostaStatusEnum,
         NUMBER_2: 2 as PropostaStatusEnum,
-        NUMBER_3: 3 as PropostaStatusEnum
+        NUMBER_3: 3 as PropostaStatusEnum,
+        NUMBER_4: 4 as PropostaStatusEnum
     }
 }

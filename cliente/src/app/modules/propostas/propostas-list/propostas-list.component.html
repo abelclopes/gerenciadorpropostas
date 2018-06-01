@@ -40,11 +40,9 @@
                           <td>{{proposta.fornecedor.nome | uppercase}}</td>
                           <td>{{proposta.valor | currency:'R$'}}</td>
                           <td> 
-                            <strong *ngIf="proposta.status == 0">Aguardando </strong>
-                            <i *ngIf="proposta.status == 0" class="color-red fa fa-lock"></i>
-                            <i *ngIf="proposta.status == 1" class="color-green fa fa-check"></i>
-                            <i *ngIf="proposta.status == 2" class="color-green fa fa-check"></i>
-                            <i *ngIf="proposta.status == 4" class="color-green fa fa-lock"></i>
+                            <strong *ngIf="proposta.status == 1" ><i class="color-green fa fa-clock"></i> Aguardando</strong>
+                            <strong *ngIf="proposta.status == 2" ><i class="color-green fa fa-check"></i> Aprovada</strong>
+                            <strong *ngIf="proposta.status == 3" ><i class="color-red fa fa-lock"></i> Expirada</strong>
                           </td>
                           <td>{{proposta.dataCriacao | date:'short'}}</td>
                           <td class="center"><a routerLink='detalhes/{{proposta.id}}' title="Visualizar Proposta"><i class="fa fa-search"></i></a></td>
