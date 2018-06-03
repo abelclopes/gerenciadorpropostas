@@ -7,12 +7,15 @@ namespace DOMAIN
     public enum PropostaStatus
     {  
         [Description("Aguardando Avaliação")]
-        AguardandoAvaliacao = 1, 
+        PROPOSTA_AGUARDANDO_APROVACAO = 1, 
         [Description("Aprovado")]
-        aprovado = 2,
+        PROPOSTA_APOVADA_FINANCEIRO = 2,
+        PROPOSTA_APOVADA_APROVADA= 2,
         [Description("Expirado")]
-        expirado = 3,
+        PROPOSTA_EXPIRADA = 3,
         [Description("Aguardando Avaliação do Analista Financeiro")]
-        AguardandoAvaliacaoAnalistaFinanceiro = 4
+        PROPOSTA_APOVADA_DIRETOR = 4,
+        [Description("Rejeitada")]
+        PROPOSTA_REJEITADA = 5
     }
 }
