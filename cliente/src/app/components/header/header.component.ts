@@ -28,9 +28,10 @@ export class HeaderComponent implements OnInit {
   }
   isAuthenticaiton(){
     const authOn: tokenUser = JSON.parse(localStorage.getItem('usuarioCorrente'));
+    this.userClaims = JSON.parse(localStorage.getItem('usuarioClans'));
     if(authOn != null && authOn != undefined){
-      this.email = authOn['email'];
-      this.accessToken = authOn['token'];
+      this.email = this.userClaims.Email;
+      this.accessToken = authOn.token;
        return true
     }
     return false
