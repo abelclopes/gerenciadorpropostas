@@ -10,6 +10,7 @@ import { FornecedorModel } from '../../fornecedores/model';
 import { FornecedorService } from '../../fornecedores/service/fornecedor.service';
 import { Observable, Subject } from 'rxjs';  
 import { NotificationService } from '../../../shared/messages/notification.service';
+import { UsuariosClans } from '../../usuarios/model/usuario-clans.model';
 
 @Component({
   moduleId: module.id.toString(),
@@ -107,14 +108,16 @@ export class PropostasEditComponent implements OnInit {
 
     console.log('formModel', formModel);
     let formData = new FormData();
-    
+    let usuarioAtual: UsuariosClans = JSON.parse(localStorage.getItem('usuarioClans'));
+    console.log("usuarioAtual" ,usuarioAtual);
     formData.append("nomeProposta", formModel.nomeProposta);
     formData.append("anexo", formModel.anexo);
     formData.append("descricao", formModel.descricao);
     formData.append("fornecedorID", formModel.fornecedorID);
     formData.append("categoriaID", formModel.categoria);
     formData.append("valor", formModel.valor);
-    
+    formData.append("usuario", usuarioAtual['id'] );
+    console.log(formModel.valor)
     return formData;
   }
 
