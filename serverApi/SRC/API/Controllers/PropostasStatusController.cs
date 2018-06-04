@@ -69,6 +69,9 @@ namespace API.Controllers
                     Perfil = pb.getPermissaoUsuarioLogado().Nivel,
                     DataNacimento = usuarioLogado.DataNacimento
                 };
+        
+            MemoryCache.Remove("propostas");
+
             return Ok(new {Ok=true, Response =new {propSituacao, usuario}});
         }
         [HttpPut("{id}"), Authorize]
@@ -101,6 +104,9 @@ namespace API.Controllers
             await Context.PropostasHistoricos.AddAsync(propostaHistorico);
             Context.Propostas.Update(proposta);
             await Context.SaveChangesAsync();
+
+            MemoryCache.Remove("propostas");
+
             return Ok(new {ok = true,Response= "Proposta Aprovada"});
         }
     }

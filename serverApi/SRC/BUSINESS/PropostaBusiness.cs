@@ -15,7 +15,7 @@ namespace BUSINESS
         private Proposta Proposta { get; set; }        
         public PropostaSituacao situacao;
         private Usuario UsuarioAuthenticado { get; set; }
-        private string VALOR_MAXIMO = "10000";
+        private string VALOR_MAXIMO = "10000,00"; //verificar
 
         private int ADMINISTRADOR = 1;
         private int ANALISTA_COMPRAS = 2;
