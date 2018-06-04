@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BUSINESS.Model;
 using DOMAIN;
 using DOMAIN.Interfaces;
@@ -11,11 +12,17 @@ namespace BUSINESS
     public class PropostaBusiness
     {
         public IContext Context { get; }
-
-        public PropostaSituacao situacao;
         private Proposta Proposta { get; set; }        
+        public PropostaSituacao situacao;
         private Usuario UsuarioAuthenticado { get; set; }
-        private string VALOR_MAXIMO = "10000,00";
+        private string VALOR_MAXIMO = "10000";
+
+        private int ADMINISTRADOR = 1;
+        private int ANALISTA_COMPRAS = 2;
+        private int ANALISTA_FINANCEIRO = 3;
+        private int DIRETOR_FINANCEIRO = 4;
+        
+        private bool PropostaValida;
 
         public PropostaBusiness(IContext context)
         {   
@@ -28,20 +35,18 @@ namespace BUSINESS
         }        
         public PropostaSituacao validate(Proposta model, Usuario usuarioLogado, PropostaStatus status)
         { 
-            this.UsuarioAuthenticado = usuarioLogado;
-            var propostaHistorico = Context.PropostasHistoricos.Where(x => x.PropostaId == model.Id).ToList();            
+            this.UsuarioAuthenticado = usuarioLogado;         
             var permissao = Context.Permissoes.FirstOrDefault(x => x.Nivel.Equals(4));
             var usuarioPermissoes = Context.UsuarioPermissoes.Where(x => x.PermissaoId == permissao.Id).ToList();
-            var usuarios = Context.Usuarios.Where(x => x.UsuarioPermissoes.PermissaoId == permissao.Id).ToList();
 
 
            this.situacao.NecessitaAprovavaoDiretorFinanceiro = propostaValor(model.Valor);
-            if(model.Status != (PropostaStatus)3 || model.Status != (PropostaStatus)1)
-            {   
-               this.situacao.AprovadaDiretorFinanceiro = validaJaAporvado(model, propostaHistorico, usuarioPermissoes, usuarios, true);
-               this.situacao.AprovadaAnalistaFinanceiro = validaJaAporvado(model, propostaHistorico, usuarioPermissoes, usuarios);
-               this.situacao.Status = status;
-                return this.situacao ;
+           
+           // proposta Aprovada ou expirada nao executa validação
+            if(model.Status != (PropostaStatus)3 || model.Status != (PropostaStatus)1) 
+            {
+                this.situacao.Status = GetPropostaValida(model.Id).Status;
+                return validaJaAporvado(model);
             }            
             return this.situacao ;
         }
@@ -49,54 +54,74 @@ namespace BUSINESS
         {
             valor = valor.Replace(".", ",");
             double numero = Convert.ToDouble(valor);
+            if(numero == Convert.ToDouble(VALOR_MAXIMO)) return this.situacao.ValorPropostaAcimaDoLimiteDesMill = false;
             if(numero > Convert.ToDouble(VALOR_MAXIMO)) return this.situacao.ValorPropostaAcimaDoLimiteDesMill = true;
             return false;
         }
-        private bool validaJaAporvado(
-            Proposta model, 
-            List<PropostaHistorico> propostaHistorico,
-            List<UsuarioPermissao> usuarioPermissoes, 
-            List<Usuario> usuarios, 
-            bool diretor = false
-        ){
-            propostaHistorico.Any( x => x.PropostaId == model.Id);
-            var ph = propostaHistorico.Where( x => x.PropostaId == model.Id );
-            var decisao = false;
-            PropostaHistorico historico;
-            if(ph.Any(x => x.PropostaStatus == (PropostaStatus)4) && diretor)
+        private PropostaSituacao validaJaAporvado(Proposta model)
+        {
+            var ph = Context.PropostasHistoricos.Where(x => x.PropostaId == model.Id).ToList();
+            var UsuarioPermissao = getPermissaoUsuarioLogado();
+            // se for analista financeiro pode aprovar
+            if(ph.Any(x => x.PropostaStatus == (PropostaStatus)4) && !ph.Any(x => x.PropostaStatus == (PropostaStatus)2) 
+                && (this.situacao.Status == (PropostaStatus)4) && (this.situacao.Status != (PropostaStatus)2)
+                && this.situacao.NecessitaAprovavaoDiretorFinanceiro && UsuarioPermissao.Nivel.Equals(DIRETOR_FINANCEIRO))
             {
-                historico = propostaHistorico.FirstOrDefault(x => x.PropostaStatus == (PropostaStatus)4);
-            }
-            else
-            {
-                historico = propostaHistorico.FirstOrDefault(x => x.PropostaStatus == (PropostaStatus)1);
-            }
-//@todo
-            switch((int)historico.PropostaStatus){
-                case 4: // Aprovado por Diretor Financeiro
-                    if(this.situacao.NecessitaAprovavaoDiretorFinanceiro  && diretor)
-                    {
-                        return decisao = true;
-                    }
-                break;
-                case 1: // aprovar Analista Financeiro
-                    if(!this.situacao.NecessitaAprovavaoDiretorFinanceiro  && diretor == false)
-                    {
-                        decisao = true;
-                    }
-                break;
-                default:
-                    this.situacao.AbilitaOpcaoAprovarProposta = false;
-                    this.situacao.Aprovar = false;
-                    return false;
-            }
-            if(decisao == true){
-                this.situacao.AbilitaOpcaoAprovarProposta = true;
+                this.situacao.AprovadaDiretorFinanceiro = true;                
+                this.situacao.AprovadaAnalistaFinanceiro = false;
                 this.situacao.Aprovar = true;
+                this.situacao.AbilitaOpcaoAprovarProposta = true;
             }
-            return decisao;
+            // somente diretor financeiro pode aprovar
+            else if(!ph.Any(x => x.PropostaStatus == (PropostaStatus)4) && !ph.Any(x => x.PropostaStatus == (PropostaStatus)2)
+                && (this.situacao.Status != (PropostaStatus)4) && (this.situacao.Status != (PropostaStatus)2)
+                && this.situacao.NecessitaAprovavaoDiretorFinanceiro && UsuarioPermissao.Nivel.Equals(DIRETOR_FINANCEIRO))
+            {                
+                this.situacao.AprovadaDiretorFinanceiro = true;
+                this.situacao.AprovadaAnalistaFinanceiro = true;
+                this.situacao.Aprovar = true;
+                this.situacao.AbilitaOpcaoAprovarProposta = true;
+            }
+            // nao necessita de diretor financeiro para aprovar
+            else if(!ph.Any(x => x.PropostaStatus == (PropostaStatus)4) && !ph.Any(x => x.PropostaStatus == (PropostaStatus)2)  
+                && (this.situacao.Status != (PropostaStatus)4) && (this.situacao.Status != (PropostaStatus)2)
+                && !this.situacao.NecessitaAprovavaoDiretorFinanceiro && UsuarioPermissao.Nivel.Equals(ANALISTA_FINANCEIRO))
+            {
+                this.situacao.Aprovar = true;
+                this.situacao.AbilitaOpcaoAprovarProposta = true;
+            }
+            // administardor nao pode aprovar
+            else if(!ph.Any(x => x.PropostaStatus == (PropostaStatus)4) && !ph.Any(x => x.PropostaStatus == (PropostaStatus)2)  
+                && (this.situacao.Status != (PropostaStatus)4) && (this.situacao.Status != (PropostaStatus)2)
+                && !this.situacao.NecessitaAprovavaoDiretorFinanceiro && UsuarioPermissao.Nivel.Equals(ADMINISTRADOR) || UsuarioPermissao.Nivel.Equals(ANALISTA_COMPRAS))
+            {
+                this.situacao.Aprovar = false;
+                this.situacao.AbilitaOpcaoAprovarProposta = false;
+            }
+            return this.situacao;
         }
 
+        public bool propostaIsValid(Guid Id)
+        {
+            GetPropostaValida(Id);
+            return PropostaValida;
+        }
+        public Proposta GetPropostaValida(Guid Id)
+        {
+            Proposta proposta = Context.Propostas.FirstOrDefault(x => x.Id == Id  && x.Status != (PropostaStatus)3 || x.Status != (PropostaStatus)1 && !x.Excluido);
+            PropostaValida = (proposta.NomeProposta != null)? true: false;
+            return proposta;
+        }
+
+        public Permissao getPermissaoUsuarioLogado()
+        {
+            var permissaoId = Context.UsuarioPermissoes.FirstOrDefault(x => x.Usuario.Id == this.UsuarioAuthenticado.Id);
+            return Context.Permissoes.FirstOrDefault(x => x.Id == permissaoId.PermissaoId);
+        }
+        public async Task<Usuario> getUsuarioLogado(string id){
+            this.UsuarioAuthenticado = await Context.Usuarios.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
+            return this.UsuarioAuthenticado;
+        }
         public bool validaSePropsotaExpirou(Proposta model)
         {
             DateTime dt = Convert.ToDateTime(model.DataCriacao);

@@ -45,9 +45,7 @@ namespace API.Controllers
         [SwaggerResponse(403)]
         public async Task<IActionResult> Post([FromBody]PropostaSituacaoModel model)
         {
-            var id = model.Id;
-            var UsuarioId = Guid.Parse(model.UsuarioId);
-            
+            var id = model.Id;            
             if (string.IsNullOrEmpty(model.Status.ToString()))
             {
                 return BadRequest(new {Response= "Não foi possivel cadastar a proposta"});
@@ -56,20 +54,19 @@ namespace API.Controllers
             {
                 return BadRequest(new {Response= "Não foi possivel cadastar a proposta"});
             }
-
             var pb = new PropostaBusiness(Context);
             var proposta = new Proposta();
+            var usuarioLogado = await pb.getUsuarioLogado(model.UsuarioId);
+
             var status = (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), proposta.Status);
-            var usuarioLogado = Context.Usuarios.FirstOrDefault(x => x.Id == UsuarioId);
             proposta = await Context.Propostas.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
             var propSituacao = pb.validate(proposta, usuarioLogado, status);
-            var permissaoId = Context.UsuarioPermissoes.FirstOrDefault(x => x.Usuario.Id == UsuarioId);
-            var permissoes = Context.Permissoes.FirstOrDefault(x => x.Id == permissaoId.PermissaoId);
+
             var usuario = new NovoUsuarioModel(){
                     Email = usuarioLogado.Email,
                     Nome = usuarioLogado.Nome,
-                    PermissaoId = permissaoId.PermissaoId,
-                    Perfil = permissoes.Nivel,
+                    PermissaoId = pb.getPermissaoUsuarioLogado().Id,
+                    Perfil = pb.getPermissaoUsuarioLogado().Nivel,
                     DataNacimento = usuarioLogado.DataNacimento
                 };
             return Ok(new {Ok=true, Response =new {propSituacao, usuario}});
@@ -88,14 +85,17 @@ namespace API.Controllers
             {
                 return BadRequest(new {Response= "Não foi possivel aprovar a proposta"});
             }
+            var pb = new PropostaBusiness(Context);
+            Guid propsotaId = Guid.Parse(id);
 
-            var propsotaId = Guid.Parse(id);
-            var proposta = await Context.Propostas.FirstOrDefaultAsync(x => x.Id == propsotaId 
-            && x.Status != (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), 3) 
-            || x.Status != (PropostaStatus)Enum.ToObject(typeof(PropostaStatus), 1) && !x.Excluido);
+            if(!pb.propostaIsValid(propsotaId))
+            {
+                return BadRequest(new {Response= "Não foi possivel aprovar a proposta"});
+            }
+            var proposta = pb.GetPropostaValida(propsotaId);
             
-            var usuario = await Context.Usuarios.FirstOrDefaultAsync(x => x.Id == Guid.Parse(model.UsuarioId));
-            proposta.Status =  (PropostaStatus)model.Status;
+            var usuario = await pb.getUsuarioLogado(model.UsuarioId);
+            proposta.Status = (pb.getPermissaoUsuarioLogado().Nivel.Equals(4))?  (PropostaStatus)4 : (PropostaStatus)2;
 
             var propostaHistorico = new PropostaHistorico(proposta, usuario );
             await Context.PropostasHistoricos.AddAsync(propostaHistorico);
