@@ -1,7 +1,7 @@
 import { PropostaModel } from "../../../logica-api";
 
 export interface PropostaPagedListModel {
-    totalItens?: number;
+    totalItens?: number; 
     pageNumber?: number;
     pageSize?: number;
     resultado?: Array<PropostaModel>;

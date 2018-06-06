@@ -1,4 +1,4 @@
-import { Categoria, Fornecedor } from "../../../logica-api";
+import { Categoria, Fornecedor, PropostaHistorico } from "../../../logica-api";
 
 
 export class PropostaModel {
@@ -13,14 +13,16 @@ export class PropostaModel {
     public id?: string,
     public dataAtualizacao?: Date,
     public dataCriacao?: Date,
-    public excluido?: boolean
+    public excluido?: boolean,
+    public file?: File
   ){}
 }
 export namespace Proposta {
-    export type StatusEnum = 1 | 2 | 3;
+    export type StatusEnum = 1 | 2 | 3 | 4;
     export const StatusEnum = {
         NUMBER_1: 1 as StatusEnum,
         NUMBER_2: 2 as StatusEnum,
-        NUMBER_3: 3 as StatusEnum
+        NUMBER_3: 3 as StatusEnum,
+        NUMBER_4: 4 as StatusEnum
     }
 }

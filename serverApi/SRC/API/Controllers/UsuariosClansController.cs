@@ -21,14 +21,16 @@ using Microsoft.Extensions.Caching.Memory;
 namespace API.Controllers
 {
   
-  [Route("api/[controller]")]
+  [Route("api/usuarios/Clans")]
   public class UsuariosClansController : BaseController
   {    
     public UsuariosClansController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache)
     {}
    
-    [HttpGet("{email}")]
-    [Authorize]
+    [HttpGet("{email}"), Authorize]
+    [ProducesResponseType(typeof(UsuarioAuthModel), 201)]
+    [SwaggerResponse(401)]
+    [SwaggerResponse(403)]   
     public IActionResult get(string email)
     {
       var usuarios = new UsuarioAuthModel();
@@ -39,18 +41,24 @@ namespace API.Controllers
       return Ok(ConsultaUsuario(email));      
       
     }
-    
-
     private UsuarioAuthModel ConsultaUsuario(string Email){
-       var usuario = Context.Usuarios.FirstOrDefault(x => x.Email == Email && !x.Excluido);
-       
-      return new UsuarioAuthModel{
-          Id = usuario.Id,
-          Nome = usuario.Nome,
-          Email = usuario.Email,
-          Police = EnumHelper.GetDescription(usuario.PerfilUsuario),
-          Excluido = usuario.Excluido
-      };
+       return Context.Usuarios.Select(x => new UsuarioAuthModel{
+          Id = x.Id,
+          Nome = x.Nome,
+          Cpf = x.Cpf,
+          DataNacimento = x.DataNacimento,
+          Idade = this.CalcularIdade(x.DataNacimento),
+          Email = x.Email,
+          Police = x.UsuarioPermissoes.Permissoes.Nome,
+          Excluido = x.Excluido
+      }).FirstOrDefault(x => x.Email == Email && !x.Excluido);     
+    }
+    private int CalcularIdade(DateTime nascimento)
+    {
+      var today = DateTime.Today;
+      var idade = today.Year - nascimento.Year;
+      if (nascimento > today.AddYears(-idade)) return idade--;
+      return idade;
     }
   }
 }

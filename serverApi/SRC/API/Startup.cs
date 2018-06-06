@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authorization;
 //using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +24,9 @@ using INFRAESTRUCTURE.Data;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Filters;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace API
 {
@@ -37,7 +41,10 @@ namespace API
 
         public void ConfigureServices(IServiceCollection services)
         {           
-            services.AddDbContext<ApplicationDbContext>(options =>
+            // services.AddDbContext<ApplicationDbContext>(
+            //     options =>options.UseSqlite("Data Source=MvcEmployee.db")
+            // );  
+           services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                 //options.UseMySql(                    
                     Configuration.GetConnectionString("DefaultConnection"),
@@ -48,7 +55,9 @@ namespace API
           
             ResolveDependencies(services);
           
+           // services.AddCors();  
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
+            services.ConfigureJwtAuthentication();
             services.AddResponseCompression(options =>
             {
                 options.MimeTypes = new[]
@@ -56,21 +65,23 @@ namespace API
                     "application/json"
                 };
             });
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+            services.AddAuthorization(options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    ValidAudience = Configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                };
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(
+                    JwtBearerDefaults.AuthenticationScheme
+                    ).RequireAuthenticatedUser().Build();
             });
+
+            //services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(opt =>
+                {
+                    // Force all ISO8601 timestamp conversions to use UTC (ie: YYYY-MM-DDTHH:MM:SS.FFFZ)
+                    opt.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    opt.SerializerSettings.DateParseHandling = DateParseHandling.DateTimeOffset;
+                    opt.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                    opt.SerializerSettings.DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'";
+                });
 
             ResolveDependencies(services);
 
@@ -83,7 +94,6 @@ namespace API
                       .AllowCredentials()
                 .Build());
             });
-            services.AddMvc();
 
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -122,16 +132,17 @@ namespace API
             // app.UseStaticFiles();
 
 
+            // app.UseCorsMiddleware();
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
+            app.UseMvc();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "GERPRO API V1");
             });
 
-            app.UseMvc();
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {

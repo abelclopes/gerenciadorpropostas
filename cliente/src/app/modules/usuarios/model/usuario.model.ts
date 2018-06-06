@@ -1,10 +1,13 @@
+import { PermissaoUsuario } from "./usuario-permissao.model";
 
 export class UsuariosModel {
   constructor(
   public nome?: string,
   public email?: string,
   public cpf?: string,
-  public perfil?: UsuariosModel.PerfilEnum,
+  public perfilUsuario?: UsuariosModel.PerfilEnum,
+  public permissaoUsuario?: PermissaoUsuario,
+  public permissaoNivel?: any,
   public dataNacimento?: Date,
   public id?: string,
   public dataAtualizacao?: Date,

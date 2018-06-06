@@ -13,8 +13,9 @@ import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.co
 
 
 const routes: Routes = [
-  { path : '', redirectTo:'/login', pathMatch : 'full'},
+  { path : '', redirectTo:'/dashboard', pathMatch : 'full'},
   { path: 'login', loadChildren: './components/login/login.module#LoginModule' },
+  { path: 'logout', loadChildren: './components/login/login.module#LoginModule' },
   { path: 'fornecedores', loadChildren: './modules/fornecedores/fornecedores.module#FornecedoresModule', canActivate: [AuthGuard]},
   { path: 'categorias', loadChildren: './modules/categorias/categorias.module#CategoriasModule', canActivate: [AuthGuard]},
   { path: 'propostas', loadChildren: './modules/propostas/propostas.module#PropostasModule', canActivate: [AuthGuard]},

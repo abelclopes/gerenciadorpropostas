@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { IFormFile } from './iFormFile';
 
 
 export interface NovaPropostaModel {
@@ -18,5 +19,6 @@ export interface NovaPropostaModel {
     fornecedorID?: string;
     categoriaID?: string;
     status?: number;
-    anexo?: string;
+    usuario?: string;
+    anexo?: IFormFile;
 }

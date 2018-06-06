@@ -1,11 +1,13 @@
 
 export class UsuarioNovoModel {
   constructor(
+  public id?: string,
   public nome?: string,
   public email?: string,
   public cpf?: string,
-  public perfil?: UsuarioNovoModel.PerfilEnum,
-  public dataNacimento?: Date,
+  public permissaoNivel?: UsuarioNovoModel.PerfilEnum,
+  public perfilUsuario?: any,
+  public dataNacimento?: any,
   public senha?: string
 ){}
 }

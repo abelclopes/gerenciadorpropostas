@@ -2,3 +2,15 @@ a.btn.btn-primary.btn-small {
     margin-bottom: 20px;
 }
 
+.color-green{
+    color: rgba(0, 255, 128, 0.808)
+}
+.color-blue{
+    color: rgb(0, 119, 255)
+}
+.color-red{
+    color: rgb(255, 0, 0)
+}
+.color-black{
+    color: #000000
+}

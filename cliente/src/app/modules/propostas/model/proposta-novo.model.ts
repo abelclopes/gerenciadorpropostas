@@ -9,8 +9,12 @@ export class PropostaNovaModel {
     public fornecedor?: Fornecedor,
     public categoria?: Categoria,
     public status?: PropostaNovaModel.StatusEnum,
+    public fornecedorID?: string,
+    public categoriaID?: string,
     public anexo?: string,
+    public files?: File,
     public id?: string,
+    public usuario?: string,
     public dataAtualizacao?: Date,
     public dataCriacao?: Date,
     public excluido?: boolean

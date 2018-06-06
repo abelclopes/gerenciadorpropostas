@@ -5,7 +5,7 @@ import { PropostasModule } from '../propostas.module';
 import { PropostaService } from '../service/proposta.service';
 import { CategoriaPagedListModel } from '../../categorias/model';
 import { PropostaPagedListModel } from '../model';
-
+import { CurrencyPipe } from '@angular/common';
 @Component({
   selector: 'app-propostas-list',
   templateUrl: './propostas-list.component.html',

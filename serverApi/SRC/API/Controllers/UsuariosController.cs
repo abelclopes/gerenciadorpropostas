@@ -1,26 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
+using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using System.Data;
+using System.Security.Cryptography;
+using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+
 
 using Model;
 using INFRAESTRUCTURE;
 using DOMAIN;
 using DOMAIN.EnumHelper;
-using DOMAIN.Paginator;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using StructureMap.Diagnostics;
 using DOMAIN.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using API.Model;
+using System.Globalization;
 
 namespace API.Controllers
 {
+  [Authorize]
+  [Produces("application/json")]
   [Route("api/[controller]")]
   public class UsuariosController : BaseController
   {
@@ -28,11 +38,12 @@ namespace API.Controllers
     {}
    
     [HttpGet, Authorize]
-    //[HttpGet, Authorize(Policy = "Administrador")]
+    //[HttpGet]
+    [ProducesResponseType(typeof(ListaPaginada<UsuariosModel>), 201)]
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public  ListaPaginada<UsuariosModel> Get(PaginationParams model)
+    public  ListaPaginada<UsuariosModel> Get([FromQuery] PaginationParams model)
     {
       var usuarios = RestornaUsuariosList();
       if(!string.IsNullOrEmpty(model.buscaTermo)){ 
@@ -58,11 +69,12 @@ namespace API.Controllers
       }
       return usuarios;
     }
+    
     [HttpPost, Authorize]
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public IActionResult Post([FromBody] NovoUsuarioModel model)
+    public async Task<IActionResult> Post([FromBody] UpdateUsuarioModel model)
     {
        if (model == null)
       {
@@ -72,41 +84,57 @@ namespace API.Controllers
       {
         throw new ArgumentException($"O Email {model.Email} já esta em uso");
       }
-      Context.Usuarios.Add(new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, model.PerfilUsuario, model.Senha));
-      Context.SaveChanges();
+      var Permissao = Context.Permissoes.FirstOrDefault(x => x.Nivel == model.perfilUsuario);
+      var usuario = new Usuario(model.Nome, model.Email, model.Cpf, Util.convertDateTime(model.DataNacimento), model.Senha);
+      var usuarioPermissoes = new UsuarioPermissao(usuario, Permissao);
 
-      MemoryCache.Remove("fornecedor");
-      return Ok(new {Response = "Usuário salvo com sucesso"});
+      Context.Usuarios.Add(usuario);
+      
+      Context.UsuarioPermissoes.Add(usuarioPermissoes);
+      await Context.SaveChangesAsync();
+
+      MemoryCache.Remove("usuarios");
+      return Ok(new {ok=true,Response = "Usuário salvo com sucesso"});
     }
     
     [HttpPut("{id}"), Authorize]
     [SwaggerResponse(201)]
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
-    public IActionResult Put(string id, [FromBody] NovoUsuarioModel model)
+    public async Task<IActionResult> Put(string id, [FromBody] UpdateUsuarioModel model)
     {
-      if (model == null ||  string.IsNullOrEmpty(id))
-      {
-          return BadRequest();
-      }
-      
-      var usuario =  ConsultaUsuario(id);
-      if (usuario == null)
+      model.Id = Guid.Parse(id);
+      if (!Context.Usuarios.Any(x => x.Id == Guid.Parse(id)))
       {
           return NotFound();
       }
+      if(string.IsNullOrEmpty(model.Nome) || string.IsNullOrEmpty(model.Email)) return NotFound(new {error ="Nome ou email nao podem ser alterados para nulos"});
+      var usuario =  ConsultaUsuario(id);    
+
       
-      var user = new Usuario(model.Nome, model.Email, model.Cpf, model.DataNacimento, model.PerfilUsuario);
+      var user = new Usuario();
+      user.Nome = model.Nome;
+      user.Email = model.Email;
+      user.Cpf =  model.Cpf.Replace(".","").Replace("-","");
+      user.DataNacimento = Util.convertDateTime(model.DataNacimento);
+      string dateInput = model.DataNacimento;
+      
       if(!string.IsNullOrEmpty(model.Senha))
       {
         user.Senha = model.Senha;
       }
+      var permissao = getPermissao().FirstOrDefault(x => x.Nivel.Equals(model.perfilUsuario));
       usuario.Atualizar(user, Context);
+      if(!Context.UsuarioPermissoes.Any(x => x.UsuarioId == model.Id && x.PermissaoId == permissao.Id )){
+        var up = Context.UsuarioPermissoes.FirstOrDefault(x => x.UsuarioId == model.Id && x.PermissaoId == permissao.Id );
+        Context.UsuarioPermissoes.Remove(up);
+        usuario.UsuarioPermissoes = new UsuarioPermissao(usuario, permissao);
+      }
       Context.Usuarios.Update(usuario);
-      Context.SaveChanges();
+      await Context.SaveChangesAsync();
 
-      MemoryCache.Remove("fornecedor");
-      return Ok(new {Response = "Usuário salvo com sucesso"});
+      MemoryCache.Remove("usuarios");
+      return Ok(new {ok = true, Response = "Usuário salvo com sucesso"});
     }
     
     [HttpDelete("{id}"), Authorize]
@@ -124,29 +152,41 @@ namespace API.Controllers
       Context.Usuarios.Update(user);
       Context.SaveChanges();
 
-      MemoryCache.Remove("fornecedor");
-      return Ok(new {Response = "Usuário deletado com sucesso"});
+      MemoryCache.Remove("usuarios");
+      return Ok(new {ok= true, Response = "Usuário deletado com sucesso"});
     }
 
     private List<UsuariosModel>  RestornaUsuariosList(){
       return MemoryCache.GetOrCreate("usuarios", entry =>
-                          {
-                            entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
-                            return Context.Usuarios.Where(x => !x.Excluido)
-                            .Select(x => new UsuariosModel
-                              {
-                                Id = x.Id,
-                                Nome = x.Nome, 
-                                Email = x.Email, 
-                                Cpf = x.Cpf,
-                                DataNacimento = x.DataNacimento,
-                                Perfil = x.PerfilUsuario,
-                                //PerfilDescricao = EnumHelper.GetDescription(x.PerfilUsuario), 
-                              }).ToList();
+          {
+            entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+            return Context.Usuarios.Where(x => !x.Excluido)
+            .Select(x => new UsuariosModel
+              {
+                Id = x.Id,
+                Nome = x.Nome, 
+                Email = x.Email, 
+                Cpf = x.Cpf,
+                DataNacimento = x.DataNacimento,
+                DataCriacao = x.DataCriacao,
+                Permissao = x.UsuarioPermissoes.Permissoes.Nome,
+                PermissaoNivel = x.UsuarioPermissoes.Permissoes.Nivel
+              }).ToList();
           });
     }
     private Usuario ConsultaUsuario(string id){
       return Context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);
     }
+    private List<Permissao> getPermissao() => Context.Permissoes.ToList();
+    private DateTime? convertData(string value){
+      
+      DateTime convertedDate = Convert.ToDateTime(value);
+      string date = convertedDate.ToShortDateString();
+      return  DateTime.ParseExact(date, "dd/MM/yyyy", null);
+    }
+
+
+
   }
+    
 }

@@ -26,7 +26,7 @@ import { Configuration }                                     from '../configurat
 @Injectable()
 export class UsuariosClansService {
 
-    protected basePath = 'https://localhost';
+    protected basePath = '';
     public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 
@@ -89,7 +89,7 @@ export class UsuariosClansService {
         let consumes: string[] = [
         ];
 
-        return this.httpClient.get<any>(`${this.basePath}/api/UsuariosClans/${encodeURIComponent(String(email))}`,
+        return this.httpClient.get<any>(`${this.basePath}/api/usuarios/Clans/${encodeURIComponent(String(email))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

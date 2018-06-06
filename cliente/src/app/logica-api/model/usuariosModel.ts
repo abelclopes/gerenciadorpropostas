@@ -9,25 +9,17 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { PermissaoUsuario } from './permissaoUsuario';
 
 
 export interface UsuariosModel {
     nome?: string;
     email?: string;
     cpf?: string;
-    perfil?: UsuariosModel.PerfilEnum;
+    permissaoUsuario?: PermissaoUsuario;
     dataNacimento?: Date;
     id?: string;
-    dataAtualizacao?: Date;
     dataCriacao?: Date;
+    dataAtualizacao?: Date;
     excluido?: boolean;
-}
-export namespace UsuariosModel {
-    export type PerfilEnum = 1 | 2 | 3 | 4;
-    export const PerfilEnum = {
-        NUMBER_1: 1 as PerfilEnum,
-        NUMBER_2: 2 as PerfilEnum,
-        NUMBER_3: 3 as PerfilEnum,
-        NUMBER_4: 4 as PerfilEnum
-    }
 }

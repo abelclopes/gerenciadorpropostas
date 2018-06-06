@@ -29,7 +29,7 @@ import { Configuration }                                     from '../configurat
 @Injectable()
 export class PropostasService {
 
-    protected basePath = 'https://localhost';
+    protected basePath = '';
     public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 
@@ -284,14 +284,26 @@ export class PropostasService {
     /**
      * 
      * 
-     * @param model 
+     * @param nomeProposta 
+     * @param descricao 
+     * @param valor 
+     * @param fornecedorID 
+     * @param categoriaID 
+     * @param status 
+     * @param usuario 
+     * @param anexo 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiPropostasPost(model?: NovaPropostaModel, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiPropostasPost(model?: NovaPropostaModel, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiPropostasPost(model?: NovaPropostaModel, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiPropostasPost(model?: NovaPropostaModel, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public apiPropostasPost(nomeProposta?: string, descricao?: string, valor?: number, fornecedorID?: string, categoriaID?: string, status?: number, usuario?: string, anexo?: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiPropostasPost(nomeProposta?: string, descricao?: string, valor?: number, fornecedorID?: string, categoriaID?: string, status?: number, usuario?: string, anexo?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiPropostasPost(nomeProposta?: string, descricao?: string, valor?: number, fornecedorID?: string, categoriaID?: string, status?: number, usuario?: string, anexo?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiPropostasPost(nomeProposta?: string, descricao?: string, valor?: number, fornecedorID?: string, categoriaID?: string, status?: number, usuario?: string, anexo?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (anexo !== undefined) {
+            queryParameters = queryParameters.set('Anexo', <any>anexo);
+        }
 
         let headers = this.defaultHeaders;
 
@@ -310,19 +322,45 @@ export class PropostasService {
 
         // to determine the Content-Type header
         let consumes: string[] = [
-            'application/json-patch+json',
-            'application/json',
-            'text/json',
-            'application/_*+json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+
+        const canConsumeForm = this.canConsumeForm(consumes);
+
+        let formParams: { append(param: string, value: any): void; };
+        let useForm = false;
+        let convertFormParamsToString = false;
+        if (useForm) {
+            formParams = new FormData();
+        } else {
+            formParams = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        }
+
+        if (nomeProposta !== undefined) {
+            formParams = formParams.append('NomeProposta', <any>nomeProposta) || formParams;
+        }
+        if (descricao !== undefined) {
+            formParams = formParams.append('Descricao', <any>descricao) || formParams;
+        }
+        if (valor !== undefined) {
+            formParams = formParams.append('Valor', <any>valor) || formParams;
+        }
+        if (fornecedorID !== undefined) {
+            formParams = formParams.append('FornecedorID', <any>fornecedorID) || formParams;
+        }
+        if (categoriaID !== undefined) {
+            formParams = formParams.append('CategoriaID', <any>categoriaID) || formParams;
+        }
+        if (status !== undefined) {
+            formParams = formParams.append('Status', <any>status) || formParams;
+        }
+        if (usuario !== undefined) {
+            formParams = formParams.append('Usuario', <any>usuario) || formParams;
         }
 
         return this.httpClient.post<any>(`${this.basePath}/api/Propostas`,
-            model,
+            convertFormParamsToString ? formParams.toString() : formParams,
             {
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

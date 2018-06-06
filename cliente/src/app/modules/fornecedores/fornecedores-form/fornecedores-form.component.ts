@@ -51,8 +51,8 @@ export class FornecedoresFormComponent implements OnInit {
     let novaFornecedor: FornecedorModel;
     model.nome = this.fornecedorForm.controls['nome'].value;
     model.email = this.fornecedorForm.controls['email'].value;
-    model.cnpjCpf = this.fornecedorForm.controls['cnpjCpf'].value;
-    model.telefone = this.fornecedorForm.controls['telefone'].value;
+    model.cnpjCpf = this.fornecedorForm.controls['cnpjCpf'].value.replace(/[^0-9]+/g,'');;
+    model.telefone = this.fornecedorForm.controls['telefone'].value.replace(/[^0-9]+/g,'');;
     this.catService.novaFornecedor(model)
       .subscribe(
         data => {

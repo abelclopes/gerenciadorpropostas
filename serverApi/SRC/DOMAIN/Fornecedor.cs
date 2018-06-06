@@ -8,7 +8,6 @@ namespace DOMAIN
 {
     public class Fornecedor : EntidadeBase
     {
-        public Fornecedor(){}
         public Fornecedor(string nome)
         {
             Nome = nome;
@@ -21,11 +20,16 @@ namespace DOMAIN
             Telefone = telefone;
         }
 
-        public string Nome { get; set; }
+        public Fornecedor()
+        {
+           // Propostas = new HashSet<Proposta>();
+        }
         public string CnpjCpf { get; set; }
         public string Email { get; set; }
+        public string Nome { get; set; }
         public string Telefone { get; set; }
-        public ICollection<Proposta> Propostas { get; set; }
+
+        //public ICollection<Proposta> Propostas { get; set; }
 
         public void Atualizar(Fornecedor model, IContext _context)
         {
@@ -33,14 +37,6 @@ namespace DOMAIN
             CnpjCpf = model.CnpjCpf;
             Telefone = model.Telefone;
             Email = model.Email;
-        }
-        
-        public async Task Atualizar(string nome, IContext _context)
-        {
-            if (await _context.Usuarios.AnyAsync(x => x.Nome.Equals(nome)))
-                throw new ArgumentException($"O Nome {nome} já esta em uso");
-            
-            Nome = nome;
         }
     }
 }

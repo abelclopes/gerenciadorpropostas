@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,30 +11,32 @@ using Microsoft.EntityFrameworkCore;
 using Model;
 using INFRAESTRUCTURE;
 using DOMAIN;
-
+using DOMAIN.EnumHelper;
+using DOMAIN.Paginator;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using StructureMap.Diagnostics;
 using DOMAIN.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 
+
 namespace API.Controllers
 {
-    [Route("api/Usuarios/[controller]")]
-    public class PerfisController : BaseController
+    [Route("api/Usuarios/Permissoes")]
+    public class PermissoesController : BaseController
     {
-        public PerfisController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache)
+        public PermissoesController(IContext context, IMemoryCache memoryCache) : base(context, memoryCache)
         {}
+        
         [HttpGet, Authorize]
         [SwaggerResponse(201)]
         [SwaggerResponse(401)]
         [SwaggerResponse(403)]
-        public List<PerfilsModel> Get(){
-            return new List<PerfilsModel>{
-                new PerfilsModel(){id = 1, nome = "Administrador"},
-                new PerfilsModel(){id = 2, nome = "Analista De Compras"},
-                new PerfilsModel(){id = 3, nome = "Analista Financeiro"},
-                new PerfilsModel(){id = 4, nome = "Diretor Financeiro"}
-            };
+        public List<Permissao> Get(){
+            return Context.Permissoes.Select(x => new Permissao{
+                Nome = x.Nome,
+                Nivel = x.Nivel,
+                Id = x.Id
+            }).Where(x => !x.Excluido).ToList();
         }
     }
 }

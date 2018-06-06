@@ -19,20 +19,20 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.css",
-        "vendor/bootstrap/css/bootstrap.min.css",
+        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
         "vendor/metisMenu/metisMenu.min.css",
         "assets/css/sb-admin-2.min.css",
         "vendor/font-awesome/css/font-awesome.min.css",
-        "../node_modules/ngx-toastr/toastr.css"
+        "../node_modules/ngx-toastr/toastr.css",
+        "styles.css"
       ],
       "scripts": [
         "vendor/jquery/jquery.min.js",
-        "vendor/bootstrap/js/bootstrap.min.js",
+        "../node_modules/bootstrap/dist/js/bootstrap.min.js",
         "vendor/metisMenu/metisMenu.min.js",
         "assets/js/sb-admin-2.min.js",     
         "../node_modules/jquery-mask-plugin/dist/jquery.mask.min.js",
-        "../node_modules/ng2-input-autocomplete/bundles/ng2-input-autocompleteModule.umd.js"
+        "../node_modules/ng2-input-autocomplete/bundles/ng2-input-autocompleteModule.umd.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

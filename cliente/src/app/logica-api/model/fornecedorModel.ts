@@ -17,7 +17,7 @@ export interface FornecedorModel {
     email?: string;
     telefone?: string;
     id?: string;
-    dataAtualizacao?: Date;
     dataCriacao?: Date;
+    dataAtualizacao?: Date;
     excluido?: boolean;
 }

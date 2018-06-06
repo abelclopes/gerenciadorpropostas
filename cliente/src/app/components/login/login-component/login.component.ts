@@ -23,7 +23,12 @@ export class LoginComponent implements OnInit {
     this.authService.login(email, password)
     .subscribe(data => {
       if(data == true)
-        this.router.navigate(['/dashboard']);
+      this.authService.UsuariosClans()
+        .subscribe(
+          data =>{            
+            localStorage.setItem('usuarioClans', JSON.stringify(data))
+            this.router.navigate(['/dashboard']);
+        });
     });
   }
 }

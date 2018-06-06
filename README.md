@@ -7,30 +7,29 @@ dotnet ef migrations add InitialIdentityServerPersistedGrantDbMigration -c Persi
 dotnet ef migrations add InitialIdentityServerConfigurationDbMigration -c ConfigurationDbContext -o Data/Migrations/IdentityServer/ConfigurationDb
 
 
-This README would normally document whatever steps are necessary to get your application up and running.
+## Introduction
 
-### What is this repository for? ###
+> Para Instanar 
+* dotnet restore
+* dotnet build
+* dotnet run
+Or
+* dotnet watch run
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+## Installation
 
-### How do I get set up? ###
+> Migrations
+* dotnet ef migrations add initial
+* dotnet ef database drop
+Or
+* dotnet ef database update
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
 
-### Contribution guidelines ###
 
-* Writing tests
-* Code review
-* Other guidelines
+## node generete api do swagger
+java -jar D:\projetos\dotnetcore\swagger-codegen-cli-2.3.1.jar generate -i http://localhost:5000/swagger/v1/swagger.json -l typescript-angular
 
-### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+
+
+https://github.com/justintubbs/NetCore2_JWTExample/tree/master/WebApplication1
