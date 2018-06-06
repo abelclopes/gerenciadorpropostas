@@ -147,6 +147,22 @@ namespace API.Controllers
       var propostaHistorico = new PropostaHistorico(proposta, usuario );
       await Context.PropostasHistoricos.AddAsync(propostaHistorico);
       proposta.Atualizar(propost);
+      
+      if(model.Anexo != null)
+      {
+        using (Stream stream = model.Anexo.OpenReadStream())
+        {
+            using (var binaryReader = new BinaryReader(stream))
+            {
+              var anexo = await Context.PropostaAnexos.FirstOrDefaultAsync(x => x.Proposta.Id == Guid.Parse(id));
+              anexo.Excluido = true;
+              Context.PropostaAnexos.Update(anexo);
+              var fileContent = binaryReader.ReadBytes((int)model.Anexo.Length);
+              var propostaAnexo = new PropostaAnexo(fileContent, model.Anexo.FileName, model.Anexo.ContentType, proposta);                
+              await Context.PropostaAnexos.AddAsync(propostaAnexo);
+            }
+        }
+      }
       Context.Propostas.Update(proposta);
       await Context.SaveChangesAsync();
 

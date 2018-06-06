@@ -61,8 +61,8 @@ export class PropostaService {
   }    
   public updateProposta(id:string, model: FormData){
     let url = `${API_URL}/api/propostas/${id}`;
-    console.log(model);   
-    return this.httpClient.put<PropostaModel>(`${API_URL}/api/propostas/`,model,{headers: this.headersPut(), responseType: 'json'});
+    console.log("model", model);   
+    return this.httpClient.put<PropostaModel>(url,model,{headers: this.headersPut(), responseType: 'json'});
   }
   public delete(id: string): any {
     let url = `${API_URL}/api/propostas/${id}`;
