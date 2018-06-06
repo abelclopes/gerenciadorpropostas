@@ -1,16 +1,10 @@
-# This is a sample build configuration for .NET Core.
-# Check our guides at https://confluence.atlassian.com/x/5Q4SMw for more examples.
-# Only use spaces to indent your .yml configuration.
-# -----
-# You can specify a custom docker image from Docker Hub as your build environment.
-image: microsoft/dotnet:sdk
-
+image: microsoft/dotnet:sdk,node:6.9.4
 pipelines:
   default:
     - step:
         caches:
           - dotnetcore
-        script: # Modify the comma`nds below to build your repository.
+        script: 
           - export PROJECT_NAME=serverApi.sln
           - export TEST_NAME=test.csproj
           - cd serverApi
@@ -18,4 +12,10 @@ pipelines:
           - dotnet build $PROJECT_NAME
           - cd test
           - dotnet test $TEST_NAME
-
+    - step:
+        script:
+          - cd ..
+          - cd ..
+          - cd client
+          - node -v
+          - cd ..
