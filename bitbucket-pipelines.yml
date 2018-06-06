@@ -18,5 +18,5 @@ pipelines:
         script:
           - ls
           - cd cliente
-          - node -v
-          - cd ..
+          - npm install
+          - ng build --prod
