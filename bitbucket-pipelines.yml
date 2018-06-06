@@ -7,6 +7,7 @@ pipelines:
         script: 
           - export PROJECT_NAME=serverApi.sln
           - export TEST_NAME=test.csproj
+          - pwd
           - cd serverApi
           - dotnet restore
           - dotnet build $PROJECT_NAME
