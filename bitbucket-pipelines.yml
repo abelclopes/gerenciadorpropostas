@@ -1,4 +1,4 @@
-image: microsoft/dotnet:sdk,node:6.9.4
+image: microsoft/dotnet:sdk
 pipelines:
   default:
     - step:
@@ -13,6 +13,7 @@ pipelines:
           - cd test
           - dotnet test $TEST_NAME
     - step:
+        image: node:8.6
         script:
           - cd ..
           - cd ..
