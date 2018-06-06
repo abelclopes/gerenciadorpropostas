@@ -20,7 +20,6 @@ import { PaginationFilter } from './shared/pagination-filter.pipe';
 import { LoginModule } from './components/login/login.module';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import { LoadingModule } from 'ngx-loading';
 import { LoadingService } from './LoadingService';
 import { MaskDirective } from './shared/diretivas/mask.directive';
 import { ModalModule } from 'ngx-bootstrap';
@@ -40,6 +39,7 @@ import localeptExtra from '@angular/common/locales/extra/pt';
 registerLocaleData(localePt, 'pt', localeptExtra);
 
 import { TextMaskModule } from 'angular2-text-mask';
+import { NgxCurrencyModule } from 'ngx-currency';
 
 
 @NgModule({

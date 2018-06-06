@@ -29,75 +29,6 @@ export class PropostasEditComponent implements OnInit {
   @ViewChild("uploader") uploader: any;
 
   CategoriaOptions: {id:number, nome:string}[];
-<<<<<<< HEAD
-   
-  public fornecedores: any[] = [];
-  private termoFiltro = new Subject<string>();  
-  public forncedorNome = '';  
-  public flag: boolean = true;  
-
-  public loading = false;
- 
-  propostaForm: FormGroup;
-  private bodyText: string;
-
-  get nomeProposta() { return this.propostaForm.get('nomeProposta'); }
-  get descricao() { return this.propostaForm.get('descricao'); }
-  get fornecedor() { return this.propostaForm.get('fornecedor'); }
-  get categoria() { return this.propostaForm.get('categoria'); }
-  get anexo() { return this.propostaForm.get('anexo'); }
-  get valor() { return this.propostaForm.get('valor'); }
-
-  closeResult: string;
-  constructor(private propostaService: PropostaService, 
-    private router : Router, 
-    private fb: FormBuilder,
-    public loadingService: LoadingService,
-    private fornecedorService: FornecedorService,
-    private route: ActivatedRoute
-  ) {}
-
-  ngOnInit(){
-    this.loadingService.showLoading();
-    this.propostaService.getPropostaById(this.route.snapshot.paramMap.get('id'))
-    .subscribe(
-      data => {
-        this.proposta = data;
-      }, err => {
-        console.log(err);
-      }
-    );
-    this.propostaForm =  this.fb.group({
-        nomeProposta: ['', Validators.required, Validators.minLength(5)],
-        descricao:  [ Validators.required, Validators.minLength(4) ],
-        fornecedor:  [ Validators.required, Validators.minLength(4) ],
-        fornecedorID:  [ Validators.required, Validators.minLength(4) ],
-        categoria: new FormControl(null),
-        anexo: new FormControl(null),
-        valor: [ Validators.required, Validators.minLength(4) ],
-    }, { updateOn: 'submit' });
-    
-    this.uploader.nativeElement.value = "";
-
-    this.propostaService.getCategorias()
-    .subscribe(data =>{
-        this.CategoriaOptions = data.response;
-    })
-
-  } 
-  onSubmit() {
-    
-  this.loadingService.showLoading();
-    if (this.propostaForm.valid) {
-        console.log('is valid');
-        this.bodyText = 'This text can be updated in modal 1';
-      console.log('this.prepareSaveUpload() ======>>>' , this.prepareSaveUpload());
-      
-
-        this.propostaService.createUpload(this.prepareSaveUpload()).subscribe((proposta) => this.created.emit(proposta));
-    }
-  }
-=======
 
   public fornecedores: any[] = [];
   private termoFiltro = new Subject<string>();
@@ -172,43 +103,30 @@ export class PropostasEditComponent implements OnInit {
         );
     }
   }  
->>>>>>> Desenvolvimento
   prepareSaveUpload(): FormData {
     const formModel = this.propostaForm.value;
 
     console.log('formModel', formModel);
     let formData = new FormData();
-<<<<<<< HEAD
-    
-=======
     let usuarioAtual: UsuariosClans = JSON.parse(localStorage.getItem('usuarioClans'));
     console.log("usuarioAtual" ,usuarioAtual);
->>>>>>> Desenvolvimento
     formData.append("nomeProposta", formModel.nomeProposta);
     formData.append("anexo", formModel.anexo);
     formData.append("descricao", formModel.descricao);
     formData.append("fornecedorID", formModel.fornecedorID);
     formData.append("categoriaID", formModel.categoria);
     formData.append("valor", formModel.valor);
-<<<<<<< HEAD
-    
-    return formData;
-  }
-=======
     formData.append("usuario", usuarioAtual['id'] );
     console.log(formModel.valor)
     return formData;
   }
 
->>>>>>> Desenvolvimento
   fileChange(files: FileList) {
       if (files && files[0].size > 0) {
           this.propostaForm.patchValue({
             anexo: files[0]
           });
       }
-<<<<<<< HEAD
-=======
   }
   
   search(term: string): void {  
@@ -244,35 +162,5 @@ export class PropostasEditComponent implements OnInit {
       fornecedor: this.propostaModel.fornecedor,
       valor: this.propostaModel.valor
     });
->>>>>>> Desenvolvimento
   }
-
- search(term: string): void {  
-  
-  if(term.length > 2) {
-    this.termoFiltro
-        .debounceTime(200)
-        .switchMap(termo => this.fornecedorService.search(term))
-        .subscribe(x => {
-          let names = []
-            for(let i: number = 0; x['total'] > i; i++){
-            names.push({id: x['response'][i].id, nome: x['response'][i].nome});
-          } 
-          this.fornecedores = names;
-        })
-        this.termoFiltro.next('');
-    this.flag = true;  
-    this.termoFiltro.next(term);  
-  }  
-}  
-onSelect(fornecedor) {     
-    if (fornecedor.id != undefined) {  
-      this.propostaForm.patchValue({fornecedor: fornecedor.nome});
-      this.propostaForm.patchValue({fornecedorID: fornecedor.id});
-      this.flag = false;  
-    }  
-    else {  
-      return false;  
-    }  
-  } 
 }

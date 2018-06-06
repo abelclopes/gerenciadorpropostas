@@ -14,7 +14,7 @@ import { GeproMaskUtilService } from '../../../shared/diretivas';
 })
 export class FornecedoresFormComponent implements OnInit {
   public maskTelefone = GeproMaskUtilService.DYNAMIC_PHONE_MASK_GENERATOR;
-  public maskCpfCnpfj = GeproMaskUtilService.PERSON_MASK_GENERATOR;
+  public maskCpfCnpfj = GeproMaskUtilService.DYNAMIC_PERSON_MASK_GENERATOR;
   
 
   nome: string;
