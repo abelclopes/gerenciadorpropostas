@@ -19,4 +19,4 @@ pipelines:
           - ls
           - cd cliente
           - npm install
-          - ng build --prod
+          - npm run build
