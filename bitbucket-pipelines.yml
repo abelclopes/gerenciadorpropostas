@@ -17,8 +17,6 @@ pipelines:
         image: node:8.6
         script:
           - pwd
-          - cd ..
-          - cd ..
           - cd client
           - node -v
           - cd ..
