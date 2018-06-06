@@ -11,10 +11,11 @@ pipelines:
         caches:
           - dotnetcore
         script: # Modify the comma`nds below to build your repository.
-          - export PROJECT_NAME=serverApi/serverApi.sln
-          - export TEST_NAME=serverApi/test/test.csproj
+          - export PROJECT_NAME=serverApi.sln
+          - export TEST_NAME=test/test.csproj
           - cd serverApi
           - dotnet restore
           - dotnet build $PROJECT_NAME
+          - cd test
           - dotnet test $TEST_NAME
 
