@@ -12,7 +12,7 @@ pipelines:
           - dotnetcore
         script: # Modify the comma`nds below to build your repository.
           - export PROJECT_NAME=serverApi.sln
-          - export TEST_NAME=test/test.csproj
+          - export TEST_NAME=test.csproj
           - cd serverApi
           - dotnet restore
           - dotnet build $PROJECT_NAME
