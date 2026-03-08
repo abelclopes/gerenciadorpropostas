@@ -30,11 +30,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=${TRAEFIK_NETWORK:-traefik_public}"
-      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}.rule=Host(`${APP_HOST}`)"
-      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}.entrypoints=${TRAEFIK_ENTRYPOINTS:-websecure}"
-      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}.tls=true"
-      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
-      - "traefik.http.services.${APP_NAME}-${ENVIRONMENT}.loadbalancer.server.port=8484"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-api.rule=Host(`${APP_HOST}`) && (PathPrefix(`/api`) || PathPrefix(`/swagger`))"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-api.entrypoints=${TRAEFIK_ENTRYPOINTS:-websecure}"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-api.tls=true"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-api.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
+      - "traefik.http.services.${APP_NAME}-${ENVIRONMENT}-api.loadbalancer.server.port=8484"
     networks:
       - default
       - traefik_public
@@ -53,10 +53,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=${TRAEFIK_NETWORK:-traefik_public}"
-      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-front.rule=Host(`${FRONTEND_HOST}`)"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-front.rule=Host(`${APP_HOST}`)"
       - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-front.entrypoints=${TRAEFIK_ENTRYPOINTS:-websecure}"
       - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-front.tls=true"
       - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-front.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-front.priority=1"
       - "traefik.http.services.${APP_NAME}-${ENVIRONMENT}-front.loadbalancer.server.port=80"
     networks:
       - default
