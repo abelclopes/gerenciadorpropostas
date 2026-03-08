@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${APP_NAME}-${ENVIRONMENT}-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT}:8484"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=${TRAEFIK_NETWORK:-traefik_public}"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}.rule=Host(`${APP_HOST}`)"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}.entrypoints=${TRAEFIK_ENTRYPOINTS:-websecure}"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}.tls=true"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
+      - "traefik.http.services.${APP_NAME}-${ENVIRONMENT}.loadbalancer.server.port=8484"
+    networks:
+      - default
+      - traefik_public
+
+networks:
+  traefik_public:
+    external: true
+    name: ${TRAEFIK_NETWORK:-traefik_public}
