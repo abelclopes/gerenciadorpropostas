@@ -73,7 +73,10 @@ namespace API
             });
 
             //services.AddMvc();
-            services.AddMvc()
+            services.AddMvc(options =>
+                {
+                    options.EnableEndpointRouting = false;
+                })
                 .AddNewtonsoftJson(opt =>
                 {
                     // Force all ISO8601 timestamp conversions to use UTC (ie: YYYY-MM-DDTHH:MM:SS.FFFZ)
@@ -91,7 +94,6 @@ namespace API
                     builder => builder.AllowAnyOrigin()
                       .AllowAnyMethod()
                       .AllowAnyHeader()
-                      .AllowCredentials()
                 .Build());
             });
 
@@ -167,6 +169,7 @@ namespace API
             {
                 var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
 
+                context.Database.Migrate();
                 context.Seed();
             }
         }
