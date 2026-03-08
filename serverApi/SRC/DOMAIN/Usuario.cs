@@ -28,7 +28,7 @@ namespace DOMAIN
             Cpf = cpf;
             Email = email;
             DataNacimento = dataNacimento;
-            Senha = Util.GetSHA1HashData(senha);
+            Senha = Util.HashPassword(senha);
         }
         public string Nome { get; set; }
         public string Cpf { get; set; }
@@ -61,7 +61,7 @@ namespace DOMAIN
         }
         public void AtualizarSenha(string senha, IContext _context)
         {
-            Senha = Util.GetSHA1HashData(senha);
+            Senha = Util.HashPassword(senha);
         }        
     }
 }

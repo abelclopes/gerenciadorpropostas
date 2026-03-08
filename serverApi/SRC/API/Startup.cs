@@ -21,7 +21,7 @@ using DOMAIN;
 using DOMAIN.Interfaces;
 using INFRAESTRUCTURE;
 using INFRAESTRUCTURE.Data;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Filters;
@@ -74,7 +74,7 @@ namespace API
 
             //services.AddMvc();
             services.AddMvc()
-                .AddJsonOptions(opt =>
+                .AddNewtonsoftJson(opt =>
                 {
                     // Force all ISO8601 timestamp conversions to use UTC (ie: YYYY-MM-DDTHH:MM:SS.FFFZ)
                     opt.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
@@ -98,10 +98,29 @@ namespace API
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Gerenciador de Propostas API", Version = "v1" });
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Please enter JWT with Bearer into field", Name = "Authorization", Type = "apiKey" });
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
-                    { "Bearer", Enumerable.Empty<string>() },
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Gerenciador de Propostas API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Informe o token JWT no formato: Bearer {token}",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
                 });
             });
         }

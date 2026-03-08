@@ -122,6 +122,7 @@ namespace API.Controllers
       if(!string.IsNullOrEmpty(model.Senha))
       {
         user.Senha = model.Senha;
+        usuario.AtualizarSenha(model.Senha, Context);
       }
       var permissao = getPermissao().FirstOrDefault(x => x.Nivel.Equals(model.perfilUsuario));
       usuario.Atualizar(user, Context);

@@ -1,5 +1,17 @@
 # WebApi Dotnet core 2 authenticaiton jwt token
 
+## Status atual
+
+Projeto migrado para `.NET 10`.
+
+## Run (.NET 10)
+
+```bash
+dotnet restore serverApi.sln
+dotnet build serverApi.sln
+dotnet run --project SRC/API/API.csproj
+```
+
 ## Introduction
 
 > Para Instanar 

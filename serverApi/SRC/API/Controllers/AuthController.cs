@@ -70,9 +70,33 @@ namespace API.Controllers
         {
             NovoUsuarioModel user = null;
             if(string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Password)) return user;
-            var encript = Util.GetSHA1HashData(login.Password);
+            Usuario usuario =  Context.Usuarios.Include(x => x.UsuarioPermissoes).FirstOrDefault(x => x.Email == login.Email);
+            if (usuario == null)
+            {
+                return user;
+            }
 
-            Usuario usuario =  Context.Usuarios.Include(x => x.UsuarioPermissoes).FirstOrDefault(x => x.Email == login.Email && x.Senha == encript);
+            bool senhaValida = false;
+            if (Util.IsArgon2Hash(usuario.Senha))
+            {
+                senhaValida = Util.VerifyPassword(login.Password, usuario.Senha);
+            }
+            else if (Util.IsLegacySha1Hash(usuario.Senha))
+            {
+                senhaValida = Util.ValidateSHA1HashData(login.Password, usuario.Senha);
+                if (senhaValida)
+                {
+                    usuario.Senha = Util.HashPassword(login.Password);
+                    Context.Usuarios.Update(usuario);
+                    Context.SaveChanges();
+                }
+            }
+
+            if (!senhaValida)
+            {
+                return user;
+            }
+
             if (!string.IsNullOrEmpty(usuario?.Email))
             {
                 user = new NovoUsuarioModel(){

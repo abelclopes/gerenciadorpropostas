@@ -1,3 +1,0 @@
-export class propostaStaus{
-    constructor(){}
-}
