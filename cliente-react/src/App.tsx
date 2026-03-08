@@ -338,220 +338,280 @@ function App() {
     setNovoAnexoFile(null)
   }
 
+  const mapaTitulos: Record<TabKey, string> = {
+    propostas: 'Pipeline de Propostas',
+    categorias: 'Gestao de Categorias',
+    fornecedores: 'Base de Fornecedores',
+    usuarios: 'Equipe e Acessos',
+  }
+
+  const resumo = [
+    {
+      label: 'Propostas',
+      value: propostas?.totalItens ?? propostas?.resultado.length ?? 0,
+      tone: 'blue',
+    },
+    {
+      label: 'Categorias',
+      value: categorias?.totalItens ?? categorias?.resultado.length ?? 0,
+      tone: 'teal',
+    },
+    {
+      label: 'Fornecedores',
+      value: fornecedores?.totalItens ?? fornecedores?.resultado.length ?? 0,
+      tone: 'violet',
+    },
+    {
+      label: 'Usuarios',
+      value: usuarios?.totalItens ?? usuarios?.resultado.length ?? 0,
+      tone: 'amber',
+    },
+  ] as const
+
   return (
     <main className="container">
-      <header className="header">
-        <h1>Gerenciador de Propostas - React</h1>
-        {autenticado && (
-          <button onClick={handleLogout} className="secondary">
-            Sair
-          </button>
-        )}
-      </header>
-
       {!autenticado ? (
-        <form className="card" onSubmit={handleLogin}>
-          <h2>Entrar</h2>
-          <label>
-            E-mail
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
-          </label>
-          <label>
-            Senha
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-          </label>
-          <button type="submit" disabled={loading}>
-            {loading ? 'Entrando...' : 'Entrar'}
-          </button>
-        </form>
+        <>
+          <header className="header">
+            <h1>Pulse CRM - Propostas</h1>
+          </header>
+          <form className="card login-card" onSubmit={handleLogin}>
+            <h2>Entrar no painel</h2>
+            <p className="muted">Controle funil, equipe e aprovacoes em um unico lugar.</p>
+            <label>
+              E-mail
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+              />
+            </label>
+            <label>
+              Senha
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+              />
+            </label>
+            <button type="submit" disabled={loading}>
+              {loading ? 'Entrando...' : 'Acessar workspace'}
+            </button>
+          </form>
+        </>
       ) : (
-        <section className="card">
-          <div className="tabs">
-            <button className={tab === 'propostas' ? 'active' : ''} onClick={() => setTab('propostas')}>Propostas</button>
-            <button className={tab === 'categorias' ? 'active' : ''} onClick={() => setTab('categorias')}>Categorias</button>
-            <button className={tab === 'fornecedores' ? 'active' : ''} onClick={() => setTab('fornecedores')}>Fornecedores</button>
-            <button className={tab === 'usuarios' ? 'active' : ''} onClick={() => setTab('usuarios')}>Usuários</button>
-          </div>
+        <div className="dashboard-shell">
+          <aside className="sidebar card">
+            <div className="brand-mark">
+              <strong>Pulse CRM</strong>
+              <span>Workspace Comercial</span>
+            </div>
+            <nav className="side-nav">
+              <button type="button" className={tab === 'propostas' ? 'active' : ''} onClick={() => setTab('propostas')}>Propostas</button>
+              <button type="button" className={tab === 'categorias' ? 'active' : ''} onClick={() => setTab('categorias')}>Categorias</button>
+              <button type="button" className={tab === 'fornecedores' ? 'active' : ''} onClick={() => setTab('fornecedores')}>Fornecedores</button>
+              <button type="button" className={tab === 'usuarios' ? 'active' : ''} onClick={() => setTab('usuarios')}>Usuarios</button>
+            </nav>
+            <div className="card side-help">
+              <strong>Ambiente ativo</strong>
+              <p>{clans?.nome}</p>
+              <small>{clans?.email}</small>
+            </div>
+            <button type="button" onClick={handleLogout} className="secondary side-logout">Sair</button>
+          </aside>
 
-          {loading && <p>Carregando...</p>}
+          <section className="workspace">
+            <header className="workspace-top card">
+              <div>
+                <p className="crumb">Painel / Dashboard</p>
+                <h1>{mapaTitulos[tab]}</h1>
+              </div>
+              <input type="text" placeholder="Buscar no painel..." />
+            </header>
 
-          {tab === 'categorias' && (
-            <>
-              <form className="inline-form" onSubmit={async (event) => { event.preventDefault(); await carregarCategorias() }}>
-                <input placeholder="Buscar categorias" value={buscaCategorias} onChange={(event) => setBuscaCategorias(event.target.value)} />
-                <button type="submit">Buscar</button>
-              </form>
-              <form className="grid-form" onSubmit={salvarCategoria}>
-                <input placeholder="Nome" value={categoriaForm.nome} onChange={(event) => setCategoriaForm((old) => ({ ...old, nome: event.target.value }))} required />
-                <input placeholder="Descrição" value={categoriaForm.descricao} onChange={(event) => setCategoriaForm((old) => ({ ...old, descricao: event.target.value }))} required />
-                <button type="submit">{categoriaForm.id ? 'Atualizar' : 'Criar'}</button>
-              </form>
-              <table>
-                <thead><tr><th>Nome</th><th>Descrição</th><th>Ações</th></tr></thead>
-                <tbody>
-                  {categorias?.resultado.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.nome}</td>
-                      <td>{item.descricao}</td>
-                      <td>
-                        <button onClick={() => setCategoriaForm(item)}>Editar</button>
-                        <button className="danger" onClick={() => removerCategoria(item.id)}>Excluir</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          )}
+            <section className="stats-grid">
+              {resumo.map((item) => (
+                <article key={item.label} className={`card stat-card tone-${item.tone}`}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                </article>
+              ))}
+            </section>
 
-          {tab === 'fornecedores' && (
-            <>
-              <form className="inline-form" onSubmit={async (event) => { event.preventDefault(); await carregarFornecedores() }}>
-                <input placeholder="Buscar fornecedores" value={buscaFornecedores} onChange={(event) => setBuscaFornecedores(event.target.value)} />
-                <button type="submit">Buscar</button>
-              </form>
-              <form className="grid-form" onSubmit={salvarFornecedor}>
-                <input placeholder="Nome" value={fornecedorForm.nome} onChange={(event) => setFornecedorForm((old) => ({ ...old, nome: event.target.value }))} required />
-                <input placeholder="CNPJ/CPF" value={fornecedorForm.cnpjCpf} onChange={(event) => setFornecedorForm((old) => ({ ...old, cnpjCpf: event.target.value }))} required />
-                <input placeholder="Email" value={fornecedorForm.email} onChange={(event) => setFornecedorForm((old) => ({ ...old, email: event.target.value }))} required />
-                <input placeholder="Telefone" value={fornecedorForm.telefone} onChange={(event) => setFornecedorForm((old) => ({ ...old, telefone: event.target.value }))} required />
-                <button type="submit">{fornecedorForm.id ? 'Atualizar' : 'Criar'}</button>
-              </form>
-              <table>
-                <thead><tr><th>Nome</th><th>CNPJ/CPF</th><th>Email</th><th>Telefone</th><th>Ações</th></tr></thead>
-                <tbody>
-                  {fornecedores?.resultado.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.nome}</td><td>{item.cnpjCpf}</td><td>{item.email}</td><td>{item.telefone}</td>
-                      <td>
-                        <button onClick={() => setFornecedorForm(item)}>Editar</button>
-                        <button className="danger" onClick={() => removerFornecedor(item.id)}>Excluir</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          )}
+            <section className="card content-panel">
+              {loading && <p className="muted">Carregando...</p>}
 
-          {tab === 'usuarios' && (
-            <>
-              <form className="inline-form" onSubmit={async (event) => { event.preventDefault(); await carregarUsuarios() }}>
-                <input placeholder="Buscar usuários" value={buscaUsuarios} onChange={(event) => setBuscaUsuarios(event.target.value)} />
-                <button type="submit">Buscar</button>
-              </form>
-              <form className="grid-form" onSubmit={salvarUsuario}>
-                <input placeholder="Nome" value={usuarioForm.nome} onChange={(event) => setUsuarioForm((old) => ({ ...old, nome: event.target.value }))} required />
-                <input placeholder="CPF" value={usuarioForm.cpf} onChange={(event) => setUsuarioForm((old) => ({ ...old, cpf: event.target.value }))} required />
-                <input placeholder="Email" value={usuarioForm.email} onChange={(event) => setUsuarioForm((old) => ({ ...old, email: event.target.value }))} required />
-                <input type="date" value={usuarioForm.dataNacimento} onChange={(event) => setUsuarioForm((old) => ({ ...old, dataNacimento: event.target.value }))} required />
-                <input placeholder="Senha" value={usuarioForm.senha ?? ''} onChange={(event) => setUsuarioForm((old) => ({ ...old, senha: event.target.value }))} />
-                <select value={usuarioForm.perfilUsuario} onChange={(event) => setUsuarioForm((old) => ({ ...old, perfilUsuario: Number(event.target.value) }))}>
-                  {perfis.map((perfil) => (<option key={perfil.id} value={perfil.nivel}>{perfil.nome} ({perfil.nivel})</option>))}
-                </select>
-                <button type="submit">{usuarioEditId ? 'Atualizar' : 'Criar'}</button>
-              </form>
-              <table>
-                <thead><tr><th>Nome</th><th>Email</th><th>CPF</th><th>Perfil</th><th>Ações</th></tr></thead>
-                <tbody>
-                  {usuarios?.resultado.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.nome}</td><td>{item.email}</td><td>{item.cpf}</td><td>{item.permissao}</td>
-                      <td>
-                        <button onClick={() => {
-                          setUsuarioEditId(item.id)
-                          setUsuarioForm({
-                            nome: item.nome,
-                            cpf: item.cpf,
-                            email: item.email,
-                            senha: '',
-                            dataNacimento: String(item.dataNacimento).slice(0, 10),
-                            perfilUsuario: item.permissaoNivel,
-                          })
-                        }}>Editar</button>
-                        <button className="danger" onClick={() => removerUsuario(item.id)}>Excluir</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          )}
+              {tab === 'categorias' && (
+                <>
+                  <form className="inline-form" onSubmit={async (event) => { event.preventDefault(); await carregarCategorias() }}>
+                    <input placeholder="Buscar categorias" value={buscaCategorias} onChange={(event) => setBuscaCategorias(event.target.value)} />
+                    <button type="submit">Buscar</button>
+                  </form>
+                  <form className="grid-form" onSubmit={salvarCategoria}>
+                    <input placeholder="Nome" value={categoriaForm.nome} onChange={(event) => setCategoriaForm((old) => ({ ...old, nome: event.target.value }))} required />
+                    <input placeholder="Descricao" value={categoriaForm.descricao} onChange={(event) => setCategoriaForm((old) => ({ ...old, descricao: event.target.value }))} required />
+                    <button type="submit">{categoriaForm.id ? 'Atualizar' : 'Criar'}</button>
+                  </form>
+                  <table>
+                    <thead><tr><th>Nome</th><th>Descricao</th><th>Acoes</th></tr></thead>
+                    <tbody>
+                      {categorias?.resultado.map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.nome}</td>
+                          <td>{item.descricao}</td>
+                          <td>
+                            <button type="button" onClick={() => setCategoriaForm(item)}>Editar</button>
+                            <button type="button" className="danger" onClick={() => removerCategoria(item.id)}>Excluir</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
 
-          {tab === 'propostas' && (
-            <>
-              <form className="inline-form" onSubmit={async (event) => { event.preventDefault(); await carregarPropostas() }}>
-                <input placeholder="Buscar propostas" value={buscaPropostas} onChange={(event) => setBuscaPropostas(event.target.value)} />
-                <button type="submit">Buscar</button>
-              </form>
+              {tab === 'fornecedores' && (
+                <>
+                  <form className="inline-form" onSubmit={async (event) => { event.preventDefault(); await carregarFornecedores() }}>
+                    <input placeholder="Buscar fornecedores" value={buscaFornecedores} onChange={(event) => setBuscaFornecedores(event.target.value)} />
+                    <button type="submit">Buscar</button>
+                  </form>
+                  <form className="grid-form" onSubmit={salvarFornecedor}>
+                    <input placeholder="Nome" value={fornecedorForm.nome} onChange={(event) => setFornecedorForm((old) => ({ ...old, nome: event.target.value }))} required />
+                    <input placeholder="CNPJ/CPF" value={fornecedorForm.cnpjCpf} onChange={(event) => setFornecedorForm((old) => ({ ...old, cnpjCpf: event.target.value }))} required />
+                    <input placeholder="Email" value={fornecedorForm.email} onChange={(event) => setFornecedorForm((old) => ({ ...old, email: event.target.value }))} required />
+                    <input placeholder="Telefone" value={fornecedorForm.telefone} onChange={(event) => setFornecedorForm((old) => ({ ...old, telefone: event.target.value }))} required />
+                    <button type="submit">{fornecedorForm.id ? 'Atualizar' : 'Criar'}</button>
+                  </form>
+                  <table>
+                    <thead><tr><th>Nome</th><th>CNPJ/CPF</th><th>Email</th><th>Telefone</th><th>Acoes</th></tr></thead>
+                    <tbody>
+                      {fornecedores?.resultado.map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.nome}</td><td>{item.cnpjCpf}</td><td>{item.email}</td><td>{item.telefone}</td>
+                          <td>
+                            <button type="button" onClick={() => setFornecedorForm(item)}>Editar</button>
+                            <button type="button" className="danger" onClick={() => removerFornecedor(item.id)}>Excluir</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
 
-              <form className="grid-form" onSubmit={salvarProposta}>
-                <input placeholder="Nome da proposta" value={propostaForm.nomeProposta} onChange={(event) => setPropostaForm((old) => ({ ...old, nomeProposta: event.target.value }))} required />
-                <input placeholder="Descrição" value={propostaForm.descricao} onChange={(event) => setPropostaForm((old) => ({ ...old, descricao: event.target.value }))} required />
-                <input placeholder="Valor" value={propostaForm.valor} onChange={(event) => setPropostaForm((old) => ({ ...old, valor: event.target.value }))} required />
-                <select value={propostaForm.fornecedorID} onChange={(event) => setPropostaForm((old) => ({ ...old, fornecedorID: event.target.value }))} required>
-                  <option value="">Fornecedor</option>
-                  {fornecedores?.resultado.map((item) => (<option key={item.id} value={item.id}>{item.nome}</option>))}
-                </select>
-                <select value={propostaForm.categoriaID} onChange={(event) => setPropostaForm((old) => ({ ...old, categoriaID: event.target.value }))} required>
-                  <option value="">Categoria</option>
-                  {categorias?.resultado.map((item) => (<option key={item.id} value={item.id}>{item.nome}</option>))}
-                </select>
-                <input type="file" onChange={(event) => setPropostaAnexoFile(event.target.files?.[0] ?? null)} />
-                <button type="submit">{propostaForm.id ? 'Atualizar' : 'Criar'}</button>
-              </form>
+              {tab === 'usuarios' && (
+                <>
+                  <form className="inline-form" onSubmit={async (event) => { event.preventDefault(); await carregarUsuarios() }}>
+                    <input placeholder="Buscar usuarios" value={buscaUsuarios} onChange={(event) => setBuscaUsuarios(event.target.value)} />
+                    <button type="submit">Buscar</button>
+                  </form>
+                  <form className="grid-form" onSubmit={salvarUsuario}>
+                    <input placeholder="Nome" value={usuarioForm.nome} onChange={(event) => setUsuarioForm((old) => ({ ...old, nome: event.target.value }))} required />
+                    <input placeholder="CPF" value={usuarioForm.cpf} onChange={(event) => setUsuarioForm((old) => ({ ...old, cpf: event.target.value }))} required />
+                    <input placeholder="Email" value={usuarioForm.email} onChange={(event) => setUsuarioForm((old) => ({ ...old, email: event.target.value }))} required />
+                    <input type="date" value={usuarioForm.dataNacimento} onChange={(event) => setUsuarioForm((old) => ({ ...old, dataNacimento: event.target.value }))} required />
+                    <input placeholder="Senha" value={usuarioForm.senha ?? ''} onChange={(event) => setUsuarioForm((old) => ({ ...old, senha: event.target.value }))} />
+                    <select value={usuarioForm.perfilUsuario} onChange={(event) => setUsuarioForm((old) => ({ ...old, perfilUsuario: Number(event.target.value) }))}>
+                      {perfis.map((perfil) => (<option key={perfil.id} value={perfil.nivel}>{perfil.nome} ({perfil.nivel})</option>))}
+                    </select>
+                    <button type="submit">{usuarioEditId ? 'Atualizar' : 'Criar'}</button>
+                  </form>
+                  <table>
+                    <thead><tr><th>Nome</th><th>Email</th><th>CPF</th><th>Perfil</th><th>Acoes</th></tr></thead>
+                    <tbody>
+                      {usuarios?.resultado.map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.nome}</td><td>{item.email}</td><td>{item.cpf}</td><td>{item.permissao}</td>
+                          <td>
+                            <button type="button" onClick={() => {
+                              setUsuarioEditId(item.id)
+                              setUsuarioForm({
+                                nome: item.nome,
+                                cpf: item.cpf,
+                                email: item.email,
+                                senha: '',
+                                dataNacimento: String(item.dataNacimento).slice(0, 10),
+                                perfilUsuario: item.permissaoNivel,
+                              })
+                            }}>Editar</button>
+                            <button type="button" className="danger" onClick={() => removerUsuario(item.id)}>Excluir</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
 
-              <form className="inline-form" onSubmit={salvarNovoAnexo}>
-                <input placeholder="ID da proposta" value={novoAnexoPropostaId} onChange={(event) => setNovoAnexoPropostaId(event.target.value)} />
-                <input type="file" onChange={(event) => setNovoAnexoFile(event.target.files?.[0] ?? null)} />
-                <button type="submit">Atualizar anexo</button>
-              </form>
+              {tab === 'propostas' && (
+                <>
+                  <form className="inline-form" onSubmit={async (event) => { event.preventDefault(); await carregarPropostas() }}>
+                    <input placeholder="Buscar propostas" value={buscaPropostas} onChange={(event) => setBuscaPropostas(event.target.value)} />
+                    <button type="submit">Buscar</button>
+                  </form>
 
-              <table>
-                <thead><tr><th>Nome</th><th>Fornecedor</th><th>Categoria</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead>
-                <tbody>
-                  {propostas?.resultado.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.nomeProposta}</td>
-                      <td>{item.fornecedor?.nome}</td>
-                      <td>{item.categoria?.nome}</td>
-                      <td>{item.valor}</td>
-                      <td>{item.status}</td>
-                      <td>
-                        <button onClick={() => setPropostaForm({
-                          id: item.id,
-                          nomeProposta: item.nomeProposta,
-                          descricao: item.descricao,
-                          valor: item.valor,
-                          fornecedorID: item.fornecedor?.id ?? '',
-                          categoriaID: item.categoria?.id ?? '',
-                        })}>Editar</button>
-                        <button onClick={() => validarProposta(item)}>Validar</button>
-                        <button onClick={() => aprovarProposta(item)}>Aprovar</button>
-                        <button onClick={() => baixarAnexo(item.id)}>Anexo</button>
-                        <button className="danger" onClick={() => removerProposta(item.id)}>Excluir</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          )}
-        </section>
+                  <form className="grid-form" onSubmit={salvarProposta}>
+                    <input placeholder="Nome da proposta" value={propostaForm.nomeProposta} onChange={(event) => setPropostaForm((old) => ({ ...old, nomeProposta: event.target.value }))} required />
+                    <input placeholder="Descricao" value={propostaForm.descricao} onChange={(event) => setPropostaForm((old) => ({ ...old, descricao: event.target.value }))} required />
+                    <input placeholder="Valor" value={propostaForm.valor} onChange={(event) => setPropostaForm((old) => ({ ...old, valor: event.target.value }))} required />
+                    <select value={propostaForm.fornecedorID} onChange={(event) => setPropostaForm((old) => ({ ...old, fornecedorID: event.target.value }))} required>
+                      <option value="">Fornecedor</option>
+                      {fornecedores?.resultado.map((item) => (<option key={item.id} value={item.id}>{item.nome}</option>))}
+                    </select>
+                    <select value={propostaForm.categoriaID} onChange={(event) => setPropostaForm((old) => ({ ...old, categoriaID: event.target.value }))} required>
+                      <option value="">Categoria</option>
+                      {categorias?.resultado.map((item) => (<option key={item.id} value={item.id}>{item.nome}</option>))}
+                    </select>
+                    <input type="file" onChange={(event) => setPropostaAnexoFile(event.target.files?.[0] ?? null)} />
+                    <button type="submit">{propostaForm.id ? 'Atualizar' : 'Criar'}</button>
+                  </form>
+
+                  <form className="inline-form" onSubmit={salvarNovoAnexo}>
+                    <input placeholder="ID da proposta" value={novoAnexoPropostaId} onChange={(event) => setNovoAnexoPropostaId(event.target.value)} />
+                    <input type="file" onChange={(event) => setNovoAnexoFile(event.target.files?.[0] ?? null)} />
+                    <button type="submit">Atualizar anexo</button>
+                  </form>
+
+                  <table>
+                    <thead><tr><th>Nome</th><th>Fornecedor</th><th>Categoria</th><th>Valor</th><th>Status</th><th>Acoes</th></tr></thead>
+                    <tbody>
+                      {propostas?.resultado.map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.nomeProposta}</td>
+                          <td>{item.fornecedor?.nome}</td>
+                          <td>{item.categoria?.nome}</td>
+                          <td>{item.valor}</td>
+                          <td>{item.status}</td>
+                          <td>
+                            <button type="button" onClick={() => setPropostaForm({
+                              id: item.id,
+                              nomeProposta: item.nomeProposta,
+                              descricao: item.descricao,
+                              valor: item.valor,
+                              fornecedorID: item.fornecedor?.id ?? '',
+                              categoriaID: item.categoria?.id ?? '',
+                            })}>Editar</button>
+                            <button type="button" onClick={() => validarProposta(item)}>Validar</button>
+                            <button type="button" onClick={() => aprovarProposta(item)}>Aprovar</button>
+                            <button type="button" onClick={() => baixarAnexo(item.id)}>Anexo</button>
+                            <button type="button" className="danger" onClick={() => removerProposta(item.id)}>Excluir</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
+            </section>
+          </section>
+        </div>
       )}
 
       {error && <p className="error">{error}</p>}
-      {!error && autenticado && clans && <p className="muted">Usuário: {clans.nome} ({clans.email})</p>}
+      {!error && autenticado && clans && <p className="muted">Usuario: {clans.nome} ({clans.email})</p>}
     </main>
   )
 }

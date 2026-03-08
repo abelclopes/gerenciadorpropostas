@@ -47,13 +47,13 @@ namespace API.Controllers
           Nome = x.Nome,
           Cpf = x.Cpf,
           DataNacimento = x.DataNacimento,
-          Idade = this.CalcularIdade(x.DataNacimento),
+          Idade = CalcularIdade(x.DataNacimento),
           Email = x.Email,
           Police = x.UsuarioPermissoes.Permissoes.Nome,
           Excluido = x.Excluido
       }).FirstOrDefault(x => x.Email == Email && !x.Excluido);     
     }
-    private int CalcularIdade(DateTime nascimento)
+    private static int CalcularIdade(DateTime nascimento)
     {
       var today = DateTime.Today;
       var idade = today.Year - nascimento.Year;

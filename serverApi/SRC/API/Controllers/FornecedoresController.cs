@@ -143,7 +143,7 @@ namespace API.Controllers
    private List<FornecedorModel>  RestornaFornecedorList(){
       return MemoryCache.GetOrCreate("fornecedor", entry =>
                           {
-                            entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+                            entry.AbsoluteExpiration = DateTime.UtcNow.AddMinutes(3);
                             return Context.Fornecedores.Where(x => !x.Excluido)
                             .Select(x => new FornecedorModel
                               {

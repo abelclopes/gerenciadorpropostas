@@ -190,7 +190,7 @@ namespace API.Controllers
     private List<PropostaModel>  RestornaPropostaList(){
       return MemoryCache.GetOrCreate("propostas", entry =>
             {
-              entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+              entry.AbsoluteExpiration = DateTime.UtcNow.AddMinutes(3);
               return Context.Propostas.Where(x => !x.Excluido)
                 .Select(x => new PropostaModel
                 { 

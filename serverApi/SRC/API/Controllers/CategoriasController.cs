@@ -142,7 +142,7 @@ namespace API.Controllers
     private List<CategoriasModel>  RestornaCategoriaList(){
       return MemoryCache.GetOrCreate("categorias", entry =>
                             {
-                              entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+                              entry.AbsoluteExpiration = DateTime.UtcNow.AddMinutes(3);
                               return Context.Categorias.Where(x => !x.Excluido)
                                 .Select(x => new CategoriasModel
                                 { 

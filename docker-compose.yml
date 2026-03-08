@@ -34,6 +34,7 @@ services:
       - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-api.entrypoints=${TRAEFIK_ENTRYPOINTS:-websecure}"
       - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-api.tls=true"
       - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-api.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
+      - "traefik.http.routers.${APP_NAME}-${ENVIRONMENT}-api.priority=100"
       - "traefik.http.services.${APP_NAME}-${ENVIRONMENT}-api.loadbalancer.server.port=8484"
     networks:
       - default
@@ -47,7 +48,7 @@ services:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     restart: unless-stopped
     ports:
-      - "8332:80"
+      - "${FRONTEND_PORT:-8332}:80"
     expose:
       - "80"
     labels:

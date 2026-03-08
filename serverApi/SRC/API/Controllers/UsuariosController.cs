@@ -160,7 +160,7 @@ namespace API.Controllers
     private List<UsuariosModel>  RestornaUsuariosList(){
       return MemoryCache.GetOrCreate("usuarios", entry =>
           {
-            entry.AbsoluteExpiration = DateTime.UtcNow.AddDays(1);
+            entry.AbsoluteExpiration = DateTime.UtcNow.AddMinutes(3);
             return Context.Usuarios.Where(x => !x.Excluido)
             .Select(x => new UsuariosModel
               {

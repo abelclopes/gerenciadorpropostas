@@ -32,11 +32,11 @@ namespace API.Controllers
         [SwaggerResponse(401)]
         [SwaggerResponse(403)]
         public List<Permissao> Get(){
-            return Context.Permissoes.Select(x => new Permissao{
+            return Context.Permissoes.Where(x => !x.Excluido).Select(x => new Permissao{
                 Nome = x.Nome,
                 Nivel = x.Nivel,
                 Id = x.Id
-            }).Where(x => !x.Excluido).ToList();
+            }).ToList();
         }
     }
 }
