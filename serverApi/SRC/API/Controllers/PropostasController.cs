@@ -24,6 +24,8 @@ using DOMAIN.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using BUSINESS;
+using API.Messaging;
+using API.Messaging.Contracts;
 
 namespace API.Controllers
 {
@@ -32,9 +34,11 @@ namespace API.Controllers
   public class PropostasController : BaseController
   {
     private readonly ILogger _logger;
-    public PropostasController(IContext context, IMemoryCache memoryCache, ILogger<PropostasController> logger) : base(context, memoryCache)
+    private readonly IOutboxWriter _outboxWriter;
+    public PropostasController(IContext context, IMemoryCache memoryCache, ILogger<PropostasController> logger, IOutboxWriter outboxWriter) : base(context, memoryCache)
     {
       this._logger = logger;
+      _outboxWriter = outboxWriter;
     }
 
     [HttpGet, Authorize]
@@ -43,22 +47,97 @@ namespace API.Controllers
     [SwaggerResponse(401)]
     [SwaggerResponse(403)]
 
-    public  ListaPaginada<PropostaModel> Get([FromQuery]PaginationParamsProposta model)
+    public async Task<ListaPaginada<PropostaModel>> Get([FromQuery]PaginationParamsProposta model)
     {
       this.checaExistenciaDePropostasExpiradas();
-      var listaPaginada = new ListaPaginada<PropostaModel>(model.PageNumber, model.PageSize);
-      var propostas = new List<PropostaModel>();
-      if(RestornaPropostaList().Any()){
-        propostas = RestornaPropostaList();
-        if(!string.IsNullOrEmpty(model.NomeProposta) || Convert.ToDouble(model.Valor) > 0 && !string.IsNullOrEmpty(model.Valor.ToString()) || !string.IsNullOrEmpty(model.FornecedorID)){ 
-          propostas = propostas.Where(x => x.NomeProposta.Contains(model.NomeProposta) 
-                              ||  x.Valor.Equals(model.Valor)
-                              ||  x.Fornecedor.Id == Guid.Parse(model.FornecedorID)
-                              ||  x.Categoria.Id == Guid.Parse(model.CategoriaID)
-                              ).ToList();                
-        }
+      var pageNumber = model.PageNumber <= 0 ? 1 : model.PageNumber;
+      var pageSize = model.PageSize <= 0 ? 10 : model.PageSize;
+      var listaPaginada = new ListaPaginada<PropostaModel>(pageNumber, pageSize);
+      var propostas = RestornaPropostaQueryable();
+
+      if (!string.IsNullOrWhiteSpace(model.BuscaTermo))
+      {
+        var busca = model.BuscaTermo.Trim().ToLower();
+        propostas = propostas.Where(x =>
+          (x.NomeProposta ?? string.Empty).ToLower().Contains(busca) ||
+          (x.Descricao ?? string.Empty).ToLower().Contains(busca) ||
+          (x.Valor ?? string.Empty).ToLower().Contains(busca) ||
+          (x.Fornecedor.Nome ?? string.Empty).ToLower().Contains(busca) ||
+          (x.Categoria.Nome ?? string.Empty).ToLower().Contains(busca));
       }
-      return listaPaginada.Carregar(propostas);
+
+      if (!string.IsNullOrWhiteSpace(model.NomeProposta))
+      {
+        var nome = model.NomeProposta.Trim().ToLower();
+        propostas = propostas.Where(x => (x.NomeProposta ?? string.Empty).ToLower().Contains(nome));
+      }
+
+      if (!string.IsNullOrWhiteSpace(model.Descricao))
+      {
+        var descricao = model.Descricao.Trim().ToLower();
+        propostas = propostas.Where(x => (x.Descricao ?? string.Empty).ToLower().Contains(descricao));
+      }
+
+      if (!string.IsNullOrWhiteSpace(model.Valor))
+      {
+        propostas = propostas.Where(x => (x.Valor ?? string.Empty).Contains(model.Valor));
+      }
+
+      if (!string.IsNullOrWhiteSpace(model.FornecedorID) && Guid.TryParse(model.FornecedorID, out Guid fornecedorId))
+      {
+        propostas = propostas.Where(x => x.Fornecedor.Id == fornecedorId);
+      }
+
+      if (!string.IsNullOrWhiteSpace(model.FornecedorNome))
+      {
+        var fornecedorNome = model.FornecedorNome.Trim().ToLower();
+        propostas = propostas.Where(x => (x.Fornecedor.Nome ?? string.Empty).ToLower().Contains(fornecedorNome));
+      }
+
+      if (!string.IsNullOrWhiteSpace(model.CategoriaID) && Guid.TryParse(model.CategoriaID, out Guid categoriaId))
+      {
+        propostas = propostas.Where(x => x.Categoria.Id == categoriaId);
+      }
+
+      if (!string.IsNullOrWhiteSpace(model.CategoriaNome))
+      {
+        var categoriaNome = model.CategoriaNome.Trim().ToLower();
+        propostas = propostas.Where(x => (x.Categoria.Nome ?? string.Empty).ToLower().Contains(categoriaNome));
+      }
+
+      if (model.Status.HasValue)
+      {
+        propostas = propostas.Where(x => (int)x.Status == model.Status.Value);
+      }
+
+      var sortBy = (model.SortBy ?? "dataCriacao").Trim().ToLower();
+      var sortDir = (model.SortDir ?? "desc").Trim().ToLower();
+      var isAsc = sortDir == "asc";
+
+      switch (sortBy)
+      {
+        case "nome":
+        case "nomeproposta":
+          propostas = isAsc ? propostas.OrderBy(x => x.NomeProposta) : propostas.OrderByDescending(x => x.NomeProposta);
+          break;
+        case "fornecedor":
+          propostas = isAsc ? propostas.OrderBy(x => x.Fornecedor.Nome) : propostas.OrderByDescending(x => x.Fornecedor.Nome);
+          break;
+        case "categoria":
+          propostas = isAsc ? propostas.OrderBy(x => x.Categoria.Nome) : propostas.OrderByDescending(x => x.Categoria.Nome);
+          break;
+        case "valor":
+          propostas = isAsc ? propostas.OrderBy(x => x.Valor) : propostas.OrderByDescending(x => x.Valor);
+          break;
+        case "status":
+          propostas = isAsc ? propostas.OrderBy(x => x.Status) : propostas.OrderByDescending(x => x.Status);
+          break;
+        default:
+          propostas = isAsc ? propostas.OrderBy(x => x.DataCriacao) : propostas.OrderByDescending(x => x.DataCriacao);
+          break;
+      }
+
+      return await listaPaginada.Carregar(propostas);
     }
 
     [Route("{id}")]
@@ -70,7 +149,7 @@ namespace API.Controllers
     {
       var propostas = new PropostaModel();
       if(!string.IsNullOrEmpty(id)){
-        return Ok(RestornaPropostaList().FirstOrDefault(x => x.Id == Guid.Parse(id)));
+        return Ok(RestornaPropostaQueryable().FirstOrDefault(x => x.Id == Guid.Parse(id)));
       }
       return Ok(new { Response = "Nenhum Resultado Encontrado" });
     }
@@ -112,6 +191,23 @@ namespace API.Controllers
       var usuario = Context.Usuarios.FirstOrDefault(x => x.Id == Guid.Parse(model.Usuario));
       var propostaHistorico = new PropostaHistorico(proposta, usuario );
       await Context.PropostasHistoricos.AddAsync(propostaHistorico);
+
+      await _outboxWriter.EnqueueAsync(
+        messageType: nameof(PropostaCriadaIntegrationEvent),
+        routingKey: "proposta.criada",
+        payload: new PropostaCriadaIntegrationEvent
+        {
+          PropostaId = proposta.Id,
+          NomeProposta = proposta.NomeProposta,
+          Valor = proposta.Valor,
+          Status = (int)proposta.Status,
+          FornecedorId = proposta.FornecedorId,
+          CategoriaId = proposta.CategoriaId,
+          UsuarioId = usuario?.Id ?? Guid.Empty,
+          CriadoEmUtc = DateTime.UtcNow
+        }
+      );
+
       await Context.SaveChangesAsync();
 
       MemoryCache.Remove("propostas");
@@ -187,24 +283,20 @@ namespace API.Controllers
       MemoryCache.Remove("propostas");
       return Ok(new {Response = "Proposta deletado com sucesso"});
     }
-    private List<PropostaModel>  RestornaPropostaList(){
-      return MemoryCache.GetOrCreate("propostas", entry =>
-            {
-              entry.AbsoluteExpiration = DateTime.UtcNow.AddMinutes(3);
-              return Context.Propostas.Where(x => !x.Excluido)
-                .Select(x => new PropostaModel
-                { 
-                  Id = x.Id,
-                  NomeProposta = x.NomeProposta,
-                  Descricao = x.Descricao,
-                  Fornecedor = x.Fornecedor,
-                  Categoria = x.Categoria,
-                  Valor = x.Valor,
-                  //PropostaHistorico = (x.PropostaHistorico.Any())? x.PropostaHistorico: null,
-                  DataCriacao = x.DataCriacao,
-                  Status = x.Status
-                }).OrderByDescending(x =>x.DataCriacao).ToList();
-            });
+    private IQueryable<PropostaModel> RestornaPropostaQueryable(){
+      return Context.Propostas.Where(x => !x.Excluido)
+        .Select(x => new PropostaModel
+        { 
+          Id = x.Id,
+          NomeProposta = x.NomeProposta,
+          Descricao = x.Descricao,
+          Fornecedor = x.Fornecedor,
+          Categoria = x.Categoria,
+          Valor = x.Valor,
+          //PropostaHistorico = (x.PropostaHistorico.Any())? x.PropostaHistorico: null,
+          DataCriacao = x.DataCriacao,
+          Status = x.Status
+        });
     }
     private Proposta ConsultaProposta(string id){
       return Context.Propostas.FirstOrDefault(x => x.Id == Guid.Parse(id) && !x.Excluido);

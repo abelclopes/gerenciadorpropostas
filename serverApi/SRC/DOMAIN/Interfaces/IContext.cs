@@ -16,7 +16,8 @@ namespace DOMAIN.Interfaces
         DbSet<Proposta> Propostas { get; set; }
         DbSet<PropostaAnexo> PropostaAnexos { get; set; }
         DbSet<PropostaHistorico> PropostasHistoricos { get; set; }
-        DbSet<Categoria> Categorias { get; set; }        
+        DbSet<Categoria> Categorias { get; set; }
+        DbSet<OutboxMessage> OutboxMessages { get; set; }
         DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync();
         int SaveChanges();

@@ -20,6 +20,7 @@ namespace INFRAESTRUCTURE
         public DbSet<PropostaAnexo> PropostaAnexos { get; set; }
         public DbSet<PropostaHistorico> PropostasHistoricos { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         { 
@@ -100,6 +101,17 @@ namespace INFRAESTRUCTURE
                     .HasForeignKey<UsuarioPermissao>(d => d.UsuarioId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UsuarioPermissoes_Usuarios");
+            });
+
+            modelBuilder.Entity<OutboxMessage>(entity =>
+            {
+                entity.ToTable("OutboxMessages");
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.Type).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.RoutingKey).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Payload).IsRequired();
+                entity.Property(e => e.LastError).HasMaxLength(4000);
+                entity.HasIndex(e => e.ProcessedAt);
             });
 
             base.OnModelCreating(modelBuilder);

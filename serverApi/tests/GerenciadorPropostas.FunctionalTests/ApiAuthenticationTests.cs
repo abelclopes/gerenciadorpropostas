@@ -91,4 +91,36 @@ public class ApiAuthenticationTests
         Assert.Equal(JsonValueKind.Array, json.RootElement.ValueKind);
         Assert.True(json.RootElement.GetArrayLength() > 0);
     }
+
+    [Fact]
+    public async Task LoginEConsultaDashboardKpis_DeveRetornarSucesso()
+    {
+        using var http = new HttpClient { BaseAddress = new Uri(BaseUrl), Timeout = TimeSpan.FromSeconds(20) };
+
+        using var loginResponse = await http.PostAsJsonAsync("/api/auth", new
+        {
+            email = "abell@gmail.com",
+            password = "teste123"
+        });
+
+        loginResponse.EnsureSuccessStatusCode();
+        var loginBody = await loginResponse.Content.ReadAsStringAsync();
+        using var loginJson = JsonDocument.Parse(loginBody);
+        var token = loginJson.RootElement.GetProperty("token").GetString();
+
+        Assert.False(string.IsNullOrWhiteSpace(token));
+
+        http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        http.DefaultRequestHeaders.Add("x-access-token", token);
+
+        using var response = await http.GetAsync("/api/dashboard/kpis");
+        response.EnsureSuccessStatusCode();
+
+        var body = await response.Content.ReadAsStringAsync();
+        using var json = JsonDocument.Parse(body);
+
+        Assert.True(json.RootElement.TryGetProperty("totalPropostas", out _));
+        Assert.True(json.RootElement.TryGetProperty("valorTotal", out _));
+        Assert.True(json.RootElement.TryGetProperty("updatedAtUtc", out _));
+    }
 }

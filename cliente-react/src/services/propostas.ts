@@ -8,10 +8,35 @@ import type {
 import { request } from './http'
 
 export const propostasApi = {
-  listar(token: string, pageNumber: number, pageSize: number, buscaTermo = '') {
-    const busca = encodeURIComponent(buscaTermo)
+  listar(
+    token: string,
+    pageNumber: number,
+    pageSize: number,
+    options?: {
+      buscaTermo?: string
+      nomeProposta?: string
+      fornecedorNome?: string
+      categoriaNome?: string
+      status?: number
+      sortBy?: string
+      sortDir?: 'asc' | 'desc'
+    },
+  ) {
+    const query = new URLSearchParams({
+      PageNumber: String(pageNumber),
+      PageSize: String(pageSize),
+    })
+
+    if (options?.buscaTermo) query.set('BuscaTermo', options.buscaTermo)
+    if (options?.nomeProposta) query.set('NomeProposta', options.nomeProposta)
+    if (options?.fornecedorNome) query.set('FornecedorNome', options.fornecedorNome)
+    if (options?.categoriaNome) query.set('CategoriaNome', options.categoriaNome)
+    if (typeof options?.status === 'number') query.set('Status', String(options.status))
+    if (options?.sortBy) query.set('SortBy', options.sortBy)
+    if (options?.sortDir) query.set('SortDir', options.sortDir)
+
     return request<ListaPaginada<Proposta>>(
-      `/api/propostas?PageNumber=${pageNumber}&PageSize=${pageSize}&buscaTermo=${busca}`,
+      `/api/propostas?${query.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -81,3 +81,12 @@ export interface PropostaAnexo {
   contentType: string
   fileContent: string
 }
+
+export interface DashboardKpi {
+  totalPropostas: number
+  propostasAguardando: number
+  propostasAprovadas: number
+  propostasOutrosStatus: number
+  valorTotal: number
+  updatedAtUtc: string
+}
