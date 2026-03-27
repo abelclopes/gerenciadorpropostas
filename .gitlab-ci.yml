@@ -45,9 +45,9 @@ frontend_build:
   image: alpine:3.20
   before_script:
     - apk add --no-cache bash openssh-client rsync
-    - : "${LAB_CORE_HOST:?LAB_CORE_HOST nao definido}"
-    - : "${LAB_CORE_USER:?LAB_CORE_USER nao definido}"
-    - : "${LAB_CORE_SSH_PRIVATE_KEY:?LAB_CORE_SSH_PRIVATE_KEY nao definida}"
+    - ': "${LAB_CORE_HOST:?LAB_CORE_HOST nao definido}"'
+    - ': "${LAB_CORE_USER:?LAB_CORE_USER nao definido}"'
+    - ': "${LAB_CORE_SSH_PRIVATE_KEY:?LAB_CORE_SSH_PRIVATE_KEY nao definida}"'
     - eval "$(ssh-agent -s)"
     - printf '%s\n' "$LAB_CORE_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
