@@ -188,3 +188,45 @@ npm run preview
 - Melhorar feedback de erro/sucesso por operação
 - Incluir pipeline CI para build/test automatizado
 - Revisar warnings restantes da API (obsoletos e analyzers)
+
+## 10) Pipeline GitLab para deploy no lab-core
+
+O repositório agora inclui um pipeline GitLab em `.gitlab-ci.yml` com:
+
+- `api_test`: restore, build e testes do backend .NET
+- `frontend_build`: build do frontend React
+- `deploy_lab_core_develop`: deploy automatico da branch `develop` no `lab-core`
+- `deploy_lab_core_homolog`: deploy manual de `main` ou `master` no `lab-core`
+
+O deploy usa o script `scripts/deploy-lab-core.sh`, que:
+
+- sincroniza o repositorio por `rsync` para o host remoto
+- entra no host `lab-core` por SSH
+- executa `docker compose --env-file .env.<ambiente> up -d --build`
+
+### Variaveis de CI necessarias
+
+Cadastre no GitLab:
+
+- `LAB_CORE_HOST`: host ou IP do `lab-core` (`10.0.0.246` ou alias SSH)
+- `LAB_CORE_USER`: usuario SSH do host remoto, por exemplo `abel`
+- `LAB_CORE_SSH_PRIVATE_KEY`: chave privada usada pelo runner para acessar o `lab-core`
+
+O pipeline tambem aceita overrides opcionais:
+
+- `LAB_CORE_PORT`: porta SSH, padrao `22`
+- `LAB_CORE_DEPLOY_PATH`: caminho remoto do deploy
+
+Bootstrap do acesso SSH do GitLab no `lab-core`:
+
+- executar `./scripts/setup-gitlab-lab-core-access.sh`
+- cadastrar a chave privada gerada em `LAB_CORE_SSH_PRIVATE_KEY`
+
+### Caminhos remotos padrao
+
+- `develop`: `/home/abel/apps/gerenciadorpropostas/develop`
+- `homolog`: `/home/abel/apps/gerenciadorpropostas/homolog`
+
+Documentacao detalhada:
+
+- `docs/DEPLOY-LAB-CORE.md`
