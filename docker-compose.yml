@@ -15,6 +15,7 @@ services:
       retries: 20
 
   app:
+    image: ${APP_IMAGE:-register.devos.abellinux.com/gerenciadorpropostas/app:local}
     build:
       context: .
       dockerfile: Dockerfile
@@ -40,6 +41,7 @@ services:
       - traefik_public
 
   frontend:
+    image: ${FRONTEND_IMAGE:-register.devos.abellinux.com/gerenciadorpropostas/frontend:local}
     build:
       context: .
       dockerfile: cliente-react/Dockerfile

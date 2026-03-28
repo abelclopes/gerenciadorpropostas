@@ -16,6 +16,9 @@ variables:
   DOTNET_NOLOGO: "true"
   NPM_CONFIG_FUND: "false"
   NPM_CONFIG_AUDIT: "false"
+  DOCKER_REGISTRY: "register.devos.abellinux.com"
+  APP_IMAGE_REPOSITORY: "register.devos.abellinux.com/gerenciadorpropostas/app"
+  FRONTEND_IMAGE_REPOSITORY: "register.devos.abellinux.com/gerenciadorpropostas/frontend"
 
 api_test:
   stage: test
@@ -40,6 +43,42 @@ frontend_build:
     - if: $CI_COMMIT_BRANCH
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
+.docker_publish:
+  stage: deploy
+  image: docker:27-cli
+  services:
+    - name: docker:27-dind
+      alias: docker
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - ': "${DOCKER_REGISTRY_USERNAME:?DOCKER_REGISTRY_USERNAME nao definido}"'
+    - ': "${DOCKER_REGISTRY_PASSWORD:?DOCKER_REGISTRY_PASSWORD nao definido}"'
+    - printf '%s' "$DOCKER_REGISTRY_PASSWORD" | docker login "$DOCKER_REGISTRY" -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
+  script:
+    - docker build -f Dockerfile -t "${APP_IMAGE_REPOSITORY}:${IMAGE_TAG}" .
+    - docker push "${APP_IMAGE_REPOSITORY}:${IMAGE_TAG}"
+    - docker build -f cliente-react/Dockerfile --build-arg VITE_API_BASE_URL="${VITE_API_BASE_URL}" -t "${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}" .
+    - docker push "${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}"
+
+publish_images_develop:
+  extends: .docker_publish
+  variables:
+    IMAGE_TAG: develop
+    VITE_API_BASE_URL: https://gerenciadorpropostas.develop.devops.abellinux.com
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+publish_images_homolog:
+  extends: .docker_publish
+  variables:
+    IMAGE_TAG: homolog
+    VITE_API_BASE_URL: https://gerenciadorpropostas.homolog.devops.abellinux.com
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "master"
+
 .deploy_lab_core:
   stage: deploy
   image: alpine:3.20
@@ -48,6 +87,8 @@ frontend_build:
     - ': "${LAB_CORE_HOST:?LAB_CORE_HOST nao definido}"'
     - ': "${LAB_CORE_USER:?LAB_CORE_USER nao definido}"'
     - ': "${LAB_CORE_SSH_PRIVATE_KEY:?LAB_CORE_SSH_PRIVATE_KEY nao definida}"'
+    - ': "${DOCKER_REGISTRY_USERNAME:?DOCKER_REGISTRY_USERNAME nao definido}"'
+    - ': "${DOCKER_REGISTRY_PASSWORD:?DOCKER_REGISTRY_PASSWORD nao definido}"'
     - eval "$(ssh-agent -s)"
     - printf '%s\n' "$LAB_CORE_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
@@ -59,9 +100,15 @@ frontend_build:
 
 deploy_lab_core_develop:
   extends: .deploy_lab_core
+  needs:
+    - publish_images_develop
   variables:
     DEPLOY_ENV: develop
     LAB_CORE_DEPLOY_PATH: /home/abel/apps/gerenciadorpropostas/develop
+    DOCKER_REGISTRY: register.devos.abellinux.com
+    APP_IMAGE: register.devos.abellinux.com/gerenciadorpropostas/app
+    FRONTEND_IMAGE: register.devos.abellinux.com/gerenciadorpropostas/frontend
+    IMAGE_TAG: develop
   environment:
     name: lab-core/develop
     url: https://gerenciadorpropostas.develop.devops.abellinux.com
@@ -70,9 +117,15 @@ deploy_lab_core_develop:
 
 deploy_lab_core_homolog:
   extends: .deploy_lab_core
+  needs:
+    - publish_images_homolog
   variables:
     DEPLOY_ENV: homolog
     LAB_CORE_DEPLOY_PATH: /home/abel/apps/gerenciadorpropostas/homolog
+    DOCKER_REGISTRY: register.devos.abellinux.com
+    APP_IMAGE: register.devos.abellinux.com/gerenciadorpropostas/app
+    FRONTEND_IMAGE: register.devos.abellinux.com/gerenciadorpropostas/frontend
+    IMAGE_TAG: homolog
   environment:
     name: lab-core/homolog
     url: https://gerenciadorpropostas.homolog.devops.abellinux.com

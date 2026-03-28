@@ -173,3 +173,20 @@ Verifique:
 
 - se a solucao `serverApi/serverApi.sln` continua compilando em `Release`
 - se os testes passam localmente com `dotnet test`
+
+## Plano Futuro
+
+### SonarQube compartilhado entre GitLab e Jenkins
+
+Objetivo:
+
+- subir uma instancia de SonarQube para analise continua reaproveitada pelos pipelines do GitLab e do Jenkins
+
+Proximos passos sugeridos:
+
+1. provisionar SonarQube com banco persistente e URL publica
+2. criar token tecnico para GitLab e outro para Jenkins
+3. adicionar etapa de analise no `.gitlab-ci.yml` para `develop` e `main`
+4. adicionar etapa equivalente nos pipelines Jenkins
+5. padronizar chave de projeto, quality gate e exclusoes para backend e frontend
+6. decidir se o deploy deve bloquear quando o quality gate falhar
