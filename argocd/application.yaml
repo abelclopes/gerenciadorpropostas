@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gerenciadorpropostas
+  namespace: argocd
+spec:
+  destination:
+    namespace: gerenciadorpropostas
+    server: https://kubernetes.default.svc
+  source:
+    path: k8s
+    repoURL: ssh://git@gitlab.abellinux.com:4057/abelclopes/gerenciadorpropostas.git
+    targetRevision: develop
+  project: default
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: false
+      selfHeal: false
+    syncOptions:
+      - CreateNamespace=true
