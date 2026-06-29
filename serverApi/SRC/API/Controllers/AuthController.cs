@@ -55,11 +55,14 @@ namespace API.Controllers
         }
         private string BuildToken(NovoUsuarioModel user)
         {        
+            var issuer = _config["Jwt:Issuer"];
+            var audience = _config["Jwt:Audience"];
+
             var model = TokenBuilder.CreateJsonWebToken(
                 "gerp.project", 
                 new List<string>() {user.PermissaoId.ToString(), user.Nome,user.Email,user.DataNacimento.ToString("yyyy-MM-dd"), user.PermissaoId.ToString() } ,
-                "http://audience.com", 
-                "http://issuer.com", 
+                audience, 
+                issuer, 
                 Guid.NewGuid(), 
                 DateTime.UtcNow.AddDays(1)
             );
@@ -143,7 +146,9 @@ namespace API.Controllers
         [Route("gerartokens")]
         public IActionResult Post()
         {
-            var model = TokenBuilder.CreateJsonWebToken("gerp.prod", new List<string>() { "Administrator" } , "http://audience.com", "http://issuer.com", Guid.NewGuid(), DateTime.UtcNow.AddMinutes(20));
+            var issuer = _config["Jwt:Issuer"];
+            var audience = _config["Jwt:Audience"];
+            var model = TokenBuilder.CreateJsonWebToken("gerp.prod", new List<string>() { "Administrator" }, audience, issuer, Guid.NewGuid(), DateTime.UtcNow.AddMinutes(20));
             return Ok(model);
         }
     }

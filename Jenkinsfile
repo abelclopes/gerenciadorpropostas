@@ -27,6 +27,7 @@ pipeline {
   environment {
     PROJECT_SLUG = "gerenciadorpropostas"
     ENV_FILE = ".env.${params.ENVIRONMENT}"
+    ENV_LOCAL_FILE = ".env.${params.ENVIRONMENT}.local"
     COMPOSE_PROJECT_NAME = "${PROJECT_SLUG}-${params.ENVIRONMENT}"
     EFFECTIVE_IMAGE_TAG = "${params.IMAGE_TAG ?: env.BUILD_NUMBER}"
   }
@@ -63,6 +64,9 @@ pipeline {
           test -f "${ENV_FILE}" || { echo "Arquivo ${ENV_FILE} nao encontrado"; exit 1; }
           test -f "docker-compose.yml" || { echo "docker-compose.yml nao encontrado"; exit 1; }
           test -f "sonar-project.properties" || { echo "sonar-project.properties nao encontrado"; exit 1; }
+          if [ -f "${ENV_LOCAL_FILE}" ]; then
+            echo "Usando overrides locais de ${ENV_LOCAL_FILE}"
+          fi
         '''
       }
     }
@@ -113,6 +117,12 @@ pipeline {
             unset DOCKER_CONTEXT
           fi
           cd "${WORKDIR}"
+          set -a
+          . "${ENV_FILE}"
+          if [ -f "${ENV_LOCAL_FILE}" ]; then
+            . "${ENV_LOCAL_FILE}"
+          fi
+          set +a
           export APP_IMAGE="register.devos.abellinux.com/${PROJECT_SLUG}/app:${EFFECTIVE_IMAGE_TAG}"
           export FRONTEND_IMAGE="register.devos.abellinux.com/${PROJECT_SLUG}/frontend:${EFFECTIVE_IMAGE_TAG}"
           export APP_NAME="${PROJECT_SLUG}"
@@ -135,6 +145,12 @@ pipeline {
             unset DOCKER_CONTEXT
           fi
           cd "${WORKDIR}"
+          set -a
+          . "${ENV_FILE}"
+          if [ -f "${ENV_LOCAL_FILE}" ]; then
+            . "${ENV_LOCAL_FILE}"
+          fi
+          set +a
           export APP_IMAGE="register.devos.abellinux.com/${PROJECT_SLUG}/app:${EFFECTIVE_IMAGE_TAG}"
           export FRONTEND_IMAGE="register.devos.abellinux.com/${PROJECT_SLUG}/frontend:${EFFECTIVE_IMAGE_TAG}"
           export APP_NAME="${PROJECT_SLUG}"

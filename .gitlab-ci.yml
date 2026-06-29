@@ -40,7 +40,7 @@ api_test:
     - dotnet build serverApi.sln -c Release --no-restore
     - dotnet test tests/GerenciadorPropostas.UnitTests/GerenciadorPropostas.UnitTests.csproj -c Release --no-build
     - /bin/bash -lc 'for i in {1..60}; do if (echo > /dev/tcp/db/1433) >/dev/null 2>&1; then exit 0; fi; sleep 2; done; exit 1'
-    - dotnet run --project SRC/API/API.csproj -c Release --no-build > /tmp/gerenciadorpropostas-api.log 2>&1 &
+    - dotnet run --project SRC/API/API.csproj -c Release --no-build --no-launch-profile > /tmp/gerenciadorpropostas-api.log 2>&1 &
     - API_PID=$!
     - trap 'status=$?; if [ -f /tmp/gerenciadorpropostas-api.log ]; then tail -n 200 /tmp/gerenciadorpropostas-api.log; fi; if [ -n "${API_PID:-}" ]; then kill "${API_PID}" 2>/dev/null || true; wait "${API_PID}" 2>/dev/null || true; fi; exit $status' EXIT
     - /bin/bash -lc 'for i in {1..60}; do if (echo > /dev/tcp/127.0.0.1/18132) >/dev/null 2>&1; then exit 0; fi; sleep 2; done; exit 1'

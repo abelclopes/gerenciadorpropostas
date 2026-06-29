@@ -25,6 +25,9 @@ services:
         condition: service_healthy
     environment:
       ConnectionStrings__DefaultConnection: "Server=db;Database=gerenciadorPropostas;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=true"
+      Jwt__Key: ${Jwt__Key}
+      Jwt__Issuer: ${Jwt__Issuer}
+      Jwt__Audience: ${Jwt__Audience}
       ASPNETCORE_URLS: "http://0.0.0.0:8484"
     ports:
       - "${APP_PORT}:8484"
